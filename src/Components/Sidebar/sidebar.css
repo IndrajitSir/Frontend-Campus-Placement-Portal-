@@ -1,0 +1,23 @@
+.non-active-link {
+    color: rgb(254, 100, 218);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 10px;
+  }
+  
+  .non-active-link:hover {
+    color: rgb(0, 0, 0);
+    background-color: #f50aa7;
+    opacity: 0.8;
+  }
+  
+  .active-link {
+    color: rgb(237, 113, 200);
+    background-color: #423541;
+    cursor: pointer;
+    border-radius: 10px;
+    padding-left: 15px;
+    padding-right: 8px;
+    transition: all 0.3s ease-in-out;
+  }
