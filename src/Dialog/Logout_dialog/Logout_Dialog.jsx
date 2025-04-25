@@ -13,11 +13,10 @@ function Logout_Dialog({ logoutDialog, setLogoutDialog }) {
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      const res = await axios.post(`${API_URL}/api/v1/users/logout`, {
+      await axios.post(`${API_URL}/api/v1/users/logout`, {
         credentials: "include",
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      // window.confirm(`${res.data.message}!`);
     } catch (error) {
       console.error(error);
       window.confirm("Logout failed!");
@@ -31,7 +30,7 @@ function Logout_Dialog({ logoutDialog, setLogoutDialog }) {
   return (
     <>
       <Dialog open={logoutDialog} onOpenChange={setLogoutDialog}>
-        {/* <DialogTitle>LOGOUT</DialogTitle> */}
+        <DialogTitle></DialogTitle>
         <DialogContent>
           <DialogHeader>Are you sure you want to logout?</DialogHeader>
           <DialogFooter>

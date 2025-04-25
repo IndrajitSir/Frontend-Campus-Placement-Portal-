@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "
 import { Button } from '../../components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
+// Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function DeleteUserDialog({ deleteUserDialog, setdeleteUserDialog, userID }) {
