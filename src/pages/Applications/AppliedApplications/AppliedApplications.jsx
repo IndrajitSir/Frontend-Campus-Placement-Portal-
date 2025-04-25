@@ -14,6 +14,8 @@ import { X } from 'lucide-react';
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
 // Constants
 import { record } from '../../../constants/constants.js';
+// hooks
+import { useGetDataV3 } from '../../../functionality/api.js';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 const version = import.meta.env.VITE_API_VERSION;
@@ -31,25 +33,8 @@ function AppliedApplications() {
     setApplications(record);
   }, []);
 
-  async function getDataV3() {
-    const res = await fetch(`${API_URL}/api/v3/applications/applied-candidates?page=${page}&limit=9`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-    });
-
-    const response = await res.json();
-    if (response?.data?.candidates.length > 0) {
-      console.log("candidates:", response?.data?.candidates);
-      setApplications(response?.data?.candidates);
-    }
-  }
-  useEffect(() => {
-    getDataV3();
-  }, [page])
+  const data = useGetDataV3(page, "applied");
+  if(data){ setApplications(data); }
 
   useEffect(() => {
     setApplications(prevApplications =>

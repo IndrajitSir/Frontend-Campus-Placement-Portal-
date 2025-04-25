@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-// CONTEXT api
-import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 // Shadcn Components
 import { Card } from '../../../components/ui/card.jsx';
 import { Button } from '../../../components/ui/button.jsx';
@@ -12,8 +10,9 @@ import DeleteStudentApplicationDialog from '../../../Dialog/Delete_Student_Appli
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
 // Constants
 import { record } from '../../../constants/constants.js';
+// hooks
+import { useGetDataV3 } from '../../../functionality/api.js';
 // Environment variable
-const API_URL = import.meta.env.VITE_API_URL;
 const version = import.meta.env.VITE_API_VERSION;
 
 function RejectedApplications() {
@@ -22,36 +21,19 @@ function RejectedApplications() {
   const [displayUserDetailsDialog, setDisplayUserDetailsDialog] = useState(false);
   const [dataForDisplay, setDataForDisplay] = useState(null);
   const [recordID, setRecordID] = useState(null);
-  const { accessToken } = useUserData();
   const [page, setPage] = useState(1);
   useEffect(() => {
     setApplications(record);
   }, [])
 
-  async function getDataV3() {
-    const res = await fetch(`${API_URL}/api/v3/applications/rejected-candidates?page=${page}&limit=9`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-    });
+  const data = useGetDataV3(page, "rejected");
+  if(data){ setApplications(data); }
 
-    const response = await res.json();
-    if (response?.data?.candidates.length > 0) {
-      console.log("candidates:", response?.data?.candidates);
-      setApplications(response?.data?.candidates);
-    }
-  }
-  useEffect(() => {
-    getDataV3();
-  }, [page])
   return (
     <>
       < div className="p-6" >
-      <div className='border-t-2 border-gray-20 pt-4 mt-8'>
-        <h2 className="text-2xl font-bold mb-4 px-2 py-1 rounded-full text-red-600 bg-red-100 text-center">Rejected Applications</h2>
+        <div className='border-t-2 border-gray-20 pt-4 mt-8'>
+          <h2 className="text-2xl font-bold mb-4 px-2 py-1 rounded-full text-red-600 bg-red-100 text-center">Rejected Applications</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-26">
           {applications.map(application => (
