@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { motion } from 'framer-motion';
 // Shadcn Components
 import { Card, CardContent } from "../../components/ui/card";
 // Card Components
@@ -42,7 +43,7 @@ function SystemAnalysis() {
         return <p>Error fetching stats!</p>;
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {stats.map(stat => (
                     <Card key={stat.title} className="w-110">
                         <CardContent className="p-4">
@@ -51,24 +52,25 @@ function SystemAnalysis() {
                         </CardContent>
                     </Card>
                 ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
                 <UserCountCard />
                 <StudentsPerDepartmentCard />
-                <div className='col-span-1 md:col-span-2'>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className='col-span-1 md:col-span-2'>
                     <SelectedStudentsCard />
-                </div>
+                </motion.div>
                 <PlacementCreatedCard />
                 <ApplicationStatusCard />
-                <div className='col-span-1 md:col-span-2'>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className='col-span-1 md:col-span-2'>
                     <StudentByLocationCard />
-                </div>
+                </motion.div>
                 <StudentApprovalStats />
                 <ResumeUploadStatsCard />
-                <div className='col-span-1 md:col-span-2'>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className='col-span-1 md:col-span-2'>
                     <ActiveStudentsCard />
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </>
     )
 }

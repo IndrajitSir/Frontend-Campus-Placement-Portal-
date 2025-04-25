@@ -1,4 +1,5 @@
 import React from 'react'
+import { motion } from 'framer-motion';
 // Chart
 import { Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
 // Shadcn Components
@@ -18,18 +19,20 @@ function StudentsPerDepartmentCard() {
     return (
         <>
             {/* 2. Students per Department -- working fine */}
-            <Card className="w-full max-w-xl mx-auto shadow-md">
-                <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Students per Department</h2>
-                    <PieChart width={460} height={290}>
-                        <Pie data={data} dataKey="count" nameKey="_id" cx="50%" cy="50%" outerRadius={80} fill="#82ca9d" label>
-                            {Array.isArray(data) && data?.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                    </PieChart>
-                </CardContent>
-            </Card>
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <Card className="w-full max-w-xl mx-auto shadow-md">
+                    <CardContent>
+                        <h2 className="text-xl font-semibold mb-2">Students per Department</h2>
+                        <PieChart width={460} height={290}>
+                            <Pie data={data} dataKey="count" nameKey="_id" cx="50%" cy="50%" outerRadius={80} fill="#82ca9d" label isAnimationActive={true} animationDuration={600}>
+                                {Array.isArray(data) && data?.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                            </Pie>
+                            <Tooltip />
+                            <Legend />
+                        </PieChart>
+                    </CardContent>
+                </Card>
+            </motion.div>
         </>
     )
 }

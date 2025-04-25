@@ -1,4 +1,5 @@
 import React from 'react'
+import { motion } from 'framer-motion';
 // Chart
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 // Shadcn Components
@@ -15,17 +16,19 @@ function ActiveStudentsCard() {
     return (
         <>
             {/* 9. Top Active Students */}
-            <Card className="w-full shadow-md">
-                <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Top 10 Active Students</h2>
-                    <BarChart width={1300} height={250} data={data}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="applications" fill="#82ca9d" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </CardContent>
-            </Card>
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <Card className="w-full shadow-md">
+                    <CardContent>
+                        <h2 className="text-xl font-semibold mb-2">Top 10 Active Students</h2>
+                        <BarChart width={1300} height={250} data={data}>
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="applications" fill="#82ca9d" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={600} />
+                        </BarChart>
+                    </CardContent>
+                </Card>
+            </motion.div>
         </>
     )
 }

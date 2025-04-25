@@ -1,4 +1,5 @@
 import React from 'react'
+import { motion } from 'framer-motion';
 // Chart
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 // Shadcn Components
@@ -15,17 +16,19 @@ function UserCountCard() {
     return (
         <>
             {/* 1. User Count by Role -- working fine */}
-            <Card className="w-full max-w-xl mx-auto shadow-md">
-                <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Users by Role</h2>
-                    <BarChart width={480} height={250} data={data}>
-                        <XAxis dataKey="_id" />
-                        <YAxis allowDecimals={false} />
-                        <Tooltip />
-                        <Bar dataKey="count" fill="#8884d8" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </CardContent>
-            </Card>
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <Card className="w-full max-w-xl mx-auto shadow-md">
+                    <CardContent>
+                        <h2 className="text-xl font-semibold mb-2">Users by Role</h2>
+                        <BarChart width={480} height={290} data={data}>
+                            <XAxis dataKey="_id" />
+                            <YAxis allowDecimals={false} />
+                            <Tooltip />
+                            <Bar dataKey="count" fill="#8884d8" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={600} />
+                        </BarChart>
+                    </CardContent>
+                </Card>
+            </motion.div>
         </>
     )
 }
