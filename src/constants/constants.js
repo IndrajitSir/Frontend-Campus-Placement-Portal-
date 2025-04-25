@@ -27,3 +27,5 @@ export const animation = {
         ease: "easeInOut",
     },
 };
+
+export const languages = ["javascript", "python", "cpp", "java"];
