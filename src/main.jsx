@@ -6,6 +6,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import App from './App.jsx'
 import Auth from './pages/Auth/Auth.jsx'
 import Placements from './pages/Placements/Placements.jsx'
+import InfinitePlacements from './pages/Placements/InfinitePlacements.jsx'
 import ProtectedRoute from './functionality/ProtectedRoutes.jsx'
 import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import DashBoardContent from './pages/Dashboard/DashBoardContent'
@@ -31,8 +32,8 @@ const router = createBrowserRouter(
         <Route path="/login" element={<Auth />} />
         <Route path="/register" element={<Auth />} />
         <Route path="/home" element={<ProtectedRoute />} >
-          <Route path="" element={<PlacementDataProvider><Placements /></PlacementDataProvider>} />
-          <Route path="placements" element={<PlacementDataProvider><Placements /></PlacementDataProvider>} />
+          <Route path="" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
+          <Route path="placements" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
           <Route path="dashboard" element={<Dashboard />} >
             <Route path="" element={<DashBoardContent />} />
             <Route path="profile" element={<ProfilePage />} />

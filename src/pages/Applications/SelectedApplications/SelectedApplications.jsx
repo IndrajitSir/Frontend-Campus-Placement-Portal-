@@ -11,7 +11,7 @@ import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Di
 // Constants
 import { record } from '../../../constants/constants.js';
 // hooks
-import { useGetDataV3 } from '../../../functionality/api.js';
+import { useGetDataV3 } from '../../../hooks/api/api.js';
 // Environment variable
 const version = import.meta.env.VITE_API_VERSION;
 
@@ -28,7 +28,7 @@ function SelectedApplications() {
 
   const data = useGetDataV3(page, "selected");
   if(data){ setApplications(data); }
-  
+
   return (
     <>
       < div className="p-6" >

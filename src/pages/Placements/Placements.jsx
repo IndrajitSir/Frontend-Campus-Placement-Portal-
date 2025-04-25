@@ -11,6 +11,7 @@ import PlacementSearch from "./PlacementSearch/PlacementSearch.jsx";
 // Dialog Boxes
 import CreateJobPost from "../../Dialog/Create_JobPost/CreateJobPost.jsx";
 import Missing_Details_Form_Dialog from "../../Dialog/Student_Missing_Details_Form/Missing_Details_Form_Dialog.jsx";
+import DeletePlacementPostDialog from "../../Dialog/DeletePlacement_dialog/DeletePlacementDialog";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 import { usePlacementData } from "../../context/PlacementContext/PlacementContext.jsx";
@@ -29,13 +30,15 @@ const Placements = () => {
   const [createPostDialog, setCreatePostDialog] = useState(false);
   const [missingDetailsFillFormDialog, setMissingDetailsFillFormDialog] = useState(true);
   const [showSearchResult, setShowSearchResult] = useState(false);
+  const [postDeleteDialog, setPostDeleteDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [placementInfo, setPlacementInfo] = useState({});
   const [filteredPlacement, setFilteredPlacement] = useState({});
-  const [applicationID, setApplicationID] = useState("");
+  const [postID, setPostID] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [editedInfo, setEditedInfo] = useState(placementInfo);
-
+  const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     setEditedInfo((prevInfo) => ({ ...prevInfo, location: "Not Mentioned!" }))
     cleanSearchedData();
@@ -57,7 +60,7 @@ const Placements = () => {
   };
 
   const applyForPlacement = async () => {
-    const res = await fetch(`${API_URL}/api/v1/applications/${applicationID}`, {
+    const res = await fetch(`${API_URL}/api/v1/applications/${postID}`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -75,24 +78,8 @@ const Placements = () => {
     }
   }
 
-  const handlePostDelete = async (id) => {
-    const res = await fetch(`${API_URL}/api/v1/placements/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-    });
-    if (!res.ok) {
-      throw new Error(`Error ${res.status}: ${res.statusText}`);
-    }
-    const response = await res.json();
-    console.log("response delete post", response);
-    if (!response.success) {
-      toast.warning(response.message)
-    }
-    const updatedPosts = placements.filter((placement) => placement._id !== id);
+  const handlePostDeleted = () => {
+    const updatedPosts = placements.filter((placement) => placement._id !== postID);
     setPlacements(updatedPosts);
   }
 
@@ -125,6 +112,7 @@ const Placements = () => {
     setShowSearchResult(true);
   }
 
+
   return (
     <div className="p-6">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -154,7 +142,7 @@ const Placements = () => {
               <p>Eligibility: {filteredPlacement.eligibility}</p>
               <p>Last Date : {filteredPlacement.last_date}</p>
               {role === "student" ? (
-                <Button onClick={() => { setApplyPlacementDialog(true); setApplicationID(filteredPlacement._id); }}
+                <Button onClick={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement._id); }}
                   className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                 >
                   Apply
@@ -166,7 +154,7 @@ const Placements = () => {
                   >
                     Update
                   </Button>
-                  <Button onClick={() => handlePostDelete(filteredPlacement._id)}
+                  <Button onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
                     variant="destructive" size="icon"
                     className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
                   >
@@ -195,7 +183,7 @@ const Placements = () => {
                       className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                       onClick={() => {
                         setApplyPlacementDialog(true);
-                        setApplicationID(placement._id);
+                        setPostID(placement._id);
                       }}
                     >
                       Apply
@@ -214,7 +202,7 @@ const Placements = () => {
                       </Button>
                       <Button variant="destructive" size="icon"
                         className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                        onClick={() => handlePostDelete(placement._id)}
+                        onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
                       >
                         <Trash size={16} />
                       </Button>
@@ -246,7 +234,7 @@ const Placements = () => {
                   className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                   onClick={() => {
                     setApplyPlacementDialog(true);
-                    setApplicationID(placement._id);
+                    setPostID(placement._id);
                   }}
                 >
                   Apply
@@ -265,7 +253,7 @@ const Placements = () => {
                   </Button>
                   <Button variant="destructive" size="icon"
                     className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                    onClick={() => handlePostDelete(placement._id)}
+                    onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
                   >
                     <Trash size={16} />
                   </Button>
@@ -275,8 +263,8 @@ const Placements = () => {
           ))
         )}
       </div>
-
-
+      {/* Delete placement post */}
+      <DeletePlacementPostDialog deletePlacementPostDialog={postDeleteDialog} setDeletePlacementPostDialog={setPostDeleteDialog} placementPostID={postID} onPostDelete={handlePostDeleted} loading={loading} setLoading={setLoading} />
       {/* Apply Placement Confirmation Dialog */}
       <Dialog open={applyPlacementDialog} onOpenChange={setApplyPlacementDialog} className="max-h-[90vh] overflow-y-auto">
         <DialogContent>
