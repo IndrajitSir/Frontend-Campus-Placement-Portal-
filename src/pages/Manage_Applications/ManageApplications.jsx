@@ -59,13 +59,13 @@ function ManageApplications() {
         <>
             <div className="p-6 space-y-4">
                 <h2 className="text-2xl font-semibold">Manage Applications</h2>
-                <div className="flex gap-x-248 justify-betweeen">
-                    <select className="p-2 border rounded mb-4" value={filterApplication} onChange={e => setFilterApplication(e.target.value)}>
-                        <option value="">All Applications</option>
-                        <option value="selected">Selected</option>
-                        <option value="shortlisted">Shortlisted</option>
-                        <option value="applied">Applied</option>
-                        <option value="rejected">Rejected</option>
+                <div className="flex items-center gap-x-5 justify-betweeen border-b-2 border-gray-20">
+                    <select className="w-1/9 h-10 border rounded mb-1 cursor-pointer" value={filterApplication} onChange={e => setFilterApplication(e.target.value)}>
+                        <option value="" className='cursor-pointer'>All Applications</option>
+                        <option value="selected" className='cursor-pointer'>Selected</option>
+                        <option value="shortlisted" className='cursor-pointer'>Shortlisted</option>
+                        <option value="applied" className='cursor-pointer'>Applied</option>
+                        <option value="rejected" className='cursor-pointer'>Rejected</option>
                     </select>
                     <div className="flex items-center justify-end">
                         <SearchDialog data={usersNameAndEmail} onQuery={searchQueryFromChild}  placeholderValue={"Search student by name and email"}/>

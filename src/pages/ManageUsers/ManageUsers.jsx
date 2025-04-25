@@ -76,14 +76,14 @@ function ManageUsers() {
     return (
         <div className="p-6 space-y-4">
             <h2 className="text-2xl font-semibold">{role === "placement_staff" ? "Manage Students" : "Manage Users"}</h2>
-            <div className="flex gap-x-248 justify-betweeen">
+            <div className="flex gap-x-248 justify-betweeen border-b-2 border-gray-20">
                 { role !== "placement_staff" &&
                     <>
-                        <select className="p-2 border rounded mb-4" value={filterRole} onChange={e => setFilterRole(e.target.value)}>
-                            <option value="">All Roles</option>
-                            <option value="admin">Admin</option>
-                            <option value="student">Student</option>
-                            <option value="placement_staff">Placement Staff</option>
+                        <select className="p-2 py-4 border rounded mb-4 cursor-pointer" value={filterRole} onChange={e => setFilterRole(e.target.value)}>
+                            <option value="" className="cursor-pointer">All Roles</option>
+                            <option value="admin" className="cursor-pointer">Admin</option>
+                            <option value="student" className="cursor-pointer">Student</option>
+                            <option value="placement_staff" className="cursor-pointer">Placement Staff</option>
                         </select>
                     </>
                 }

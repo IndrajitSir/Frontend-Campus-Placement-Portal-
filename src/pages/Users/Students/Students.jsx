@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 // CONTEXT api
 import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 // Shadcn Components
-import { Card, CardContent } from '../../../components/ui/card.jsx';
+import { Card } from '../../../components/ui/card.jsx';
 import { Button } from "../../../components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../../components/ui/dialog.jsx';
 // Icons
@@ -13,6 +13,7 @@ import DeleteUserDialog from '../../../Dialog/DeleteUser_dialog/DeleteUserDialog
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
+const version = import.meta.env.VITE_API_VERSION;
 
 function Students() {
   const [students, setStudents] = useState([]);
@@ -23,8 +24,10 @@ function Students() {
   const [student_id, setStudent_id] = useState("");
   const [isApproved, setIsApproved] = useState(false);
   const [specificUserDetails, setSpecificUserDetails] = useState({});
-  async function getData() {
-    const res = await fetch(`${API_URL}/api/v1/student/all`, {
+  const [page, setPage] = useState(1);
+
+  async function getDataV2() {
+    const res = await fetch(`${API_URL}/api/v2/student/all?page=${page}&limit=9`, {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
@@ -36,14 +39,15 @@ function Students() {
     if (!response.success) {
       toast.error(response.message || "Something went wrong!");
     }
-    console.log("Response data: ", response.data);
+    console.log("version 2 response for students: ", response?.data?.students);
     console.log("Role: ", role);
 
-    setStudents(response?.data);
+    setStudents(response?.data?.students);
   }
+
   useEffect(() => {
-    getData();
-  }, [])
+    getDataV2();
+  }, [page])
 
   const handleApproval = async (student_id) => {
     const res = await fetch(`${API_URL}/api/v1/admin/change-student-approval`, {
@@ -77,40 +81,56 @@ function Students() {
   return (
     <>
       < div className="p-6" >
-        <h2 className="text-2xl font-bold mb-4">All Students</h2>
+        <h2 className="text-2xl font-bold mb-4 px-2 py-1 rounded-full text-blue-600 bg-blue-100 text-center">Students</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-26">
           {students.map(user => (
-            <Card key={user._id}>
-              <CardContent className="p-4 flex justify-between items-center">
+            <Card key={user._id} className="shadow-md rounded-lg p-4">
+              <div className="flex justify-between items-center mb-2">
                 <div>
-                  <h1 className="text-lg font-medium">{user.student_id.name}</h1>
-                  <h2 className="text-sm text-muted-foreground">Email: {user.student_id.email}</h2>
-                  <p>Contact Number: {user?.student_id?.phoneNumber || "N/A"}</p>
-                  <p>Department: {user?.department || "N/A"}</p>
-                  <p>Professional Skill: {user?.professional_skill || "N/A"}</p>
-                  <p>Location: {user?.location || "N/A"}</p>
-                  <p>About: {user?.about || "N/A"}</p>
+                  <h3 className="text-lg font-semibold">{user?.student_id?.name}</h3>
+                  <p className="text-sm text-gray-600">{user?.student_id?.email}</p>
+                  <p className="text-sm">{user?.student_id?.phoneNumber || "N/A"}</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-y-4">
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="icon" className="cursor-pointer hover:bg-gray-200" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}><Eye size={16} /></Button>
-                    {
-                      role !== "placement_staff" &&
-                      <>
-                        <Button variant="outline" size="icon" className="cursor-pointer hover:bg-gray-200"><Pencil size={16} /></Button>
-                        <Button variant="destructive" size="icon" className="cursor-pointer hover:bg-red-500" onClick={() => { setStudent_id(user._id); setdeleteUserDialog(true); }}><Trash size={16} /></Button>
-                      </>
-                    }
-                  </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                <div><strong>Department:</strong> {user?.department || "N/A"}</div>
+                <div><strong>Location:</strong> {user?.location || "N/A"}</div>
+                <div><strong>About:</strong> {user?.about || "N/A"}</div>
+                <div><strong>Professional Skill:</strong> {user?.professional_skill || "N/A"}</div>
+              </div>
+
+              <div className="mt-4 flex justify-between items-center">
+                <a href={user?.resume} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">View Resume</a>
+                <span className="text-xs text-gray-500">{new Date(user?.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-y-4">
+                <div className="flex justify-around items-center">
+                  <Button variant="outline" size="icon" className="cursor-pointer bg-yellow-200 hover:bg-yellow-400" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}><Eye size={12} /></Button>
                   {
                     role !== "placement_staff" &&
-                    <Button className="cursor-pointer" onClick={() => { setStudent_id(user._id); setapprovalDialog(true); setIsApproved(user.approved) }}>{user.approved ? "Remove approval" : "Approve"}</Button>
+                    <>
+                      <Button variant="outline" size="icon" className="cursor-pointer bg-blue-200 hover:bg-blue-400"><Pencil size={12} /></Button>
+                      <Button variant="destructive" size="icon" className="cursor-pointer hover:bg-red-500" onClick={() => { setStudent_id(user._id); setdeleteUserDialog(true); }}><Trash size={12} /></Button>
+                    </>
                   }
                 </div>
-              </CardContent>
+                {
+                  role !== "placement_staff" &&
+                  <Button className={`cursor-pointer ${user.approved ? "bg-red-400 hover:bg-red-500": "bg-green-400 hover:bg-green-500"} ?`} onClick={() => { setStudent_id(user._id); setapprovalDialog(true); setIsApproved(user.approved) }}>{user.approved ? "Remove approval" : "Approve"}</Button>
+                }
+              </div>
             </Card>
           ))}
         </div>
+        {
+          version !== 1 &&
+          <>
+            <div className="flex items-center justify-center gap-10 mt-5">
+              <Button variant="outline" onClick={() => setPage(p => Math.max(p - 1, 1))} className="cursor-pointer">Previous</Button>
+              <Button onClick={() => setPage(p => p + 1)} className="cursor-pointer">Next</Button>
+            </div>
+          </>
+        }
         <Display_User_Details_Dialog displayUserDetailsDialog={userDetailsDialog} setDisplayUserDetailsDialog={setUserDetailsDialog} data={specificUserDetails} />
         {/* Delete user Dialog */}
         <DeleteUserDialog deleteUserDialog={deleteUserDialog} setdeleteUserDialog={setdeleteUserDialog} userID={student_id} />
