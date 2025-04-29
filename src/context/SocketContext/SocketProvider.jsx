@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const SocketProvider = ({ children }) => {
     const { role } = useUserData();
     const [socket, setSocket] = useState(null);
+    const [isSocketReady, setIsSocketReady] = useState(false);
 
     useEffect(() => {
         if (!role) return;
@@ -21,7 +22,7 @@ export const SocketProvider = ({ children }) => {
     }, [role]);
 
     return (
-        <SocketContext.Provider value={socket}>
+        <SocketContext.Provider value={{socket, isSocketReady, setIsSocketReady}}>
             {children}
         </SocketContext.Provider>
     );
