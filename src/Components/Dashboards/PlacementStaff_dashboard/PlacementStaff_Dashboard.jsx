@@ -6,7 +6,10 @@ import { Button } from '../../ui/button';
 // Components
 import SystemAnalysis from '../../../components/System_Analysis/SystemAnalysis.jsx';
 function PlacementStaff_Dashboard() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const handleJoinInterview = ()=>{
+    navigate("/home/dashboard/interview-setup");
+  }
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -31,7 +34,7 @@ function PlacementStaff_Dashboard() {
             <CardTitle>Schedule Interviews</CardTitle>
           </CardHeader>
           <CardContent>
-            <Button className="mt-2 cursor-pointer">Set Up Interviews</Button>
+            <Button className="mt-2 cursor-pointer" onClick={handleJoinInterview}>Set Up Interviews</Button>
           </CardContent>
         </Card>
         <Card>

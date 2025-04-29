@@ -6,14 +6,22 @@ const LogViewer = () => {
     const [filter, setFilter] = useState("all");
     const [autoScroll, setAutoScroll] = useState(false);
     const logEndRef = useRef(null);
-    const socket = useSocket();
+    const { socket, setIsSocketReady } = useSocket();
 
     useEffect(() => {
         if (!socket) return;
         socket.on("connect", () => {
             console.log("Socket connected: ", socket.id);
+            setIsSocketReady(true);
         });
-        return () => { socket.off("connect"); }
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected!");
+            setIsSocketReady(false);
+        });
+        return () => {
+            socket.off("connect");
+            socket.off("disconnect");
+        }
     }, [socket]);
 
     useEffect(() => {
