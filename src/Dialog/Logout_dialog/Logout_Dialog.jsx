@@ -1,11 +1,12 @@
 import React from 'react'
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 // Shadcn Components
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../components/ui/dialog";
 import { Button } from '../../components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
+// Environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Logout_Dialog({ logoutDialog, setLogoutDialog }) {
@@ -13,19 +14,27 @@ function Logout_Dialog({ logoutDialog, setLogoutDialog }) {
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      await axios.post(`${API_URL}/api/v1/users/logout`, {
+      const resonse = await fetch(`${API_URL}/api/v1/users/logout`, {
+        method: "POST",
         credentials: "include",
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}` },
       });
+      const res = await resonse.json();
+      console.log(`Logout response: `, res);
+      if(res.success){
+        setRole("");
+        setAccessToken("");
+        setRefreshToken("");
+        setUserInfo({});
+        toast.success("Logout successfully!");
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       console.error(error);
-      window.confirm("Logout failed!");
+      toast.error("Logout failed!");
     }
-    setRole("");
-    setAccessToken("");
-    setRefreshToken("");
-    setUserInfo({});
-    navigate("/", { replace: true });
   }
   return (
     <>

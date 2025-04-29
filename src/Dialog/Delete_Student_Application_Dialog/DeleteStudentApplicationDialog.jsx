@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Button } from '../../components/ui/button.jsx';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
+// Environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function DeleteStudentApplicationDialog({ deleteUserApplication, setDeleteUserApplication, recordID }) {

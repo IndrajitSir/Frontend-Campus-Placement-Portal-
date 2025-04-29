@@ -7,6 +7,7 @@ import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
+// Environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function CreateJobPost({ onCancel }) {
