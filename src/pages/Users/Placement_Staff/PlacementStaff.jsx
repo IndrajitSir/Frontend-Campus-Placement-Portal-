@@ -57,7 +57,7 @@ function PlacementStaff() {
                                     <p className="text-sm text-muted-foreground">{user.phoneNumber}</p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="icon" className="cursor-pointer"><Pencil size={16} /></Button>
+                                    <Button variant="outline" size="icon" className="cursor-pointer bg-blue-400 hover:bg-blue-500"><Pencil size={16} /></Button>
                                     <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setUserID(user._id); setdeleteUserDialog(true); }}><Trash size={16} /></Button>
                                 </div>
                             </CardContent>

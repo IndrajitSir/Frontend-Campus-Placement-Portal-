@@ -20,6 +20,7 @@ import ManageApplications from './pages/Manage_Applications/ManageApplications'
 import ManageUsers from './pages/ManageUsers/ManageUsers'
 import AppliedForJobs from './components/AppliedForJobs/AppliedForJobs'
 import MonitorSystem from './components/Dashboards/Admin_dashboard/Monitor_System/MonitorSystem'
+import InterviewSetup from './pages/Interview_Setup/InterviewSetup'
 // CONTEXT PROVIDER imported
 import { AuthCrediantialsProvider } from './context/AuthContext/AuthProvider.jsx'
 import { PlacementDataProvider } from './context/PlacementContext/PlacementProvider.jsx'
@@ -41,6 +42,7 @@ const router = createBrowserRouter(
             <Route path="applied-jobs" element={<AppliedForJobs />} />
             <Route path="manage-users" element={<ManageUsers />} />
             <Route path="monitor-system" element={<MonitorSystem />} />
+            <Route path="interview-setup" element={<InterviewSetup />} />
             <Route path="manage-applications">
               <Route path="" element={<ManageApplications />} />
               <Route path="selected-candidates" element={<SelectedApplications />} />

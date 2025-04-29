@@ -12,10 +12,6 @@ import { Check } from 'lucide-react';
 import { X } from 'lucide-react';
 // Dialog Boxes
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
-// Constants
-import { record } from '../../../constants/constants.js';
-// hooks
-import { useGetDataV3 } from '../../../hooks/api/api.js';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 const version = import.meta.env.VITE_API_VERSION;
@@ -29,27 +25,34 @@ function AppliedApplications() {
   const [dataForDisplay, setDataForDisplay] = useState(null);
   const [recordID, setRecordID] = useState(null);
   const [page, setPage] = useState(1);
-  useEffect(() => {
-    setApplications(record);
-  }, []);
-
-  const data = useGetDataV3(page, "applied");
-  if(data){ setApplications(data); }
 
   useEffect(() => {
-    setApplications(prevApplications =>
-      prevApplications.filter(application =>
-        application.role === "applied"
-      )
-    );
-  }, [applications.role]);
+    const fetch = async () => {
+        const res = await window.fetch(`${API_URL}/api/v3/applications/applied-candidates?page=${page}&limit=9`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+        });
+        const response = await res.json();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        if (response?.data?.candidates?.length > 0) {
+          setApplications(response.data.candidates);
+        }
+    };
+    fetch();
+  }, [page, accessToken]);
+
 
   const updateStatus = async ({ newStatus, recordID }) => {
     const res = await fetch(`${API_URL}/api/v1/applications/update-status`, {
       method: "PUT",
       credentials: "include",
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       },
       body: JSON.stringify({ newStatus, recordID })
@@ -114,7 +117,7 @@ function AppliedApplications() {
             <DialogHeader>Are you sure you want to Shortlist the candidate?</DialogHeader>
             <DialogFooter>
               <Button className="cursor-pointer" variant="secondary" onClick={() => setSelectionDialog(false)}>Cancel</Button>
-              <Button className="cursor-pointer bg-blue-600 hover:bg-blue-500" onClick={() => updateStatus("selected", recordID)}>Shortlist</Button>
+              <Button className="cursor-pointer bg-blue-600 hover:bg-blue-500" onClick={() => updateStatus({ newStatus: "selected", recordID })}>Shortlist</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -125,7 +128,7 @@ function AppliedApplications() {
             <DialogHeader>Are you sure you want to Reject the candidate?</DialogHeader>
             <DialogFooter>
               <Button className="cursor-pointer" variant="secondary" onClick={() => setRejectionDialog(false)}>Cancel</Button>
-              <Button className="cursor-pointer" variant="destructive" onClick={() => updateStatus("rejected", recordID)}>Reject</Button>
+              <Button className="cursor-pointer" variant="destructive" onClick={() => updateStatus({ newStatus: "rejected", recordID })}>Reject</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

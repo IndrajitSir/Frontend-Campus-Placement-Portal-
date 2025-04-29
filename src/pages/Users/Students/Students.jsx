@@ -105,18 +105,18 @@ function Students() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-1 gap-y-4">
                 <div className="flex justify-around items-center">
-                  <Button variant="outline" size="icon" className="cursor-pointer bg-yellow-200 hover:bg-yellow-400" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}><Eye size={12} /></Button>
+                  <Button variant="outline" size="icon" className="cursor-pointer bg-yellow-400 hover:bg-yellow-500" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}><Eye size={12} /></Button>
                   {
                     role !== "placement_staff" &&
                     <>
-                      <Button variant="outline" size="icon" className="cursor-pointer bg-blue-200 hover:bg-blue-400"><Pencil size={12} /></Button>
+                      <Button variant="outline" size="icon" className="cursor-pointer bg-blue-400 hover:bg-blue-500"><Pencil size={12} /></Button>
                       <Button variant="destructive" size="icon" className="cursor-pointer hover:bg-red-500" onClick={() => { setStudent_id(user._id); setdeleteUserDialog(true); }}><Trash size={12} /></Button>
                     </>
                   }
                 </div>
                 {
                   role !== "placement_staff" &&
-                  <Button className={`cursor-pointer ${user.approved ? "bg-red-400 hover:bg-red-500": "bg-green-400 hover:bg-green-500"} ?`} onClick={() => { setStudent_id(user._id); setapprovalDialog(true); setIsApproved(user.approved) }}>{user.approved ? "Remove approval" : "Approve"}</Button>
+                  <Button className={`cursor-pointer ${user.approved ? "bg-red-500 hover:bg-red-600": "bg-green-500 hover:bg-green-600"} ?`} onClick={() => { setStudent_id(user._id); setapprovalDialog(true); setIsApproved(user.approved) }}>{user.approved ? "Remove approval" : "Approve"}</Button>
                 }
               </div>
             </Card>

@@ -29,7 +29,7 @@ function ManageApplications() {
     useEffect(() => {
         const users = data.filter((user) => user.role === "student")
         setUsersNameAndEmail(users);
-    }, [data])
+    }, [])
     const searchQueryFromChild = async (query) => {
         const res = await fetch(`${API_URL}/api/v1/users/one/${query?.name}`, {
             method: "GET",

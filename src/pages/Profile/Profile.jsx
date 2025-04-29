@@ -126,7 +126,7 @@ export default function ProfilePage() {
               className={`${userInfo.student.approved ? "text-blue-500" : "text-gray-700"} text-xl ml-2 mt-2 cursor-pointer relative inline-block`}
             ><BsPatchCheckFill />
               <motion.h6 key="approval" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeInOut" }}
-                className={`${showBadgeContent ? "block" : "hidden"} absolute left-4 top-0 text-[13px] w-25`}
+                className={`${showBadgeContent ? "block" : "hidden"} absolute ${userInfo.student.approved ? "left-0 top-0" : "left-4 top-0"}  text-[13px] w-25`}
               >{userInfo.student.approved ? "Approved" : "Not Approved"}</motion.h6>
             </span>
           </div>
@@ -190,7 +190,8 @@ export default function ProfilePage() {
             <Input name="user.phoneNumber" value={editedUser.user.phoneNumber} onChange={handleEditChange} />
             <Label>About</Label>
             <Input name="student.about" value={editedUser.student.about} onChange={handleEditChange} />
-            <Button className="mt-2 cursor-pointer" onClick={saveChanges}>Save</Button>
+            <Button variant="outline" className="mt-2 cursor-pointer" onClick={() => setEditMode(false)}>Cancel</Button>
+            <Button className="mt-2 ml-4 cursor-pointer" onClick={saveChanges}>Save</Button>
           </div>
         ) : (
           <CardContent>
@@ -207,7 +208,7 @@ export default function ProfilePage() {
         <h3 className="text-lg font-semibold">Projects</h3>
         <div className="grid grid-cols-2 gap-4">
           {
-            Array.isArray(userInfo.student.projects) && userInfo.student.projects.length > 0 && userInfo.student.projects.map((project) => {
+            Array.isArray(userInfo?.student?.projects) && userInfo?.student?.projects?.length > 0 && userInfo?.student?.projects?.map((project) => {
               <Card className="w-20 p-4">
                 <h3 className="text-lg font-semibold">{project.title}</h3>
                 <p>Description: {project.description}</p>

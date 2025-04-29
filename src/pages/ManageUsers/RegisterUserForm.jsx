@@ -7,21 +7,18 @@ import { Button } from '../../components/ui/button.jsx';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
-function RegisterUserForm({onCancel}) {
+function RegisterUserForm({ onCancel }) {
     const [signupInfo, setSignupInfo] = useState({ name: "", email: "", password: "", role: "student" });
-    const [url, setURL] = useState(`${API_URL}/api/v1/admin/create-new-student`);
     const { role, accessToken } = useUserData();
     const handleRegister = async () => {
         try {
+            let finalUrl = `${API_URL}/api/v1/admin/create-new-student`;
             if (signupInfo.role === "admin") {
-                setURL(`${API_URL}/api/v1/admin/create-new-admin`)
-            }
-            else if (signupInfo.role === "placement_staff") {
-                setURL(`${API_URL}/api/v1/admin/create-new-placement_staff`)
-            } else {
-                setURL(`${API_URL}/api/v1/admin/create-new-student`)
-            }
-            const res = await fetch(url, {
+                finalUrl = `${API_URL}/api/v1/admin/create-new-admin`
+            }else if (signupInfo.role === "placement_staff") {
+               finalUrl = `${API_URL}/api/v1/admin/create-new-placement_staff`
+            } 
+            const res = await fetch(finalUrl, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +38,6 @@ function RegisterUserForm({onCancel}) {
         }
     };
     const handleChangeSignup = (e) => {
-        console.log(e.target.value);
         setSignupInfo({ ...signupInfo, [e.target.name]: e.target.value });
     };
     const handleRolechange = (e) => {
@@ -60,7 +56,7 @@ function RegisterUserForm({onCancel}) {
                     <><input type="radio" name="role" id="admin" value="admin" checked={signupInfo.role === "admin"} className="ml-7 cursor-pointer" onChange={handleRolechange} /><label htmlFor="admin" className="ml-1 cursor-pointer">Admin</label></>
                 }
             </label>
-            <Button className="cursor-pointer mt-4" variant="outline" onClick={()=> onCancel(false)}>Cancel</Button>
+            <Button className="cursor-pointer mt-4" variant="outline" onClick={() => onCancel(false)}>Cancel</Button>
             <Button className="cursor-pointer mt-4 ml-3 gap-x-6" onClick={handleRegister}>Create</Button>
         </div>
     )

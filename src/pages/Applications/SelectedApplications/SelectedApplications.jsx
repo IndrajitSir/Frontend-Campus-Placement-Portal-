@@ -8,11 +8,10 @@ import { Trash } from 'lucide-react';
 // Dialog Boxes
 import DeleteStudentApplicationDialog from '../../../Dialog/Delete_Student_Application_Dialog/DeleteStudentApplicationDialog.jsx';
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
-// Constants
-import { record } from '../../../constants/constants.js';
-// hooks
-import { useGetDataV3 } from '../../../hooks/api/api.js';
+// CONTEXT api
+import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 // Environment variable
+const API_URL = import.meta.env.VITE_API_URL;
 const version = import.meta.env.VITE_API_VERSION;
 
 function SelectedApplications() {
@@ -22,13 +21,27 @@ function SelectedApplications() {
   const [displayUserDetailsDialog, setDisplayUserDetailsDialog] = useState(false);
   const [dataForDisplay, setDataForDisplay] = useState(null);
   const [page, setPage] = useState(1);
+  const { accessToken } = useUserData();
+
   useEffect(() => {
-    setApplications(record);
-  }, []);
-
-  const data = useGetDataV3(page, "selected");
-  if(data){ setApplications(data); }
-
+    const fetch = async () => {
+        const res = await window.fetch(`${API_URL}/api/v3/applications/selected-candidates?page=${page}&limit=9`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          },
+        });
+        const response = await res.json();
+        if (!response.success) {
+          throw new Error(response.message);
+        }
+        if (response?.data?.candidates?.length > 0) {
+          setApplications(response.data.candidates);
+        }
+    };
+    fetch();
+  }, [page, accessToken]);
   return (
     <>
       < div className="p-6" >
