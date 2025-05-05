@@ -29,3 +29,9 @@ export const animation = {
 };
 
 export const languages = ["javascript", "python", "cpp", "java"];
+
+export const predefinedQuestions = [
+    { question: "Explain closures in JavaScript", code: "function outer() {\n  let counter = 0;\n  return function inner() {\n    counter++;\n    console.log(counter);\n  }\n}" },
+    { question: "What is event delegation in JavaScript?", code: "// Explain concept of event bubbling and delegation" },
+    { question: "Difference between var, let and const?", code: "var a = 10;\nlet b = 20;\nconst c = 30;" }
+];

@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
-// Shadcn Components
-import { Button } from "../ui/button.jsx";
 const Navbar = () => {
   const navigate = useNavigate();
   const { accessToken, role } = useUserData();
@@ -14,9 +12,6 @@ const Navbar = () => {
   const handleHome = () => {
     navigate("/home")
   }
-  // const handlePlacement = () => {
-  //   navigate("/home/placements")
-  // }
   const handleDashboard = () => {
     navigate("/home/dashboard")
   }
@@ -39,15 +34,12 @@ const Navbar = () => {
                   <button onClick={handleHome} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Jobs</button>
                   <button onClick={handleApplications} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Applications</button>
                   <button onClick={handleProfile} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Profile</button>
-                  {/* <Button variant="secondary" onClick={handleHome} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Jobs</Button> */}
                 </>
               }
               {
                 role !== "student" &&
                 <>
-                  {/* <button onClick={handlePlacement} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Jobs</button> */}
                   <button onClick={handleDashboard} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Dashboard</button>
-                  {/* <Button variant="secondary" onClick={handleDashboard} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Dashboard</Button> */}
                 </>
               }
             </>

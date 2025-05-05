@@ -1,11 +1,4 @@
 import React from "react";
-// import { motion } from "framer-motion";
-
-// const stats = [
-//   { title: "98% Placement Rate", value: "98%" },
-//   { title: "300+ Recruiters", value: "300+" },
-//   { title: "1000+ Successful Hires", value: "1000+" }
-// ];
 const PlacementStats = () => {// NOT USED
     return (
       <section className="text-center my-10">

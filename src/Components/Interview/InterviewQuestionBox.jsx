@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea"; // Assuming you have a Textarea component
+import { Textarea } from "../ui/textarea"; 
 import { toast } from "react-toastify";
-
-// Dummy questions (can come from backend later too)
-const predefinedQuestions = [
-    { question: "Explain closures in JavaScript", code: "function outer() {\n  let counter = 0;\n  return function inner() {\n    counter++;\n    console.log(counter);\n  }\n}" },
-    { question: "What is event delegation in JavaScript?", code: "// Explain concept of event bubbling and delegation" },
-    { question: "Difference between var, let and const?", code: "var a = 10;\nlet b = 20;\nconst c = 30;" }
-];
+import { predefinedQuestions } from "../../constants/constants.js";
 
 export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState("");
@@ -63,9 +57,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
                         <h2 className="text-lg font-semibold text-center">Ask Questions</h2>
                         <div className="space-y-2">
                             <label className="text-sm font-semibold">Select a Question</label>
-                            <select
-                                value={selectedQuestionIndex}
-                                onChange={(e) => setSelectedQuestionIndex(e.target.value)}
+                            <select value={selectedQuestionIndex} onChange={(e) => setSelectedQuestionIndex(e.target.value)}
                                 className="border p-2 rounded w-full cursor-pointer"
                             >
                                 <option value="">-- Select from List --</option>
@@ -75,9 +67,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
                                     </option>
                                 ))}
                             </select>
-                            <Button
-                                disabled={selectedQuestionIndex === ""}
-                                onClick={handleSendPredefinedQuestion}
+                            <Button disabled={selectedQuestionIndex === ""} onClick={handleSendPredefinedQuestion}
                                 className="w-full bg-green-600 hover:bg-green-500 mt-2 cursor-pointer"
                             >
                                 Send Selected Question
@@ -87,20 +77,11 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
                         {/* Manual Custom Question */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold">Ask Your Own Question</label>
-                            <Input
-                                placeholder="Enter your question..."
-                                value={manualQuestion}
-                                onChange={(e) => setManualQuestion(e.target.value)}
-                            />
-                            <Textarea
-                                rows={5}
-                                placeholder="Enter related code block..."
-                                value={manualCode}
-                                onChange={(e) => setManualCode(e.target.value)}
+                            <Input placeholder="Enter your question..." value={manualQuestion} onChange={(e) => setManualQuestion(e.target.value)}/>
+                            <Textarea rows={5} placeholder="Enter related code block..." value={manualCode} onChange={(e) => setManualCode(e.target.value)}
                                 className="border p-2 rounded w-full"
                             />
-                            <Button
-                                onClick={handleSendManualQuestion}
+                            <Button onClick={handleSendManualQuestion}
                                 className="w-full bg-blue-600 hover:bg-blue-500 mt-2 cursor-pointer"
                             >
                                 Send Manual Question

@@ -60,7 +60,7 @@ function InterviewSetup() {
           setRoomID(res?.roomId);
           localStorage.setItem("roomId", res?.roomId);
           toast.success(res?.message);
-          socket.emit("join-room", { roomId: roomId, role: role, name: userInfo.user.name }, (res) => {
+          socket.emit("join-room", { roomId: res?.roomId, role: role, name: userInfo?.user?.name }, (res) => {
             if (!res.success) {
               toast.error(res?.message || "Invalid ID");
               return;

@@ -57,7 +57,7 @@ function AppliedForJobs() {
       toast.warning("Please enter a valid Interview ID!");
       return;
     }
-    socket.emit("join-room", { roomId: interviewID, role, name: userInfo?.user?.name }, (res) => {
+    socket.emit("join-room", { roomId: interviewID, role: role, name: userInfo?.user?.name }, (res) => {
       if (!res?.success) {
         toast.error(res?.message || "Unable to join interview");
         return;
