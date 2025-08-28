@@ -5,7 +5,7 @@ import { SocketContext } from "./SocketContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const SocketProvider = ({ children }) => {
-    const { role } = useUserData();
+    const { role, userInfo } = useUserData();
     const [socket, setSocket] = useState(null);
     const [isSocketReady, setIsSocketReady] = useState(false);
 
@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
         if (!role) return;
 
         const newSocket = io(API_URL, {
-            query: { role }
+            query: { role: role, userId: userInfo.user._id }
         });
 
         setSocket(newSocket);

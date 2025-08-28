@@ -6,13 +6,16 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 // CONTEXT api
 import { SocketProvider } from '../../context/SocketContext/SocketProvider.jsx'
+import { ApiProvider } from "../../context/ApiContext/ApiProvider.jsx";
 const Home = () => {
   return (
-    <div className="p-4">
+    <div className="p-4 relative block">
       <ToastContainer position="top-right" autoClose={3000} />
       <Navbar />
       <SocketProvider>
-        <Outlet />
+        <ApiProvider>
+          <Outlet />
+        </ApiProvider>
       </SocketProvider>
     </div>
   );

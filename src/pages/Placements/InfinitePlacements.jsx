@@ -67,7 +67,6 @@ const InfinitePlacements = () => {
 
   useEffect(() => {
     if (inView && hasMore) {
-      console.log("current page", page);
       setPage(prev => prev + 1);
     }
   }, [inView]);
@@ -97,7 +96,6 @@ const InfinitePlacements = () => {
       },
     })
     const response = await res.json();
-    console.log(`Apply placement: ${JSON.stringify(response)}`);
     if (!response.success) {
       toast.warning(response.message)
     }

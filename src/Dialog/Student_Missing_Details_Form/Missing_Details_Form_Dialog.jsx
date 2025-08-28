@@ -55,7 +55,7 @@ function Missing_Details_Form_Dialog({ onCancel }) {
 
     useEffect(() => {
         if (step === 2 &&
-            [formData.location, formData.about, formData.professional_skill, formData.department].some((field) => field?.trim()==='')
+            [formData.location, formData.about, formData.professional_skill, formData.department].some((field) => field?.trim() === '')
         ) {
             setStep(3);
         }
@@ -173,8 +173,8 @@ function Missing_Details_Form_Dialog({ onCancel }) {
                     },
                 }).then(res => res.json()
                 ).then(data => {
-                    if (!data.success) toast.error(data.message);
-                    else toast.success(data.message);
+                    if (!data.success) { toast.error(data.message); }
+                    else { toast.success(data.message); }
                 }).catch(err => {
                     console.error(`Error while adding new project: ${err}`)
                 });
@@ -195,12 +195,7 @@ function Missing_Details_Form_Dialog({ onCancel }) {
             {step === 1 &&
                 <>
                     <Label>Phone Number</Label>
-                    <Input
-                        className="mt-2"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                    />
+                    <Input className="mt-2" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
                     <div className="flex justify-end gap-2 mt-4">
                         <Button onClick={saveStepData} className="cursor-pointer">Save & Continue</Button>
                     </div>

@@ -14,6 +14,9 @@ import { PlusCircleIcon } from "lucide-react";
 import { UploadCloudIcon } from "lucide-react";
 import { Trash2Icon } from "lucide-react";
 import { BsPatchCheckFill } from 'react-icons/bs';
+import { FaRegComments } from "react-icons/fa";
+// Components
+import ChatBox from "../../components/PersonalChat/ChatBox.jsx";
 // Dialog Boxes
 import ImageUploadDialog from "../../Dialog/Image_Upload_Dialog/ImageUploadDialog.jsx";
 import ResumeUpload from "../../Dialog/ResumeUpload/ResumeUpload";
@@ -35,6 +38,7 @@ export default function ProfilePage() {
   const [deleteResumeDialog, setDeleteResumeDialog] = useState(false);
   const [showFeaturesOfResume, setShowFeaturesOfResume] = useState(false);
   const [hoveringIcons, setHoveringIcons] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const shouldShowIcons = showFeaturesOfResume || hoveringIcons;
 
@@ -52,10 +56,10 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append("avatar", file);
       const res = await axios.put(`${API_URL}/api/v1/student/upload-avatar`, formData, {
-        credentials: "include",
+        withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${accessToken}`
+          "Authorization": `Bearer ${accessToken}`
         },
       });
       if (!res.success) {
@@ -108,11 +112,11 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-6 w-full mx-auto">
+    <div className="relative p-6 w-full block">
       {/* Profile Header */}
-      <Card className="bg-pink-300 p-6 rounded-lg relative text-center w-346">
+      <Card className="bg-pink-300 p-6 rounded-lg relative text-center w-full max-w-7xl mx-auto">
         <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-          <div className="relative inline-block w-fit">
+          <div className="relative inline-block w-fit mx-auto">
             <img className="w-24 h-24 mx-auto border-4 border-white rounded-full" src={userInfo?.student?.avatar === "" ? "../../defaultUserAvatar.jpeg" : userInfo.student?.avatar} />
             <PlusCircleIcon onMouseEnter={() => setShowProfileImageContent(true)} onMouseLeave={() => setShowProfileImageContent(false)} onClick={() => setAvatarUploadDialog(true)}
               className="w-5 h-5 absolute right-0 bottom-0 bg-white rounded-full cursor-pointer p-1 shadow-md hover:scale-110 transition" />
@@ -174,7 +178,30 @@ export default function ProfilePage() {
         {/* <ImageUploadDialog isOpen={resumeUploadDialog} onClose={() => setResumeUploadDialog(false)} onUpload={handleResumeUpload} /> */}
         <ResumeUpload isOpen={resumeUploadDialog} onClose={() => setResumeUploadDialog(false)} onUpload={handleResumeUpload} />
       </Card>
-
+      {/* Chat Icon */}
+      {/* <div className="absolute top-4 right-4 cursor-pointer p-1 hover:bg-gray-200 transition rounded">
+        <FaRegComments onClick={() => setChatOpen(true)} className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black transition" />
+      </div> */}
+      {/* Slide-in Chat Panel */}
+      {/* <AnimatePresence>
+        {chatOpen && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.3 }}
+            className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 p-4"
+          >
+            <div className="flex justify-between items-center border-b pb-2">
+              <h3 className="text-lg font-semibold">Messages</h3>
+              <button onClick={() => setChatOpen(false)} className="text-sm text-gray-600 hover:text-red-600 cursor-pointer">Close</button>
+            </div>
+            <div className="mt-4">
+              <ChatBox userName={userInfo.user.name} roomId={"123"}/>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence> */}
       {/* About Section */}
       <Card className="mt-6 p-4">
         <h3 className="text-lg font-semibold flex justify-between ">
@@ -217,12 +244,6 @@ export default function ProfilePage() {
             })
           }
         </div>
-      </Card>
-      {/* Messages Section */}
-      <Card className="mt-6 p-4">
-        <h3 className="text-lg font-semibold">Messages</h3>
-        <p><strong>Mira Workman:</strong> Your work is amazing! Would you be interested in collaborating?</p>
-        <p><strong>Desirae Aminoff:</strong> Your portfolio is stunning! How do you capture such captivating moments?</p>
       </Card>
       {/* Delete Resume Dialog */}
       <Dialog open={deleteResumeDialog} onOpenChange={setDeleteResumeDialog}>

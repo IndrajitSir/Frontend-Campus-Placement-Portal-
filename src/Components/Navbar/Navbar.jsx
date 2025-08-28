@@ -19,7 +19,10 @@ const Navbar = () => {
     navigate("/home/dashboard/applied-jobs");
   }
   const handleProfile = () => {
-    navigate("/home/dashboard/profile");
+    navigate("/home/profile");
+  }
+  const handleChat = () => {
+    navigate("/home/message");
   }
   return (
     <Container>
@@ -28,6 +31,7 @@ const Navbar = () => {
         {
           accessToken ? (
             <>
+              <button onClick={handleChat} className="rounded focus:outline-2 focus:outline-offset-2 cursor-pointer text-[#ff79c6] hover:underline">Chat</button>
               {
                 role === "student" &&
                 <>

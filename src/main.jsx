@@ -9,18 +9,19 @@ import Placements from './pages/Placements/Placements.jsx'
 import InfinitePlacements from './pages/Placements/InfinitePlacements.jsx'
 import ProtectedRoute from './functionality/ProtectedRoutes.jsx'
 import Dashboard from './pages/Dashboard/Dashboard.jsx'
-import DashBoardContent from './pages/Dashboard/DashBoardContent'
+import DashBoardContent from './pages/Dashboard/DashBoardContent.jsx'
 import ProfilePage from './pages/Profile/Profile.jsx'
-import Students from './pages/Users/Students/Students'
-import ShortlistedApplications from './pages/Applications/ShortlistedApplications/ShortlistedApplications'
-import AppliedApplications from './pages/Applications/AppliedApplications/AppliedApplications';
-import RejectedApplications from './pages/Applications/RejectedApplications/RejectedApplications'
-import SelectedApplications from './pages/Applications/SelectedApplications/SelectedApplications'
-import ManageApplications from './pages/Manage_Applications/ManageApplications'
-import ManageUsers from './pages/ManageUsers/ManageUsers'
-import AppliedForJobs from './components/AppliedForJobs/AppliedForJobs'
-import MonitorSystem from './components/Dashboards/Admin_dashboard/Monitor_System/MonitorSystem'
-import InterviewSetup from './pages/Interview_Setup/InterviewSetup'
+import Students from './pages/Users/Students/Students.jsx'
+import ShortlistedApplications from './pages/Applications/ShortlistedApplications/ShortlistedApplications.jsx'
+import AppliedApplications from './pages/Applications/AppliedApplications/AppliedApplications.jsx';
+import RejectedApplications from './pages/Applications/RejectedApplications/RejectedApplications.jsx'
+import SelectedApplications from './pages/Applications/SelectedApplications/SelectedApplications.jsx'
+import ManageApplications from './pages/Manage_Applications/ManageApplications.jsx'
+import ManageUsers from './pages/ManageUsers/ManageUsers.jsx'
+import AppliedForJobs from './components/AppliedForJobs/AppliedForJobs.jsx'
+import MonitorSystem from './components/Dashboards/Admin_dashboard/Monitor_System/MonitorSystem.jsx'
+import InterviewSetup from './pages/Interview_Setup/InterviewSetup.jsx'
+import NewMessagePage from './pages/Message/MessagePage.jsx'
 // CONTEXT PROVIDER imported
 import { AuthCrediantialsProvider } from './context/AuthContext/AuthProvider.jsx'
 import { PlacementDataProvider } from './context/PlacementContext/PlacementProvider.jsx'
@@ -35,9 +36,10 @@ const router = createBrowserRouter(
         <Route path="/home" element={<ProtectedRoute />} >
           <Route path="" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
           <Route path="placements" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="message" element={<NewMessagePage />} />
           <Route path="dashboard" element={<Dashboard />} >
             <Route path="" element={<DashBoardContent />} />
-            <Route path="profile" element={<ProfilePage />} />
             <Route path="students" element={<Students />} />
             <Route path="applied-jobs" element={<AppliedForJobs />} />
             <Route path="manage-users" element={<ManageUsers />} />
