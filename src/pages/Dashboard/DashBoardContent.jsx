@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 // Shadcn Components
-import { Button } from "../../components/ui/button.jsx";
+import { Button } from "../../Components/ui/button.jsx";
 // Dialog Boxes
 import Logout_Dialog from "../../Dialog/Logout_dialog/Logout_Dialog.jsx";
 // Components
-import Student_Dashboard from "../../components/Dashboards/Student_dashboard/Student_Dashboard.jsx";
-import Admin_Dashboard from "../../components/Dashboards/Admin_dashboard/Admin_Dashboard.jsx";
-import PlacementStaff_Dashboard from "../../components/Dashboards/PlacementStaff_dashboard/PlacementStaff_Dashboard.jsx";
+import Student_Dashboard from "../../Components/Dashboards/Student_dashboard/Student_Dashboard.jsx";
+import Admin_Dashboard from "../../Components/Dashboards/Admin_dashboard/Admin_Dashboard.jsx";
+import PlacementStaff_Dashboard from "../../Components/Dashboards/PlacementStaff_dashboard/PlacementStaff_Dashboard.jsx";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 
