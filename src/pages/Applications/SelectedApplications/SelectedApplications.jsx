@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 // Shadcn Components
-import { Card } from '../../../components/ui/card.jsx';
-import { Button } from '../../../components/ui/button.jsx';
+import { Card } from '../../../Components/ui/card.jsx';
+import { Button } from '../../../Components/ui/button.jsx';
 // Icons
 import { Eye } from 'lucide-react';
 import { Trash } from 'lucide-react';
