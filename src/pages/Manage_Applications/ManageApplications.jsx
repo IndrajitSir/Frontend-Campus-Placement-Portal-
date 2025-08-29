@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 // Shadcn Components
-import { Card } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
+import { Card } from "../../Components/ui/card";
+import { Button } from "../../Components/ui/button";
 // Components
 import SelectedApplications from '../../pages/Applications/SelectedApplications/SelectedApplications.jsx';
 import AppliedApplications from '../../pages/Applications/AppliedApplications/AppliedApplications.jsx';
