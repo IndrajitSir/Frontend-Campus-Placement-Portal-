@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 // Components
 import FloatingBlob from "./AnimatedComponents/FloatingBlob.jsx";
-import Navbar from "./components/Navbar/Navbar.jsx";
-import AboutSection from "./components/AboutSection/AboutSection.jsx";
-import PlacementStats from "./components/PlacementStats/PlacementStats.jsx";
-import Testimonials from "./components/Testimonials/Testimonials.jsx";
-import Footer from "./components/Footer/Footer.jsx";
-import CompaniesSection from "./components/Companies/CompaniesSection.jsx";
+import Navbar from "./Components/Navbar/Navbar.jsx";
+import AboutSection from "./Components/AboutSection/AboutSection.jsx";
+import PlacementStats from "./Components/PlacementStats/PlacementStats.jsx";
+import Testimonials from "./Components/Testimonials/Testimonials.jsx";
+import Footer from "./Components/Footer/Footer.jsx";
+import CompaniesSection from "./Components/Companies/CompaniesSection.jsx";
 // Define animation
 import { animation } from "./constants/constants.js";
 
