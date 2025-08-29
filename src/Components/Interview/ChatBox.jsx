@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../../context/SocketContext/SocketContext';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
+import { Button } from '../../Components/ui/button';
+import { Input } from '../../Components/ui/input';
 import { Send } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { v4 as uuidv4 } from 'uuid';
