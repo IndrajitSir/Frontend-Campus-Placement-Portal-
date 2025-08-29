@@ -2,8 +2,8 @@ import React from 'react'
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 // Shadcn Components
-import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../components/ui/dialog";
-import { Button } from '../../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../Components/ui/dialog";
+import { Button } from '../../Components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 // Environment variables
