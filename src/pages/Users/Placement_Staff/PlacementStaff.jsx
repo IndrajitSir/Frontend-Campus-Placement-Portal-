@@ -3,8 +3,8 @@ import { toast } from 'react-toastify';
 // CONTEXT api
 import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 // Shadcn Components
-import { Card, CardContent } from '../../../components/ui/card.jsx';
-import { Button } from "../../../components/ui/button";
+import { Card, CardContent } from '../../../Components/ui/card.jsx';
+import { Button } from "../../../Components/ui/button";
 // Icons
 import { Pencil, Trash, Eye } from "lucide-react";
 // Dialog Boxes
