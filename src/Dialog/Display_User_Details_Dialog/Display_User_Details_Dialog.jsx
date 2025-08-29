@@ -1,8 +1,8 @@
 import React from 'react'
 // Shadcn Components
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../../components/ui/dialog";
-import { Button } from '../../components/ui/button';
-import { Card } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../../Components/ui/dialog";
+import { Button } from '../../Components/ui/button';
+import { Card } from '../../Components/ui/card';
 
 function Display_User_Details_Dialog({ displayUserDetailsDialog, setDisplayUserDetailsDialog, data }) {
     console.log("user display data: ", data);
