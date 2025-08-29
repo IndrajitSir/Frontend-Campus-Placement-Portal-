@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent, CardTitle } from '../../ui/card'
 import { Button } from '../../ui/button';
 // Components
-import SystemAnalysis from '../../../components/System_Analysis/SystemAnalysis.jsx';
+import SystemAnalysis from '../../../Components/System_Analysis/SystemAnalysis.jsx';
 function PlacementStaff_Dashboard() {
   const navigate = useNavigate();
   const handleJoinInterview = ()=>{
