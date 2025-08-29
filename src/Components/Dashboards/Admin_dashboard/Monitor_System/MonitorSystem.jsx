@@ -1,9 +1,9 @@
 import { BarChart, Bar, PieChart, Pie, Tooltip, XAxis, YAxis } from "recharts";
 // Components
 import LogViewer from "./LogViewer";
-import SystemAnalysis from "../../../../components/System_Analysis/SystemAnalysis.jsx";
+import SystemAnalysis from "../../../../Components/System_Analysis/SystemAnalysis.jsx";
 // Shadcn Components
-import { Card, CardContent } from "../../../../components/ui/card";
+import { Card, CardContent } from "../../../../Components/ui/card";
 
 export default function MonitorSystem() {
 
