@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion';
 // Shadcn Components
-import { Card, CardContent } from "../../components/ui/card";
+import { Card, CardContent } from "../../Components/ui/card";
 // Card Components
 import ActiveStudentsCard from './Active_Students_Card/ActiveStudentsCard';
 import ApplicationStatusCard from './Application_Status_Card/ApplicationStatusCard';
@@ -15,7 +15,7 @@ import UserCountCard from './User_Count_Card/UserCountCard';
 // Hooks
 import { useTotalStudents, useTotalPlacements, useTotalApplications } from '../../hooks/Analytics/useAnalytics.js';
 // Components
-import CircleLoader from '../../components/Loader/CircleLoader.jsx';
+import CircleLoader from '../../Components/Loader/CircleLoader.jsx';
 
 function SystemAnalysis() {
     const [stats, setStats] = useState([
