@@ -5,8 +5,8 @@ import axios from 'axios';
 import { useSocket } from '../../context/SocketContext/SocketContext';
 import { useUserData } from '../../context/AuthContext/AuthContext';
 // Shadcn Components
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
+import { Button } from '../../Components/ui/button';
+import { Input } from '../../Components/ui/input';
 // Icons
 import { Send } from "lucide-react";
 import { ClockFading, Check, CheckCheck, TriangleAlert } from 'lucide-react';
