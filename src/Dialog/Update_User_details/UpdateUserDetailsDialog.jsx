@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../components/ui/dialog";
-import { Button } from '../../components/ui/button';
-import { Label } from '../../components/ui/label';
-import { Input } from '../../components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../Components/ui/dialog";
+import { Button } from '../../Components/ui/button';
+import { Label } from '../../Components/ui/label';
+import { Input } from '../../Components/ui/input';
 
 export default function UpdateUserDialog({ isOpen, setIsOpen, userInfo }) {
   const [formData, setFormData] = useState({});
