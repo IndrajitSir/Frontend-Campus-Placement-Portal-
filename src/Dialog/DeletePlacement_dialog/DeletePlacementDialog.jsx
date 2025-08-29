@@ -1,12 +1,12 @@
 import React from 'react'
 import { toast } from 'react-toastify';
 // Shadcn Components
-import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../components/ui/dialog";
-import { Button } from '../../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "../../Components/ui/dialog";
+import { Button } from '../../Components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 // Circle Loader
-import CircleLoader from '../../components/Loader/CircleLoader';
+import CircleLoader from '../../Components/Loader/CircleLoader';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
