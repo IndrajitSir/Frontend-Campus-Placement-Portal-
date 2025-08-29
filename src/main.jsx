@@ -18,8 +18,8 @@ import RejectedApplications from './pages/Applications/RejectedApplications/Reje
 import SelectedApplications from './pages/Applications/SelectedApplications/SelectedApplications.jsx'
 import ManageApplications from './pages/Manage_Applications/ManageApplications.jsx'
 import ManageUsers from './pages/ManageUsers/ManageUsers.jsx'
-import AppliedForJobs from './components/AppliedForJobs/AppliedForJobs.jsx'
-import MonitorSystem from './components/Dashboards/Admin_dashboard/Monitor_System/MonitorSystem.jsx'
+import AppliedForJobs from './Components/AppliedForJobs/AppliedForJobs.jsx'
+import MonitorSystem from './Components/Dashboards/Admin_dashboard/Monitor_System/MonitorSystem.jsx'
 import InterviewSetup from './pages/Interview_Setup/InterviewSetup.jsx'
 import NewMessagePage from './pages/Message/MessagePage.jsx'
 // CONTEXT PROVIDER imported
