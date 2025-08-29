@@ -4,10 +4,10 @@ import { toast } from 'react-toastify';
 // Icons
 import { Copy } from 'lucide-react';
 // Shadcn Components
-import { Card, CardContent } from '../../components/ui/card';
+import { Card, CardContent } from '../../Components/ui/card';
 // Components
-import CodeEditor from '../../components/Interview/CodeEditor';
-import ChatBox from '../../components/Interview/ChatBox.jsx';
+import CodeEditor from '../../Components/Interview/CodeEditor';
+import ChatBox from '../../Components/Interview/ChatBox.jsx';
 import { InterviewQuestionsBox } from './InterviewQuestionBox';
 // CONTEXT api
 import { useSocket } from '../../context/SocketContext/SocketContext.jsx';
