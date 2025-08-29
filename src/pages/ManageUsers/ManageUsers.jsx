@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 // Shadcn Components
-import { Card } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog";
+import { Card } from "../../Components/ui/card";
+import { Button } from "../../Components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../Components/ui/dialog";
 // Components
 import Admin from "../../pages/Users/Admin/Admin.jsx";
 import PlacementStaff from "../../pages/Users/Placement_Staff/PlacementStaff";
