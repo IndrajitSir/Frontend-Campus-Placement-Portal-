@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 // Shadcn Components
-import { Button } from '../../components/ui/button.jsx';
+import { Button } from '../../Components/ui/button.jsx';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
