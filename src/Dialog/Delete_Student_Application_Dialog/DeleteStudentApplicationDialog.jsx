@@ -1,8 +1,8 @@
 import React from 'react'
 import { toast } from 'react-toastify';
 // Shadcn Components
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog.jsx';
-import { Button } from '../../components/ui/button.jsx';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../Components/ui/dialog.jsx';
+import { Button } from '../../Components/ui/button.jsx';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 // Environment variables
