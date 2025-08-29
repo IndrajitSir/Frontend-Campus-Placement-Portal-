@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 // Chart
 import { Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
 // Shadcn Components
-import { Card, CardContent } from "../../../components/ui/card";
+import { Card, CardContent } from "../../../Components/ui/card";
 // Hooks
 import { useStudentsPerDepartment } from '../../../hooks/Analytics/useAnalytics.js';
 // Components
-import CircleLoader from '../../../components/Loader/CircleLoader.jsx';
+import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
 // Constants
 import { COLORS } from '../../../constants/constants.js';
 
