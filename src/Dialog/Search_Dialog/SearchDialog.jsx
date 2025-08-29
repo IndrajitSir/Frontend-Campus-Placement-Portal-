@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 // Shadcn Components
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
+import { Button } from '../../Components/ui/button';
+import { Input } from '../../Components/ui/input';
 
 function SearchDialog({ data, onQuery, placeholderValue }) {
     const [searchQuery, setSearchQuery] = useState("");
