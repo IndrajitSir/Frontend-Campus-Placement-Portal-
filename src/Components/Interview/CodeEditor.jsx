@@ -3,10 +3,10 @@ import Editor, {/* useMonaco */ } from '@monaco-editor/react';
 import html2canvas from "html2canvas";
 import debounce from 'lodash.debounce';
 // Shadcn components
-import { Button } from '../../components/ui/button';
-import { Dialog, DialogContent, DialogHeader } from '../../components/ui/dialog';
+import { Button } from '../../Components/ui/button';
+import { Dialog, DialogContent, DialogHeader } from '../../Components/ui/dialog';
 // Components
-import { InterviewerPanel } from '../../components/Interview/InterviewerPanel';
+import { InterviewerPanel } from '../../Components/Interview/InterviewerPanel';
 import { IntervieweePanel } from './IntervieweePanel';
 // CONTEXT api
 import { useSocket } from '../../context/SocketContext/SocketContext.jsx';
