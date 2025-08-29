@@ -3,9 +3,9 @@ import { toast } from 'react-toastify';
 // CONTEXT api
 import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 // Shadcn Components
-import { Card } from '../../../components/ui/card.jsx';
-import { Button } from '../../../components/ui/button.jsx';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../components/ui/dialog.jsx';
+import { Card } from '../../../Components/ui/card.jsx';
+import { Button } from '../../../Components/ui/button.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../Components/ui/dialog.jsx';
 // icons
 import { Eye } from 'lucide-react';
 import { Check } from 'lucide-react';
