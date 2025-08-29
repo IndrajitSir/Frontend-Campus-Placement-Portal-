@@ -4,11 +4,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 // Shadcn Components
-import { Button } from "../../components/ui/button";
-import { Card, CardContent } from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogFooter } from "../../components/ui/dialog";
+import { Button } from "../../Components/ui/button";
+import { Card, CardContent } from "../../Components/ui/card";
+import { Input } from "../../Components/ui/input";
+import { Label } from "../../Components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogFooter } from "../../Components/ui/dialog";
 // Icons
 import { PlusCircleIcon } from "lucide-react";
 import { UploadCloudIcon } from "lucide-react";
@@ -16,7 +16,7 @@ import { Trash2Icon } from "lucide-react";
 import { BsPatchCheckFill } from 'react-icons/bs';
 import { FaRegComments } from "react-icons/fa";
 // Components
-import ChatBox from "../../components/PersonalChat/ChatBox.jsx";
+import ChatBox from "../../Components/PersonalChat/ChatBox.jsx";
 // Dialog Boxes
 import ImageUploadDialog from "../../Dialog/Image_Upload_Dialog/ImageUploadDialog.jsx";
 import ResumeUpload from "../../Dialog/ResumeUpload/ResumeUpload";
