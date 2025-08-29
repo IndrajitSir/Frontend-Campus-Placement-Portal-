@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent, CardTitle } from '../../ui/card'
 import { Button } from '../../ui/button';
 // Components
-import SystemStatus from '../../../components/System_Status/SystemStatus.jsx';
+import SystemStatus from '../../../Components/System_Status/SystemStatus.jsx';
 
 function Admin_Dashboard() {
     const navigate = useNavigate();
