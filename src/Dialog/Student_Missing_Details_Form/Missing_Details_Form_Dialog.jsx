@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 // Shadcn UI
-import { Label } from '../../components/ui/label';
-import { Input } from '../../components/ui/input';
-import { Button } from '../../components/ui/button';
+import { Label } from '../../Components/ui/label';
+import { Input } from '../../Components/ui/input';
+import { Button } from '../../Components/ui/button';
 // Icons
 import { UploadCloudIcon } from "lucide-react";
 // Components
-import CircleLoader from '../../components/Loader/CircleLoader.jsx';
+import CircleLoader from '../../Components/Loader/CircleLoader.jsx';
 // Context
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 // Dialog Boxes
