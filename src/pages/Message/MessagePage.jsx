@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useInView } from 'react-intersection-observer';
 // Shadcn Components
-import { Button } from '../../components/ui/button';
-import { Card } from '../../components/ui/card';
+import { Button } from '../../Components/ui/button';
+import { Card } from '../../Components/ui/card';
 // components
-import ChatBox from '../../components/PersonalChat/ChatBox';
-import FriendRequestButton from '../../components/PersonalChat/FriendRequestButton';
+import ChatBox from '../../Components/PersonalChat/ChatBox';
+import FriendRequestButton from '../../Components/PersonalChat/FriendRequestButton';
 import SearchDialog from '../../Dialog/Search_Dialog/SearchDialogUpdated.jsx';
-import CircleLoader from '../../components/Loader/CircleLoader.jsx';
+import CircleLoader from '../../Components/Loader/CircleLoader.jsx';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 import { useSocket } from '../../context/SocketContext/SocketContext.jsx';
