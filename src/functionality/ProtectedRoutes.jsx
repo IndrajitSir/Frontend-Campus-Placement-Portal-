@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 // CONTEXT api
 import { useUserData } from "../context/AuthContext/AuthContext.jsx";
 // Components
-import CircleLoader from "../components/Loader/CircleLoader.jsx";
+import CircleLoader from "../Components/Loader/CircleLoader.jsx";
 // Pages
 import Home from "../pages/Home/Home.jsx";
 
