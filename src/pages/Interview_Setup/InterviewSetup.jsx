@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 // Shadcn Components
-import { Button } from '../../components/ui/button';
+import { Button } from '../../Components/ui/button';
 // Components
-import InterviewRoom from '../../components/Interview/InterviewRoom.jsx';
+import InterviewRoom from '../../Components/Interview/InterviewRoom.jsx';
 // CONTEXT api
 import { useSocket } from '../../context/SocketContext/SocketContext.jsx';
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
