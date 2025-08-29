@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 // Shadcn Components
-import { Label } from '../../components/ui/label';
-import { Input } from '../../components/ui/input';
-import { Card, CardContent } from '../../components/ui/card';
-import { Button } from "../../components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogDescription } from "../../components/ui/dialog";
+import { Label } from '../../Components/ui/label';
+import { Input } from '../../Components/ui/input';
+import { Card, CardContent } from '../../Components/ui/card';
+import { Button } from "../../Components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogDescription } from "../../Components/ui/dialog";
 // Components
 import PlacementSearch from "./PlacementSearch/PlacementSearch.jsx";
 // Dialog Boxes
