@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 // Chart
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 // Shadcn Components
-import { Card, CardContent } from "../../../components/ui/card";
+import { Card, CardContent } from "../../../Components/ui/card";
 // Hooks
 import { usePlacementsCreatedPerMonth } from '../../../hooks/Analytics/useAnalytics.js';
 // Components
-import CircleLoader from '../../../components/Loader/CircleLoader.jsx';
+import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
 function PlacementCreatedCard() {
     const { data, loading, error } = usePlacementsCreatedPerMonth();
     if (loading) return <CircleLoader />;
