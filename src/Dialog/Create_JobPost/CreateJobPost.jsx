@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 // Shadcn Components
 import { Label } from '../../Components/ui/label';
 import { Input } from '../../Components/ui/input';
-import { Button } from '../..Components/ui/button';
+import { Button } from '../../Components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
 // Environment variables
