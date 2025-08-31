@@ -57,6 +57,7 @@ function Auth() {
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/register`, {
         method: "POST",
+        credentials: "include",
         headers: {
           'Content-Type': 'application/json'
         },
