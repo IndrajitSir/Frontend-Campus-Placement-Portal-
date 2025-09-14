@@ -9,8 +9,9 @@ import Home from "../pages/Home/Home.jsx";
 
 const ProtectedRoute = () => {
   const { accessToken, fetchUserData } = useUserData();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   if(!accessToken || accessToken === "" || accessToken === undefined || accessToken === null){
+    setLoading(true);
     useEffect(() => {
       const checkAuth = async () => {
         await fetchUserData(); 
