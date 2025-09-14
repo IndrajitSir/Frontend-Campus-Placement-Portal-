@@ -4,8 +4,10 @@ import styled from "styled-components";
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 const Navbar = () => {
   const navigate = useNavigate();
-  const { accessToken, role } = useUserData();
-
+  const { loading, accessToken, role } = useUserData();
+  if (loading || !role) {
+    return <div>Loading navbar...</div>;
+  }
   const handleLogin = () => {
     navigate("/login")
   }

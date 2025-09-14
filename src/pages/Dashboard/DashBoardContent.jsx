@@ -11,8 +11,11 @@ import PlacementStaff_Dashboard from "../../Components/Dashboards/PlacementStaff
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 
 function DashBoardContent() {
-    const { role } = useUserData();
+    const { loading, role } = useUserData();
     const [logoutDialog, setLogoutDialog] = useState(false);
+    if (loading || !role) {
+        return <div>Loading dashboard...</div>;
+    }
     return (
         <>
             <div className="flex justify-between items-center mb-4">
