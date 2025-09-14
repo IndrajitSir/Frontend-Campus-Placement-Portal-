@@ -42,6 +42,7 @@ function Auth() {
       setRefreshToken(response?.data.refreshToken);
       setUserInfo(response?.data.user);
       toast.success("Login successful!");
+      if (!response?.data?.user?.role) { navigate("/") }
       if (response?.data.user.role === "student") {
         navigate("/home");
       } else {
