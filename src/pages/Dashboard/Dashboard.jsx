@@ -6,7 +6,9 @@ const Dashboard = () => {
       {/* <Sidebar /> */}
       <div className="p-6">
         <div className="w-full">
-          <Outlet />
+          <ErrorBoundary fallback={<p>Something went wrong at outlet!</p>}>
+            <Outlet />
+          </ErrorBoundary>
         </div>
       </div>
     </div >

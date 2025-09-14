@@ -27,10 +27,14 @@ function DashBoardContent() {
             </div>
             <div className='w-full'>
                 {role === "placement_staff" && (
-                    <PlacementStaff_Dashboard />
+                    <ErrorBoundary fallback={<p>Something went wrong at DashBoardContent!PlacementStaff_Dashboard</p>}>
+                        <PlacementStaff_Dashboard />
+                    </ErrorBoundary>
                 )}
                 {role === "admin" || role === "super_admin" && (
-                    <Admin_Dashboard />
+                    <ErrorBoundary fallback={<p>Something went wrong at DashBoardContent!Admin_Dashboard</p>}>
+                        <Admin_Dashboard />
+                    </ErrorBoundary>
                 )}
             </div>
             <Logout_Dialog logoutDialog={logoutDialog} setLogoutDialog={setLogoutDialog}></Logout_Dialog>

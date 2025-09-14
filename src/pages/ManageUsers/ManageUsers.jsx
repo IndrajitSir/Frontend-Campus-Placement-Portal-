@@ -25,6 +25,7 @@ function ManageUsers() {
     const [showSearchResult, setShowSearchResult] = useState(false);
     const [usersNameAndEmail, setUsersNameAndEmail] = useState([]);
     const [filterdUser, setFilteredUser] = useState({});
+    if (!accessToken || !role) { return <div>Loading users for managing purpose!</div> }
     const fetchUsers = async () => {
         const res = await fetch(`${API_URL}/api/v1/users/all-users-nameAndEmail`, {
             method: "GET",
@@ -69,15 +70,15 @@ function ManageUsers() {
         setShowSearchResult(false);
     }
 
-    useEffect(()=>{
-        if(role === "placement_staff") setFilterRole("student");
+    useEffect(() => {
+        if (role === "placement_staff") setFilterRole("student");
     }, [role])
 
     return (
         <div className="p-6 space-y-4">
             <h2 className="text-2xl font-semibold">{role === "placement_staff" ? "Manage Students" : "Manage Users"}</h2>
             <div className="flex gap-x-248 justify-betweeen border-b-2 border-gray-20">
-                { role !== "placement_staff" &&
+                {role !== "placement_staff" &&
                     <>
                         <select className="p-2 py-4 border rounded mb-4 cursor-pointer" value={filterRole} onChange={e => setFilterRole(e.target.value)}>
                             <option value="" className="cursor-pointer">All Roles</option>
