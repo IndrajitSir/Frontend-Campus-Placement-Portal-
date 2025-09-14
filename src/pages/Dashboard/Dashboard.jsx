@@ -1,4 +1,6 @@
 import { Outlet } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from '../../functionality/ProtectedRoutes';
 
 const Dashboard = () => {
   return (
@@ -6,7 +8,7 @@ const Dashboard = () => {
       {/* <Sidebar /> */}
       <div className="p-6">
         <div className="w-full">
-          <ErrorBoundary fallback={<p>Something went wrong at outlet!</p>}>
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
             <Outlet />
           </ErrorBoundary>
         </div>

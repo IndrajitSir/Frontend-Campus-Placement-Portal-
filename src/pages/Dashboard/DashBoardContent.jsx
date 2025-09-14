@@ -9,6 +9,8 @@ import Admin_Dashboard from "../../Components/Dashboards/Admin_dashboard/Admin_D
 import PlacementStaff_Dashboard from "../../Components/Dashboards/PlacementStaff_dashboard/PlacementStaff_Dashboard.jsx";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from '../../functionality/ProtectedRoutes';
 
 function DashBoardContent() {
     const { loading, role } = useUserData();
@@ -27,12 +29,12 @@ function DashBoardContent() {
             </div>
             <div className='w-full'>
                 {role === "placement_staff" && (
-                    <ErrorBoundary fallback={<p>Something went wrong at DashBoardContent!PlacementStaff_Dashboard</p>}>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
                         <PlacementStaff_Dashboard />
                     </ErrorBoundary>
                 )}
                 {role === "admin" || role === "super_admin" && (
-                    <ErrorBoundary fallback={<p>Something went wrong at DashBoardContent!Admin_Dashboard</p>}>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
                         <Admin_Dashboard />
                     </ErrorBoundary>
                 )}
