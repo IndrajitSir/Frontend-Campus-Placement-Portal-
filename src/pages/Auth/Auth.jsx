@@ -37,13 +37,13 @@ function Auth() {
       if (!response.success) {
         toast.error(response.message || "Something went wrong!");
       }
-      setRole(response?.data.user.role);
-      setAccessToken(response?.data.accessToken);
-      setRefreshToken(response?.data.refreshToken);
-      setUserInfo(response?.data.user);
+      setRole(response?.data?.user?.role);
+      setAccessToken(response?.data?.accessToken);
+      setRefreshToken(response?.data?.refreshToken);
+      setUserInfo(response?.data?.user);
       toast.success("Login successful!");
       if (!response?.data?.user?.role) { navigate("/") }
-      if (response?.data.user.role === "student") {
+      if (response?.data?.user?.role === "student") {
         navigate("/home");
       } else {
         navigate("/home/dashboard");
