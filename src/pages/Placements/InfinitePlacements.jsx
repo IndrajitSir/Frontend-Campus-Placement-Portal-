@@ -45,6 +45,8 @@ const InfinitePlacements = () => {
   const [loading, setLoading] = useState(false);
   const [removingPostID, setRemovingPostID] = useState(null);
 
+
+  if (!accessToken || !role) return <CircleLoader />;
   useEffect(() => {
     const fetchPlacements = async () => {
       try {
@@ -163,7 +165,7 @@ const InfinitePlacements = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {showSearchResult ? (
-            filteredPlacement !== null ? (
+            filteredPlacement?._id ? (
               <div key={filteredPlacement._id} className="border p-4 rounded shadow-md bg-white">
                 <h3 className="text-xl font-semibold">
                   {filteredPlacement.job_title} at {filteredPlacement.company_name}
@@ -201,82 +203,86 @@ const InfinitePlacements = () => {
                 p.job_title.toLowerCase().includes(searchQuery.toLowerCase())
               )
                 .map((placement) => (
-                  <div key={placement._id} className="border p-4 rounded shadow-md bg-white">
-                    <h3 className="text-xl font-semibold">
-                      {placement.job_title} at {placement.company_name}
-                    </h3>
-                    <p className="text-gray-600">{placement.description}</p>
-                    <p>Location: {placement.location || "Not found"}</p>
-                    <p>Eligibility: {placement.eligibility}</p>
-                    <p>Last Date : {placement.last_date}</p>
-                    {role === "student" ? (
-                      <Button
-                        className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
-                        onClick={() => { setApplyPlacementDialog(true); setPostID(placement._id); }}
-                      >
-                        Apply
-                      </Button>
-                    ) : (
-                      <div className="flex items-end mt-3">
+                  placement?._id && (
+                    <div key={placement._id} className="border p-4 rounded shadow-md bg-white">
+                      <h3 className="text-xl font-semibold">
+                        {placement.job_title} at {placement.company_name}
+                      </h3>
+                      <p className="text-gray-600">{placement.description}</p>
+                      <p>Location: {placement.location || "Not found"}</p>
+                      <p>Eligibility: {placement.eligibility}</p>
+                      <p>Last Date : {placement.last_date}</p>
+                      {role === "student" ? (
                         <Button
-                          className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
-                          onClick={() => { setPlacementInfo(placement); setEditedInfo(placement); setPlacementInfoDialog(true); }}
+                          className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                          onClick={() => { setApplyPlacementDialog(true); setPostID(placement._id); }}
                         >
-                          Update
+                          Apply
                         </Button>
-                        <Button variant="destructive" size="icon"
-                          className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                          onClick={() => { setPostDeleteDialog(true); setPostID(placement._id); }}
-                        >
-                          <Trash size={16} />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                      ) : (
+                        <div className="flex items-end mt-3">
+                          <Button
+                            className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                            onClick={() => { setPlacementInfo(placement); setEditedInfo(placement); setPlacementInfoDialog(true); }}
+                          >
+                            Update
+                          </Button>
+                          <Button variant="destructive" size="icon"
+                            className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
+                            onClick={() => { setPostDeleteDialog(true); setPostID(placement._id); }}
+                          >
+                            <Trash size={16} />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )
                 ))
             )
           ) : (
             // Default case: show all placements
             Array.isArray(placements) && placements.map((placement) => (
-              <div key={placement._id} className={`border p-4 rounded shadow-md bg-white transition-opacity duration-300 ease-in-out ${removingPostID === placement._id ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
-                <h3 className="text-xl font-semibold">
-                  {placement.job_title} at {placement.company_name}
-                </h3>
-                <p className="text-gray-600">{placement.description}</p>
-                <p>Location: {placement.location || "Not found"}</p>
-                <p>Eligibility: {placement.eligibility}</p>
-                <p>Last Date : {new Date(placement.last_date).toLocaleString("en-IN", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true
-                })}</p>
-                {role === "student" ? (
-                  <Button
-                    className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
-                    onClick={() => { setApplyPlacementDialog(true); setPostID(placement._id); }}
-                  >
-                    Apply
-                  </Button>
-                ) : (
-                  <div className="flex items-end mt-3">
+              placement?._id && (
+                <div key={placement._id} className={`border p-4 rounded shadow-md bg-white transition-opacity duration-300 ease-in-out ${removingPostID === placement._id ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+                  <h3 className="text-xl font-semibold">
+                    {placement.job_title} at {placement.company_name}
+                  </h3>
+                  <p className="text-gray-600">{placement.description}</p>
+                  <p>Location: {placement.location || "Not found"}</p>
+                  <p>Eligibility: {placement.eligibility}</p>
+                  <p>Last Date : {new Date(placement.last_date).toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true
+                  })}</p>
+                  {role === "student" ? (
                     <Button
-                      className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
-                      onClick={() => { setPlacementInfo(placement); setEditedInfo(placement); setPlacementInfoDialog(true); }}
+                      className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                      onClick={() => { setApplyPlacementDialog(true); setPostID(placement._id); }}
                     >
-                      Update
+                      Apply
                     </Button>
-                    <Button variant="destructive" size="icon"
-                      className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                      onClick={() => { setPostDeleteDialog(true); setPostID(placement._id); }}
-                    >
-                      <Trash size={16} />
-                    </Button>
-                  </div>
-                )}
-              </div>
+                  ) : (
+                    <div className="flex items-end mt-3">
+                      <Button
+                        className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                        onClick={() => { setPlacementInfo(placement); setEditedInfo(placement); setPlacementInfoDialog(true); }}
+                      >
+                        Update
+                      </Button>
+                      <Button variant="destructive" size="icon"
+                        className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
+                        onClick={() => { setPostDeleteDialog(true); setPostID(placement._id); }}
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )
             ))
           )}
           {hasMore && <div ref={ref}><p><CircleLoader />Loading more placements...</p></div>}
