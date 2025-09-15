@@ -18,6 +18,7 @@ function DashBoardContent() {
     if (loading || !role) {
         return <div>Loading dashboard...</div>;
     }
+    console.log("User role in DashBoardContent: ", role);
     return (
         <>
             <div className="flex justify-between items-center mb-4">

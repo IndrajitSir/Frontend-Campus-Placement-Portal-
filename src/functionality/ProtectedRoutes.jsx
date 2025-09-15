@@ -10,19 +10,22 @@ import Home from "../pages/Home/Home.jsx";
 const ProtectedRoute = () => {
   const { accessToken, fetchUserData } = useUserData();
   const [loading, setLoading] = useState(false);
+  console.log("Access Token in ProtectedRoute: ", accessToken);
   if(!accessToken || accessToken === "" || accessToken === undefined || accessToken === null){
+    console.log("No access token, fetching user data...");
     setLoading(true);
     useEffect(() => {
       const checkAuth = async () => {
         await fetchUserData(); 
         setLoading(false); 
+        console.log("User data fetched in ProtectedRoute");
       };
       checkAuth();
     }, []);
   }
   if (loading) return <CircleLoader/>; 
   if (!accessToken) return <Navigate to="/login" replace />;
-
+  console.log("Access Token present, rendering Home component.");
   return <Home />;
 };
 

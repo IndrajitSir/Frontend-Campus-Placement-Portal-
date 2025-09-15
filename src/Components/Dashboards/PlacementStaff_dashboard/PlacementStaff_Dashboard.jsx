@@ -10,6 +10,7 @@ function PlacementStaff_Dashboard() {
   const handleJoinInterview = ()=>{
     navigate("/home/dashboard/interview-setup");
   }
+  console.log("Rendering PlacementStaff_Dashboard component");
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

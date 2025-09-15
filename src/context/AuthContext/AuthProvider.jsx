@@ -25,6 +25,7 @@ export const AuthCrediantialsProvider = ({ children }) => {
         user: response?.data.user,
         student: response?.data.student
       }))
+      console.log("User data fetched: ", response);
     } catch (error) {
       console.error("Session fetch error", error);
     } finally {

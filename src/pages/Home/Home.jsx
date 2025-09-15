@@ -8,6 +8,7 @@ import Navbar from "../../Components/Navbar/Navbar.jsx";
 import { SocketProvider } from '../../context/SocketContext/SocketProvider.jsx'
 import { ApiProvider } from "../../context/ApiContext/ApiProvider.jsx";
 const Home = () => {
+  console.log("Rendering Home component");
   return (
     <div className="p-4 relative block">
       <ToastContainer position="top-right" autoClose={3000} />

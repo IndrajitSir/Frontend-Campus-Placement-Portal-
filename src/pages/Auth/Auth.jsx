@@ -38,15 +38,18 @@ function Auth() {
       if (!response.success) {
         toast.error(response.message || "Something went wrong!");
       }
+      console.log("User role after login: " + response?.data?.user?.role);
       setRole(response?.data?.user?.role);
       setAccessToken(response?.data?.accessToken);
       setRefreshToken(response?.data?.refreshToken);
       setUserInfo(response?.data?.user);
       toast.success("Login successful!");
+      console.log("User role set in context: " + response?.data?.user?.role);
       if (!response?.data?.user?.role) { navigate("/") }
       if (response?.data?.user?.role === "student") {
         navigate("/home");
       } else {
+        console.log("Navigating to dashboard for role: " + response?.data?.user?.role);
         navigate("/home/dashboard");
       }
 

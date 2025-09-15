@@ -3,6 +3,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from '../../functionality/ProtectedRoutes';
 
 const Dashboard = () => {
+  console.log("Rendering Dashboard component");
   return (
     <div className="flex w-full">
       {/* <Sidebar /> */}

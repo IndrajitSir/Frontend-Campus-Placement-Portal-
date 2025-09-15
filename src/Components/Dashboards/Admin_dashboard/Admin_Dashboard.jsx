@@ -8,6 +8,7 @@ import SystemStatus from '../../../Components/System_Status/SystemStatus.jsx';
 
 function Admin_Dashboard() {
     const navigate = useNavigate();
+    console.log("Rendering Admin_Dashboard component");
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
