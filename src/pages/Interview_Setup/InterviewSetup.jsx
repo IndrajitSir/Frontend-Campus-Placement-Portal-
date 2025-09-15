@@ -78,7 +78,7 @@ function InterviewSetup() {
         <h2 className="text-2xl font-semibold mb-4 text-center text-blue-700">Technical Interview</h2>
         {
           isLive ?
-            <InterviewRoom user={userInfo.user} isInterviewer={isInterviewer} roomId={roomId} />
+            <InterviewRoom user={userInfo?.user} isInterviewer={isInterviewer} roomId={roomId} />
             :
             (role === "placement_staff" &&
               <div className="flex justify-center">

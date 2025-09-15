@@ -62,10 +62,10 @@ export default function ProfilePage() {
           "Authorization": `Bearer ${accessToken}`
         },
       });
-      if (!res.success) {
-        toast.error(res.message);
+      if (!res?.success) {
+        toast.error(res?.message);
       } else {
-        toast.success(res.message);
+        toast.success(res?.message);
       }
     } catch (error) {
       console.error(error);
@@ -83,10 +83,10 @@ export default function ProfilePage() {
           Authorization: `Bearer ${accessToken}`
         },
       });
-      if (!res.success) {
-        toast.error(res.message);
+      if (!res?.success) {
+        toast.error(res?.message);
       } else {
-        toast.success(res.message);
+        toast.success(res?.message);
       }
     } catch (error) {
       console.error(error);
@@ -101,10 +101,10 @@ export default function ProfilePage() {
           Authorization: `Bearer ${accessToken}`
         },
       });
-      if (!res.success) {
-        toast.error(res.message);
+      if (!res?.success) {
+        toast.error(res?.message);
       } else {
-        toast.success(res.message);
+        toast.success(res?.message);
       }
     } catch (error) {
       console.error(error);
@@ -117,7 +117,7 @@ export default function ProfilePage() {
       <Card className="bg-pink-300 p-6 rounded-lg relative text-center w-full max-w-7xl mx-auto">
         <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
           <div className="relative inline-block w-fit mx-auto">
-            <img className="w-24 h-24 mx-auto border-4 border-white rounded-full" src={userInfo?.student?.avatar === "" ? "../../defaultUserAvatar.jpeg" : userInfo.student?.avatar} />
+            <img className="w-24 h-24 mx-auto border-4 border-white rounded-full" src={userInfo?.student?.avatar === "" ? "../../defaultUserAvatar.jpeg" : userInfo?.student?.avatar} />
             <PlusCircleIcon onMouseEnter={() => setShowProfileImageContent(true)} onMouseLeave={() => setShowProfileImageContent(false)} onClick={() => setAvatarUploadDialog(true)}
               className="w-5 h-5 absolute right-0 bottom-0 bg-white rounded-full cursor-pointer p-1 shadow-md hover:scale-110 transition" />
             <motion.h6 key="Profile Image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeInOut" }}
@@ -125,20 +125,20 @@ export default function ProfilePage() {
             >Upload Profile Image</motion.h6>
           </div>
           <div className="flex items-center justify-center">
-            <h2 className="text-2xl font-bold mt-2">{userInfo.user.name}</h2>
+            <h2 className="text-2xl font-bold mt-2">{userInfo?.user?.name}</h2>
             <span onMouseEnter={() => setShowBadgeContent(true)} onMouseLeave={() => setShowBadgeContent(false)}
-              className={`${userInfo.student.approved ? "text-blue-500" : "text-gray-700"} text-xl ml-2 mt-2 cursor-pointer relative inline-block`}
+              className={`${userInfo?.student?.approved ? "text-blue-500" : "text-gray-700"} text-xl ml-2 mt-2 cursor-pointer relative inline-block`}
             ><BsPatchCheckFill />
               <motion.h6 key="approval" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeInOut" }}
-                className={`${showBadgeContent ? "block" : "hidden"} absolute ${userInfo.student.approved ? "left-0 top-0" : "left-4 top-0"}  text-[13px] w-25`}
-              >{userInfo.student.approved ? "Approved" : "Not Approved"}</motion.h6>
+                className={`${showBadgeContent ? "block" : "hidden"} absolute ${userInfo?.student?.approved ? "left-0 top-0" : "left-4 top-0"}  text-[13px] w-25`}
+              >{userInfo?.student?.approved ? "Approved" : "Not Approved"}</motion.h6>
             </span>
           </div>
-          <h6 className="mt-1 text-[14px]">{userInfo.user.email}</h6>
-          <p>{userInfo.student.professional_skill}</p>
+          <h6 className="mt-1 text-[14px]">{userInfo?.user?.email}</h6>
+          <p>{userInfo?.student?.professional_skill}</p>
           <div className="flex items-center justify-center relative inline-block w-fit">
             {/* Resume Link */}
-            <NavLink to={userInfo.student.resume} className="text-blue-600 hover:underline" onMouseEnter={() => setShowFeaturesOfResume(true)}
+            <NavLink to={userInfo?.student?.resume} className="text-blue-600 hover:underline" onMouseEnter={() => setShowFeaturesOfResume(true)}
               onMouseLeave={() => setTimeout(() => setShowFeaturesOfResume(false), 300)}> Resume
             </NavLink>
             {/* Animate Presence for Smooth Enter/Exit */}
@@ -222,10 +222,10 @@ export default function ProfilePage() {
           </div>
         ) : (
           <CardContent>
-            <p>{userInfo.student.about}</p>
-            <p>Location: {userInfo.student.location}</p>
-            <p>Contact: {userInfo.user.phoneNumber}</p>
-            <p>Department: {userInfo.student.department}</p>
+            <p>{userInfo?.student?.about}</p>
+            <p>Location: {userInfo?.student?.location}</p>
+            <p>Contact: {userInfo?.user?.phoneNumber}</p>
+            <p>Department: {userInfo?.student?.department}</p>
           </CardContent>
         )}
       </Card>
@@ -237,9 +237,9 @@ export default function ProfilePage() {
           {
             Array.isArray(userInfo?.student?.projects) && userInfo?.student?.projects?.length > 0 && userInfo?.student?.projects?.map((project) => {
               <Card className="w-20 p-4">
-                <h3 className="text-lg font-semibold">{project.title}</h3>
-                <p>Description: {project.description}</p>
-                <NavLink to={project.link} className="text-blue-600 hover:underline">Link</NavLink>
+                <h3 className="text-lg font-semibold">{project?.title}</h3>
+                <p>Description: {project?.description}</p>
+                <NavLink to={project?.link} className="text-blue-600 hover:underline">Link</NavLink>
               </Card>
             })
           }

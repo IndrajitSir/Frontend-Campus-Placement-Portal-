@@ -46,7 +46,7 @@ export default function NewMessagePage() {
           setHasMore(false);
           return;
         }
-        setUsers(prev => [...prev, ...res.data.users]);
+        setUsers(prev => [...prev, ...res?.data?.users]);
       } catch (err) {
         console.error("Failed to fetch users", err);
       } finally {
@@ -67,7 +67,7 @@ export default function NewMessagePage() {
     const fetchFriends = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/api/v2/friend-request/${currentUser.user._id}`, {
+        const response = await fetch(`${API_URL}/api/v2/friend-request/${currentUser?.user?._id}`, {
           credentials: "include",
           method: "GET",
           headers: {
@@ -76,8 +76,8 @@ export default function NewMessagePage() {
           }
         });
         const res = await response.json();
-        if (!res.success) { toast.error(res.message); }
-        setFriends(res.data);
+        if (!res?.success) { toast.error(res?.message); }
+        setFriends(res?.data);
       } catch (err) {
         console.error("Failed to fetch users", err);
       } finally {
@@ -91,13 +91,13 @@ export default function NewMessagePage() {
     if (!socket) return;
 
     socket.on("friend:request", async (data) => {
-      let friend = await getUserById(data.senderId);
+      let friend = await getUserById(data?.senderId);
       // setFriends(prev => {
       //   const alreadyExists = prev.some(f => f._id === data.from);
       //   return alreadyExists ? prev : [...prev, { _id: data.from, user: friend }]
       // })
       let frnds = friendRequest.friends;
-      friend["requestId"] = data.requestId;
+      friend["requestId"] = data?.requestId;
       frnds.push(friend);
       setFriendRequest({ newFriend: true, friends: frnds });
       toast.info(`${friend?.student_id?.name || friend?.name || "Unknown user"} sent you a friend request.`);
@@ -117,10 +117,10 @@ export default function NewMessagePage() {
         },
       });
       const response = await res.json();
-      if (!response.success) {
-        return toast.warning(response.message);
+      if (!response?.success) {
+        return toast.warning(response?.message);
       }
-      setResult(response.data);
+      setResult(response?.data);
     } catch (error) {
       console.error("Search failed", error);
     }
@@ -137,7 +137,7 @@ export default function NewMessagePage() {
       body: JSON.stringify({ requestId: requestId, action: action })
     });
     const res = await response.json();
-    if (!res.success) { toast.error(res.message); }
+    if (!res?.success) { toast.error(res?.message); }
     if (action === "accepted") {
       friendRequest.friends.map((friend) => {
         if (friend.requestId === requestId) {
@@ -145,7 +145,7 @@ export default function NewMessagePage() {
         }
       })
     }
-    let frnds = friendRequest.friends.filter((friend) => friend.requestId !== requestId)
+    let frnds = friendRequest.friends.filter((friend) => friend?.requestId !== requestId)
     setFriendRequest({ newFriend: frnds.length > 0, friends: frnds });
   }
 
@@ -155,15 +155,15 @@ export default function NewMessagePage() {
       <div className="w-64 bg-gray-100 p-4 border-r md:block">
         <h2 className="text-lg font-bold mb-2">Friends</h2>
         {
-          Array.isArray(friends) && friends.length === 0 &&
+          Array.isArray(friends) && friends?.length === 0 &&
           <h2 className='text-gray-400 italic'>No frineds yet.</h2>
         }
         {
           Array.isArray(friends) && friends.map((friend) => (
             <>
-              <Card key={friend._id} className='h-5 flex relative mt-3 shadow-md cursor-pointer hover:shadow-lg transition-all' onClick={() => { setSelectedUser(friend); setOpenChat(true) }}>
-                <img className="w-8 h-8 mx-auto border-4 border-white rounded-full absolute left-1 top-2" src={friend.avatar || friend?.student_id?.avatar || "../../defaultUserAvatar.jpeg"} />
-                <p className="font-semibold pl-3 absolute left-8 top-3">{friend?.name || friend?.student_id?.name || friend?.sender?.name === currentUser.user.name ? friend?.receiver?.name : friend?.sender?.name}</p>
+              <Card key={friend?._id} className='h-5 flex relative mt-3 shadow-md cursor-pointer hover:shadow-lg transition-all' onClick={() => { setSelectedUser(friend); setOpenChat(true) }}>
+                <img className="w-8 h-8 mx-auto border-4 border-white rounded-full absolute left-1 top-2" src={friend?.avatar || friend?.student_id?.avatar || "../../defaultUserAvatar.jpeg"} />
+                <p className="font-semibold pl-3 absolute left-8 top-3">{friend?.name || friend?.student_id?.name || friend?.sender?.name === currentUser?.user?.name ? friend?.receiver?.name : friend?.sender?.name}</p>
               </Card>
             </>
           ))
@@ -182,14 +182,14 @@ export default function NewMessagePage() {
                 <div className='flex items-center gap-x-5'>
                   {
                     friendRequest.friends.map((friend) => (
-                      <Card key={friend._id} className="p-3">
-                        <div key={friend._id} className='relative'>
+                      <Card key={friend?._id} className="p-3">
+                        <div key={friend?._id} className='relative'>
                           <img className="w-8 h-8 mx-auto border-4 border-white rounded-full absolute left-1 top-2" src={friend?.student_id?.avatar || "../../defaultUserAvatar.jpeg"} />
                           <p className="font-semibold">{friend?.student_id?.name || friend?.name}</p>
                           <p className="text-sm text-gray-500">{friend?.student_id?.email || friend?.email}</p>
                           <div className='flex items-center gap-4 mt-2'>
-                            <Button size={15} className="cursor-pointer bg-green-600 hover:bg-green-500" onClick={() => handleResponseToFriendRequest("accepted", friend.requestId)}><Check /></Button>
-                            <Button size={15} className="cursor-pointer bg-red-600 hover:bg-red-500" onClick={() => handleResponseToFriendRequest("rejected", friend.requestId)}><X /></Button>
+                            <Button size={15} className="cursor-pointer bg-green-600 hover:bg-green-500" onClick={() => handleResponseToFriendRequest("accepted", friend?.requestId)}><Check /></Button>
+                            <Button size={15} className="cursor-pointer bg-red-600 hover:bg-red-500" onClick={() => handleResponseToFriendRequest("rejected", friend?.requestId)}><X /></Button>
                           </div>
                         </div>
                       </Card>
@@ -206,13 +206,13 @@ export default function NewMessagePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Searched result */}
           {result && (
-            <div key={result._id} className="p-3 border rounded bg-white flex justify-between items-center">
+            <div key={result?._id} className="p-3 border rounded bg-white flex justify-between items-center">
               <div>
-                <p className="font-semibold">{result.name}</p>
-                <p className="text-sm text-gray-500">{result.email}</p>
+                <p className="font-semibold">{result?.name}</p>
+                <p className="text-sm text-gray-500">{result?.email}</p>
               </div>
               <div className="flex items-center gap-2">
-                <FriendRequestButton senderId={currentUser} receiverId={result._id} />
+                <FriendRequestButton senderId={currentUser} receiverId={result?._id} />
                 {/* <button onClick={() => { setSelectedUser(result); setOpenChat(true) }}
                   className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 cursor-pointer">
                   Chat
@@ -223,14 +223,14 @@ export default function NewMessagePage() {
 
           {/* All users */}
           {users.map((user) => (
-            currentUser.user.name !== user.name &&
-            <div key={user._id} className="p-3 border rounded bg-white flex justify-between items-center">
+            currentUser?.user?.name !== user?.name &&
+            <div key={user?._id} className="p-3 border rounded bg-white flex justify-between items-center">
               <div>
-                <p className="font-semibold">{user.name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="font-semibold">{user?.name}</p>
+                <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
               <div className="flex items-center gap-2">
-                <FriendRequestButton senderId={currentUser.user._id} receiverId={user._id} />
+                <FriendRequestButton senderId={currentUser?.user?._id} receiverId={user?._id} />
                 {/* <button onClick={() => { setSelectedUser(user); setOpenChat(true); }}
                   className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 cursor-pointer">
                   Chat

@@ -79,14 +79,14 @@ const Placements = () => {
   }
 
   const handlePostDeleted = () => {
-    const updatedPosts = placements.filter((placement) => placement._id !== postID);
+    const updatedPosts = placements.filter((placement) => placement?._id !== postID);
     setPlacements(updatedPosts);
   }
 
   const handleUpdate = async () => {
     setEditMode(false);
     let payload = { newPlacementPost: placementInfo };
-    const res = await fetch(`${API_URL}/api/v1/placements/${placementInfo._id}`, {
+    const res = await fetch(`${API_URL}/api/v1/placements/${placementInfo?._id}`, {
       method: "PUT",
       credentials: "include",
       headers: {
@@ -133,16 +133,16 @@ const Placements = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {showSearchResult ? (
           filteredPlacement !== null ? (
-            <div key={filteredPlacement._id} className="border p-4 rounded shadow-md bg-white">
+            <div key={filteredPlacement?._id} className="border p-4 rounded shadow-md bg-white">
               <h3 className="text-xl font-semibold">
-                {filteredPlacement.job_title} at {filteredPlacement.company_name}
+                {filteredPlacement?.job_title} at {filteredPlacement?.company_name}
               </h3>
-              <p className="text-gray-600">{filteredPlacement.description}</p>
-              <p>Location: {filteredPlacement.location || "Not found"}</p>
-              <p>Eligibility: {filteredPlacement.eligibility}</p>
-              <p>Last Date : {filteredPlacement.last_date}</p>
+              <p className="text-gray-600">{filteredPlacement?.description}</p>
+              <p>Location: {filteredPlacement?.location || "Not found"}</p>
+              <p>Eligibility: {filteredPlacement?.eligibility}</p>
+              <p>Last Date : {filteredPlacement?.last_date}</p>
               {role === "student" ? (
-                <Button onClick={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement._id); }}
+                <Button onClick={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement?._id); }}
                   className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                 >
                   Apply
@@ -154,7 +154,7 @@ const Placements = () => {
                   >
                     Update
                   </Button>
-                  <Button onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
+                  <Button onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                     variant="destructive" size="icon"
                     className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
                   >
@@ -170,20 +170,20 @@ const Placements = () => {
               p.job_title.toLowerCase().includes(searchQuery.toLowerCase())
             )
               .map((placement) => (
-                <div key={placement._id} className="border p-4 rounded shadow-md bg-white">
+                <div key={placement?._id} className="border p-4 rounded shadow-md bg-white">
                   <h3 className="text-xl font-semibold">
-                    {placement.job_title} at {placement.company_name}
+                    {placement?.job_title} at {placement?.company_name}
                   </h3>
-                  <p className="text-gray-600">{placement.description}</p>
-                  <p>Location: {placement.location || "Not found"}</p>
-                  <p>Eligibility: {placement.eligibility}</p>
-                  <p>Last Date : {placement.last_date}</p>
+                  <p className="text-gray-600">{placement?.description}</p>
+                  <p>Location: {placement?.location || "Not found"}</p>
+                  <p>Eligibility: {placement?.eligibility}</p>
+                  <p>Last Date : {placement?.last_date}</p>
                   {role === "student" ? (
                     <Button
                       className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                       onClick={() => {
                         setApplyPlacementDialog(true);
-                        setPostID(placement._id);
+                        setPostID(placement?._id);
                       }}
                     >
                       Apply
@@ -202,7 +202,7 @@ const Placements = () => {
                       </Button>
                       <Button variant="destructive" size="icon"
                         className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                        onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
+                        onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                       >
                         <Trash size={16} />
                       </Button>
@@ -214,14 +214,14 @@ const Placements = () => {
         ) : (
           // Default case: show all placements
           placements.map((placement) => (
-            <div key={placement._id} className="border p-4 rounded shadow-md bg-white">
+            <div key={placement?._id} className="border p-4 rounded shadow-md bg-white">
               <h3 className="text-xl font-semibold">
-                {placement.job_title} at {placement.company_name}
+                {placement?.job_title} at {placement?.company_name}
               </h3>
-              <p className="text-gray-600">{placement.description}</p>
-              <p>Location: {placement.location || "Not found"}</p>
-              <p>Eligibility: {placement.eligibility}</p>
-              <p>Last Date : {new Date(placement.last_date).toLocaleString("en-IN", {
+              <p className="text-gray-600">{placement?.description}</p>
+              <p>Location: {placement?.location || "Not found"}</p>
+              <p>Eligibility: {placement?.eligibility}</p>
+              <p>Last Date : {new Date(placement?.last_date).toLocaleString("en-IN", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
@@ -234,7 +234,7 @@ const Placements = () => {
                   className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                   onClick={() => {
                     setApplyPlacementDialog(true);
-                    setPostID(placement._id);
+                    setPostID(placement?._id);
                   }}
                 >
                   Apply
@@ -253,7 +253,7 @@ const Placements = () => {
                   </Button>
                   <Button variant="destructive" size="icon"
                     className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                    onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
+                    onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                   >
                     <Trash size={16} />
                   </Button>

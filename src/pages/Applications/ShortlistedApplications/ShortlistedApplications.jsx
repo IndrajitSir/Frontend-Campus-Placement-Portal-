@@ -50,7 +50,7 @@ function ShortlistedApplications() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-26">
           {applications.map(application => (
-            <Card key={application._id} className="shadow-md rounded-lg p-4">
+            <Card key={application?._id} className="shadow-md rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
                 <div>
                   <h3 className="text-lg font-semibold">{application?.userInfo?.name}</h3>
@@ -73,7 +73,7 @@ function ShortlistedApplications() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="icon" className="cursor-pointer" onClick={() => { setDataForDisplay(application); setDisplayUserDetailsDialog(true) }}><Eye size={16} /></Button>
-                <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setRecordID(application._id); setDeleteStudentApplicationDialog(true) }}><Trash size={16} /></Button>
+                <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setRecordID(application?._id); setDeleteStudentApplicationDialog(true) }}><Trash size={16} /></Button>
               </div>
             </Card>
           ))}

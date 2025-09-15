@@ -31,8 +31,8 @@ function Admin() {
     });
 
     const response = await res.json();
-    if (!response.success) {
-      toast.error(response.message || "Something went wrong!");
+    if (!response?.success) {
+      toast.error(response?.message || "Something went wrong!");
     }
     console.log("version 2 response for admin: ", response?.data?.users);
     setAdmin(response?.data?.users);
@@ -49,16 +49,16 @@ function Admin() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-26">
           {admin.map(user => (
-            <Card key={user._id}>
+            <Card key={user?._id}>
               <CardContent className="p-4 flex justify-between items-center">
                 <div>
-                  <h3 className="text-lg font-medium">{user.name}</h3>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <h3 className="text-lg font-medium">{user?.name}</h3>
+                  <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <p className="text-sm text-muted-foreground">{user?.phoneNumber}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="icon" className="cursor-pointer bg-blue-400 hover:bg-blue-500"><Pencil size={16} /></Button>
-                  <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setUserID(user._id); setdeleteUserDialog(true); }}><Trash size={16} /></Button>
+                  <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setUserID(user?._id); setdeleteUserDialog(true); }}><Trash size={16} /></Button>
                 </div>
               </CardContent>
             </Card>

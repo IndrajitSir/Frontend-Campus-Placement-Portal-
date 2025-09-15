@@ -27,7 +27,7 @@ function ManageApplications() {
     const data = useAllUsersNameAndEmail();
 
     useEffect(() => {
-        const users = data.filter((user) => user.role === "student")
+        const users = data.filter((user) => user?.role === "student")
         setUsersNameAndEmail(users);
     }, [])
     const searchQueryFromChild = async (query) => {
@@ -43,11 +43,11 @@ function ManageApplications() {
             console.log(res);
         }
         const response = await res.json();
-        if (!response.success) {
-            toast.warning(response.message)
+        if (!response?.success) {
+            toast.warning(response?.message)
         }
-        console.log("Specific users data:", response.data);
-        setFilteredUser(response.data);
+        console.log("Specific users data:", response?.data);
+        setFilteredUser(response?.data);
         setShowSearchResult(true);
     }
 

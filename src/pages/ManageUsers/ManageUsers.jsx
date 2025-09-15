@@ -36,10 +36,10 @@ function ManageUsers() {
             },
         });
         const response = await res.json();
-        if (!response.success) {
-            toast.warning(response.message)
+        if (!response?.success) {
+            toast.warning(response?.message)
         }
-        setUsersNameAndEmail(response.data);
+        setUsersNameAndEmail(response?.data);
     }
     useEffect(() => {
         fetchUsers();
@@ -57,11 +57,11 @@ function ManageUsers() {
             console.log(res);
         }
         const response = await res.json();
-        if (!response.success) {
-            toast.warning(response.message)
+        if (!response?.success) {
+            toast.warning(response?.message)
         }
-        console.log("Specific users data:", response.data);
-        setFilteredUser(response.data);
+        console.log("Specific users data:", response?.data);
+        setFilteredUser(response?.data);
         setShowSearchResult(true);
     }
 

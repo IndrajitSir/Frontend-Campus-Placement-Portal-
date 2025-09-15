@@ -70,8 +70,8 @@ function Students() {
 
       setStudents(prevStudents =>
         prevStudents.map(student =>
-          student._id === student_id
-            ? { ...student, approved: !student.approved }
+          student?._id === student_id
+            ? { ...student, approved: !student?.approved }
             : student
         )
       );
@@ -84,7 +84,7 @@ function Students() {
         <h2 className="text-2xl font-bold mb-4 px-2 py-1 rounded-full text-blue-600 bg-blue-100 text-center">Students</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-26">
           {students.map(user => (
-            <Card key={user._id} className="shadow-md rounded-lg p-4">
+            <Card key={user?._id} className="shadow-md rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
                 <div>
                   <h3 className="text-lg font-semibold">{user?.student_id?.name}</h3>
@@ -110,13 +110,13 @@ function Students() {
                     role !== "placement_staff" &&
                     <>
                       <Button variant="outline" size="icon" className="cursor-pointer bg-blue-400 hover:bg-blue-500"><Pencil size={12} /></Button>
-                      <Button variant="destructive" size="icon" className="cursor-pointer hover:bg-red-500" onClick={() => { setStudent_id(user._id); setdeleteUserDialog(true); }}><Trash size={12} /></Button>
+                      <Button variant="destructive" size="icon" className="cursor-pointer hover:bg-red-500" onClick={() => { setStudent_id(user?._id); setdeleteUserDialog(true); }}><Trash size={12} /></Button>
                     </>
                   }
                 </div>
                 {
                   role !== "placement_staff" &&
-                  <Button className={`cursor-pointer ${user.approved ? "bg-red-500 hover:bg-red-600": "bg-green-500 hover:bg-green-600"} ?`} onClick={() => { setStudent_id(user._id); setapprovalDialog(true); setIsApproved(user.approved) }}>{user.approved ? "Remove approval" : "Approve"}</Button>
+                  <Button className={`cursor-pointer ${user?.approved ? "bg-red-500 hover:bg-red-600": "bg-green-500 hover:bg-green-600"} ?`} onClick={() => { setStudent_id(user?._id); setapprovalDialog(true); setIsApproved(user?.approved) }}>{user?.approved ? "Remove approval" : "Approve"}</Button>
                 }
               </div>
             </Card>

@@ -23,10 +23,10 @@ const useFetchData = (endpoint, delayMs = 0) => {
                         Authorization: `Bearer ${accessToken}`,
                     }
                 });
-                if (response.data?.data) {
-                    setData(response.data.data);
+                if (response?.data?.data) {
+                    setData(response?.data?.data);
                 } else {
-                    setData(response.data);
+                    setData(response?.data);
                 }
             } catch (err) {
                 setError(err);

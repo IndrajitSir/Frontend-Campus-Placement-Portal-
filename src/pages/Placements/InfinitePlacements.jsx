@@ -51,12 +51,12 @@ const InfinitePlacements = () => {
     const fetchPlacements = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/v2/placements?page=${page}&limit=10`);
-        if (res.data.data.data.length === 0) {
+        if (res?.data?.data?.data?.length === 0) {
           setHasMore(false);
           return;
         }
-        console.log("Data to merge", res.data?.data?.data);
-        const newPlacements = Array.isArray(res.data?.data?.data) ? res.data?.data?.data : [];
+        console.log("Data to merge", res?.data?.data?.data);
+        const newPlacements = Array.isArray(res?.data?.data?.data) ? res?.data?.data?.data : [];
         setPlacements((prev) => [...(Array.isArray(prev) ? prev : []), ...newPlacements]);
         // setPlacements((prev = []) => [...prev, ...(res.data?.data?.data || [])]);
       } catch (err) {
@@ -109,7 +109,7 @@ const InfinitePlacements = () => {
   const handleUpdate = async () => {
     setEditMode(false);
     let payload = { newPlacementPost: placementInfo };
-    const res = await fetch(`${API_URL}/api/v1/placements/${placementInfo._id}`, {
+    const res = await fetch(`${API_URL}/api/v1/placements/${placementInfo?._id}`, {
       method: "PUT",
       credentials: "include",
       headers: {
@@ -138,7 +138,7 @@ const InfinitePlacements = () => {
     setRemovingPostID(deletedID);
     setTimeout(() => {
       setPlacements((prevPlacements) => {
-        prevPlacements.filter((placement) => placement._id !== deletedID);
+        prevPlacements.filter((placement) => placement?._id !== deletedID);
       });
       setRemovingPostID(null);
       setLoading(false);
@@ -166,16 +166,16 @@ const InfinitePlacements = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {showSearchResult ? (
             filteredPlacement?._id ? (
-              <div key={filteredPlacement._id} className="border p-4 rounded shadow-md bg-white">
+              <div key={filteredPlacement?._id} className="border p-4 rounded shadow-md bg-white">
                 <h3 className="text-xl font-semibold">
-                  {filteredPlacement.job_title} at {filteredPlacement.company_name}
+                  {filteredPlacement?.job_title} at {filteredPlacement?.company_name}
                 </h3>
-                <p className="text-gray-600">{filteredPlacement.description}</p>
-                <p>Location: {filteredPlacement.location || "Not found"}</p>
-                <p>Eligibility: {filteredPlacement.eligibility}</p>
-                <p>Last Date : {filteredPlacement.last_date}</p>
+                <p className="text-gray-600">{filteredPlacement?.description}</p>
+                <p>Location: {filteredPlacement?.location || "Not found"}</p>
+                <p>Eligibility: {filteredPlacement?.eligibility}</p>
+                <p>Last Date : {filteredPlacement?.last_date}</p>
                 {role === "student" ? (
-                  <Button onClick={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement._id); }}
+                  <Button onClick={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement?._id); }}
                     className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
                   >
                     Apply
@@ -187,7 +187,7 @@ const InfinitePlacements = () => {
                     >
                       Update
                     </Button>
-                    <Button onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement._id); }}
+                    <Button onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                       variant="destructive" size="icon"
                       className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
                     >
@@ -204,18 +204,18 @@ const InfinitePlacements = () => {
               )
                 .map((placement) => (
                   placement?._id && (
-                    <div key={placement._id} className="border p-4 rounded shadow-md bg-white">
+                    <div key={placement?._id} className="border p-4 rounded shadow-md bg-white">
                       <h3 className="text-xl font-semibold">
-                        {placement.job_title} at {placement.company_name}
+                        {placement?.job_title} at {placement?.company_name}
                       </h3>
-                      <p className="text-gray-600">{placement.description}</p>
-                      <p>Location: {placement.location || "Not found"}</p>
-                      <p>Eligibility: {placement.eligibility}</p>
-                      <p>Last Date : {placement.last_date}</p>
+                      <p className="text-gray-600">{placement?.description}</p>
+                      <p>Location: {placement?.location || "Not found"}</p>
+                      <p>Eligibility: {placement?.eligibility}</p>
+                      <p>Last Date : {placement?.last_date}</p>
                       {role === "student" ? (
                         <Button
                           className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
-                          onClick={() => { setApplyPlacementDialog(true); setPostID(placement._id); }}
+                          onClick={() => { setApplyPlacementDialog(true); setPostID(placement?._id); }}
                         >
                           Apply
                         </Button>
@@ -229,7 +229,7 @@ const InfinitePlacements = () => {
                           </Button>
                           <Button variant="destructive" size="icon"
                             className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                            onClick={() => { setPostDeleteDialog(true); setPostID(placement._id); }}
+                            onClick={() => { setPostDeleteDialog(true); setPostID(placement?._id); }}
                           >
                             <Trash size={16} />
                           </Button>
@@ -243,14 +243,14 @@ const InfinitePlacements = () => {
             // Default case: show all placements
             Array.isArray(placements) && placements.map((placement) => (
               placement?._id && (
-                <div key={placement._id} className={`border p-4 rounded shadow-md bg-white transition-opacity duration-300 ease-in-out ${removingPostID === placement._id ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+                <div key={placement?._id} className={`border p-4 rounded shadow-md bg-white transition-opacity duration-300 ease-in-out ${removingPostID === placement?._id ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
                   <h3 className="text-xl font-semibold">
-                    {placement.job_title} at {placement.company_name}
+                    {placement?.job_title} at {placement?.company_name}
                   </h3>
-                  <p className="text-gray-600">{placement.description}</p>
-                  <p>Location: {placement.location || "Not found"}</p>
-                  <p>Eligibility: {placement.eligibility}</p>
-                  <p>Last Date : {new Date(placement.last_date).toLocaleString("en-IN", {
+                  <p className="text-gray-600">{placement?.description}</p>
+                  <p>Location: {placement?.location || "Not found"}</p>
+                  <p>Eligibility: {placement?.eligibility}</p>
+                  <p>Last Date : {new Date(placement?.last_date).toLocaleString("en-IN", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric",
@@ -261,7 +261,7 @@ const InfinitePlacements = () => {
                   {role === "student" ? (
                     <Button
                       className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
-                      onClick={() => { setApplyPlacementDialog(true); setPostID(placement._id); }}
+                      onClick={() => { setApplyPlacementDialog(true); setPostID(placement?._id); }}
                     >
                       Apply
                     </Button>
@@ -275,7 +275,7 @@ const InfinitePlacements = () => {
                       </Button>
                       <Button variant="destructive" size="icon"
                         className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
-                        onClick={() => { setPostDeleteDialog(true); setPostID(placement._id); }}
+                        onClick={() => { setPostDeleteDialog(true); setPostID(placement?._id); }}
                       >
                         <Trash size={16} />
                       </Button>

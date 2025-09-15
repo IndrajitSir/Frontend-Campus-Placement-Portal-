@@ -34,9 +34,9 @@ function Auth() {
       });
 
       const response = await res.json();
-      console.log("Login response: " + response + " and: " + JSON.stringify(response) + " and user: " + JSON.stringify(response?.data?.user));
-      if (!response.success) {
-        toast.error(response.message || "Something went wrong!");
+      console.log("Login response: " + JSON.stringify(response) + " and user: " + JSON.stringify(response?.data?.user));
+      if (!response?.success) {
+        toast.error(response?.message || "Something went wrong!");
       }
       console.log("User role after login: " + response?.data?.user?.role);
       setRole(response?.data?.user?.role);

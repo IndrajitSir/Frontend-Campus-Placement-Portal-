@@ -37,11 +37,11 @@ function AppliedApplications() {
           },
         });
         const response = await res.json();
-        if (!response.success) {
-          throw new Error(response.message);
+        if (!response?.success) {
+          throw new Error(response?.message);
         }
         if (response?.data?.candidates?.length > 0) {
-          setApplications(response.data.candidates);
+          setApplications(response?.data?.candidates);
         }
     };
     fetch();
@@ -59,10 +59,10 @@ function AppliedApplications() {
     });
 
     const response = await res.json();
-    if (!response.success) {
-      toast.error(response.message || "Something went wrong!");
+    if (!response?.success) {
+      toast.error(response?.message || "Something went wrong!");
     }
-    console.log(response.data);
+    console.log(response?.data);
     setApplications(response?.data);
   }
   return (
@@ -71,7 +71,7 @@ function AppliedApplications() {
         <h2 className="text-2xl font-bold mb-4 px-2 py-1 rounded-full text-blue-600 bg-blue-100 text-center">Applied Applications</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-26">
           {applications.map(application => (
-            <Card key={application._id} className="shadow-md rounded-lg p-4">
+            <Card key={application?._id} className="shadow-md rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
                 <div>
                   <h3 className="text-lg font-semibold">{application?.userInfo?.name}</h3>
@@ -94,8 +94,8 @@ function AppliedApplications() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="icon" className="cursor-pointer" onClick={() => { setDataForDisplay(application); setDisplayUserDetailsDialog(true) }}><Eye size={16} /></Button>
-                <Button variant="outline" size="icon" className="cursor-pointer" onClick={() => { setRecordID(application._id); setSelectionDialog(true) }}><Check size={16} /></Button>
-                <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setRecordID(application._id); setRejectionDialog(true) }}><X size={16} /></Button>
+                <Button variant="outline" size="icon" className="cursor-pointer" onClick={() => { setRecordID(application?._id); setSelectionDialog(true) }}><Check size={16} /></Button>
+                <Button variant="destructive" size="icon" className="cursor-pointer" onClick={() => { setRecordID(application?._id); setRejectionDialog(true) }}><X size={16} /></Button>
               </div>
             </Card>
           ))}
