@@ -34,6 +34,7 @@ function Auth() {
       });
 
       const response = await res.json();
+      console.log("Login response: " + response + " and: " + JSON.stringify(response) + " and user: " + JSON.stringify(response?.data?.user));
       if (!response.success) {
         toast.error(response.message || "Something went wrong!");
       }
