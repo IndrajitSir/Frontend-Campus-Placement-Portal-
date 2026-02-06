@@ -10,7 +10,7 @@ export const SocketProvider = ({ children }) => {
     const [isSocketReady, setIsSocketReady] = useState(false);
 
     useEffect(() => {
-        if (!role) return;
+        if (!role || !userInfo?.user?._id) return;
 
         const newSocket = io(API_URL, {
             query: { role: role, userId: userInfo.user._id }
@@ -22,7 +22,7 @@ export const SocketProvider = ({ children }) => {
     }, [role]);
 
     return (
-        <SocketContext.Provider value={{socket, isSocketReady, setIsSocketReady}}>
+        <SocketContext.Provider value={{ socket, isSocketReady, setIsSocketReady }}>
             {children}
         </SocketContext.Provider>
     );

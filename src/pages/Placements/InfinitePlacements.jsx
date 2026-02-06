@@ -50,7 +50,9 @@ const InfinitePlacements = () => {
   useEffect(() => {
     const fetchPlacements = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/v2/placements?page=${page}&limit=10`);
+        const res = await axios.get(`${API_URL}/api/v2/placements?page=${page}&limit=10`, {
+          withCredentials: true
+        });
         if (res?.data?.data?.data?.length === 0) {
           setHasMore(false);
           return;
@@ -138,7 +140,7 @@ const InfinitePlacements = () => {
     setRemovingPostID(deletedID);
     setTimeout(() => {
       setPlacements((prevPlacements) => {
-        prevPlacements.filter((placement) => placement?._id !== deletedID);
+        return prevPlacements.filter((placement) => placement?._id !== deletedID);
       });
       setRemovingPostID(null);
       setLoading(false);
