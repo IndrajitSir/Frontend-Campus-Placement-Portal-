@@ -89,56 +89,12 @@ function Auth() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/v1/auth/google`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-
-      const response = await res.json();
-      console.log(`Google login response: ${response} <-- If don't work: ${JSON.stringify(response)}`);
-      if (!response.success) {
-        toast.error(response.message || "Something went wrong!");
-      }
-      setRole(response?.data.user.role);
-      setAccessToken(response?.data.accessToken);
-      setRefreshToken(response?.data.refreshToken);
-      setUserInfo(response?.data.user);
-      toast.success("Registration successful!");
-      navigate("/home");
-    } catch (error) {
-      console.error(error);
-      toast.error("Registration failed");
-    }
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_URL}/api/v1/auth/google`;
   }
 
-  const handleGithubLogin = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/v1/auth/github`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-
-      const response = await res.json();
-      console.log(`Github login response: ${response} <-- If don't work: ${JSON.stringify(response)}`);
-      if (!response.success) {
-        toast.error(response.message || "Something went wrong!");
-      }
-      setRole(response?.data.user.role);
-      setAccessToken(response?.data.accessToken);
-      setRefreshToken(response?.data.refreshToken);
-      setUserInfo(response?.data.user);
-      toast.success("Registration successful!");
-      navigate("/home");
-    } catch (error) {
-      console.error(error);
-      toast.error("Registration failed");
-    }
+  const handleGithubLogin = () => {
+    window.location.href = `${API_URL}/api/v1/auth/github`;
   }
 
   useEffect(() => {
