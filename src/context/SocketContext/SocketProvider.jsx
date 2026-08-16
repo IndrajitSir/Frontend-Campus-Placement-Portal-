@@ -13,8 +13,7 @@ export const SocketProvider = ({ children }) => {
     const userId = userInfo?.user?._id || userInfo?._id;
 
     useEffect(() => {
-        // Only connect once we have both a role and a user id
-        if (!role || !userId) return;
+        if (!role || !userInfo?.user?._id) return;
 
         const newSocket = io(API_URL, {
             query: { role: role, userId: userId },

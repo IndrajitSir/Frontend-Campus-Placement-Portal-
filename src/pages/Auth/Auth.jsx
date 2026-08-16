@@ -110,29 +110,13 @@ function Auth() {
     }
   };
 
-  const handleSocialLogin = async (provider) => {
-    try {
-      const res = await fetch(`${API_URL}/api/v1/auth/${provider}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      const response = await res.json();
-      if (!response?.success) {
-        toast.error(response?.message || "Something went wrong!");
-        return;
-      }
-      const user = response?.data?.user;
-      setRole(user?.role);
-      setAccessToken(response?.data?.accessToken);
-      setRefreshToken(response?.data?.refreshToken);
-      setUserInfo({ user });
-      toast.success(`Signed in with ${provider === "google" ? "Google" : "GitHub"}!`);
-      redirectAfterAuth(user?.role);
-    } catch (error) {
-      console.error(error);
-      toast.error(`${provider} sign-in failed`);
-    }
-  };
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_URL}/api/v1/auth/google`;
+  }
+
+  const handleGithubLogin = () => {
+    window.location.href = `${API_URL}/api/v1/auth/github`;
+  }
 
   useEffect(() => {
     setIsLogin(location.pathname === "/login");
