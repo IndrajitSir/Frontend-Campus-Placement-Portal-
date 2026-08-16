@@ -61,7 +61,7 @@ const InfinitePlacements = () => {
         // append the same placement twice.
         setPlacements((prev) => {
           const existing = new Set((Array.isArray(prev) ? prev : []).map((p) => p?._id));
-          const fresh = newPlacements.filter((p) => p?._id && !existing.has(p._id));
+          const fresh = placements.filter((p) => p?._id && !existing.has(p._id));
           return [...(Array.isArray(prev) ? prev : []), ...fresh];
         });
       } catch (err) {

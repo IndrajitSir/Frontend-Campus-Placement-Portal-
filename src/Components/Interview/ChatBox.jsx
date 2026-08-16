@@ -105,13 +105,13 @@ export default function ChatBox({ roomId, userName }) {
         }
     }, [messages]);
     return (
-        <div className="flex flex-col h-[400px] bg-white rounded-lg shadow-md p-4">
+        <div className="flex h-full min-h-0 flex-col">
             {/* Message List */}
-            <div className="flex-1 overflow-y-auto space-y-2 mb-4">
+            <div className="flex-1 overflow-y-auto space-y-2 px-2">
                 <AnimatePresence>
                     {Array.isArray(messages) && messages.map((msg, idx) => (
                         <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                            className={`p-2 rounded max-w-[70%] ${msg.senderName === userName ? 'bg-blue-100 ml-auto' : 'bg-gray-100'}`}
+                            className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm shadow-sm ${msg.senderName === userName ? 'ml-auto rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 text-white' : 'rounded-bl-md bg-slate-100 text-slate-800'}`}
                         >
                             <span className='text-[10px] relative top-[-8px]'>{msg.senderName}</span>
                             <div className='relative left-2 pr-4'>
@@ -137,14 +137,14 @@ export default function ChatBox({ roomId, userName }) {
                 isTyping && <p className='text-xs text-gray-400 italic mb-2'>Typing...</p>
             }
             {/* Input */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 border-t border-slate-100 p-2">
                 <Input
                     placeholder="Type a message..."
                     value={message}
                     onChange={(e) => { setMessage(e.target.value); handleTyping(); }}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 />
-                <Button variant="outline" size="icon" onClick={handleSend} className="cursor-pointer">
+                <Button size="icon" onClick={handleSend} className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600">
                     <Send size={18} />
                 </Button>
             </div>

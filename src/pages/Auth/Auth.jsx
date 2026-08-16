@@ -410,14 +410,14 @@ function Auth() {
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
-                      onClick={() => handleSocialLogin("google")}
+                      onClick={() => handleGoogleLogin("google")}
                       className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition-all hover:bg-white/10 cursor-pointer"
                     >
                       <FaGoogle className="h-4 w-4" /> Google
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleSocialLogin("github")}
+                      onClick={() => handleGithubLogin("github")}
                       className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition-all hover:bg-white/10 cursor-pointer"
                     >
                       <FaGithub className="h-4 w-4" /> GitHub

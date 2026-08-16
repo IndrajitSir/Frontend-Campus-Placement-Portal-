@@ -1,5 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useSocket } from "../../../../context/SocketContext/SocketContext.jsx";
+import { Eraser, ArrowDownToLine } from "lucide-react";
+
+const FILTERS = [
+  { value: "all", label: "All" },
+  { value: "info", label: "Info" },
+  { value: "error", label: "Error" },
+];
 
 const LogViewer = () => {
     const [logs, setLogs] = useState([]);
@@ -11,11 +18,9 @@ const LogViewer = () => {
     useEffect(() => {
         if (!socket) return;
         socket.on("connect", () => {
-            console.log("Socket connected: ", socket.id);
             setIsSocketReady(true);
         });
         socket.on("disconnect", () => {
-            console.log("Socket disconnected!");
             setIsSocketReady(false);
         });
         return () => {
@@ -57,60 +62,93 @@ const LogViewer = () => {
         return true;
     });
 
+    const levelFor = (text) => {
+        const t = text.toLowerCase();
+        if (t.includes("error")) return "error";
+        if (t.includes("warn")) return "warn";
+        return "info";
+    };
+
     return (
-        <div className="text-black-400 p-4 rounded overflow-y-auto h-80 font-mono text-xl shadow-lg relative">
-            <div className="absolute top-2 right-2 flex gap-2">
-                <select
-                    className="text-black text-xs rounded p-1 cursor-pointer hover:bg-gray-200"
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                >
-                    <option value="all">All</option>
-                    <option value="info">Info</option>
-                    <option value="error">Error</option>
-                </select>
-                <button onClick={() => setLogs([])} className="rounded border cursor-pointer hover:bg-gray-200">Clear Logs</button>
-                <button
-                    className={`cursor-pointer text-xs px-2 py-1 rounded ${autoScroll ? "bg-green-600 hover:bg-green-500" : "bg-gray-400 hover:bg-gray-300"}`}
-                    onClick={() => setAutoScroll(!autoScroll)}
-                >
-                    Auto-Scroll: {autoScroll ? "On" : "Off"}
-                </button>
+        <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-[#0b1020]">
+            {/* Terminal bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                    <span className="flex gap-1.5">
+                        <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-amber-400/80" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+                    </span>
+                    <span className="ml-2 font-mono text-xs text-slate-400">live logs</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
+                        {FILTERS.map((f) => (
+                            <button
+                                key={f.value}
+                                onClick={() => setFilter(f.value)}
+                                className={`cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${
+                                    filter === f.value ? "bg-indigo-500 text-white" : "text-slate-400 hover:text-white"
+                                }`}
+                            >
+                                {f.label}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() => setAutoScroll(!autoScroll)}
+                        className={`flex cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition ${
+                            autoScroll ? "bg-emerald-500 text-white" : "bg-white/5 text-slate-400 hover:text-white"
+                        }`}
+                    >
+                        <ArrowDownToLine className="h-3 w-3" /> Auto-scroll
+                    </button>
+                    <button
+                        onClick={() => setLogs([])}
+                        className="flex cursor-pointer items-center gap-1 rounded-lg bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-400 transition hover:bg-red-500/20 hover:text-red-300"
+                    >
+                        <Eraser className="h-3 w-3" /> Clear
+                    </button>
+                </div>
             </div>
 
-            <div className="mt-8 space-y-2">
+            {/* Log body */}
+            <div className="h-80 overflow-y-auto p-4 font-mono text-xs">
+                {filteredLogs.length === 0 && (
+                    <p className="text-slate-500 italic">Waiting for logs…</p>
+                )}
                 {filteredLogs.map((line, index) => {
+                    const level = levelFor(line);
                     try {
                         const parsed = JSON.parse(line);
-                        const timestamp = new Date(parsed.timestamp).toLocaleString();
+                        const timestamp = parsed.timestamp ? new Date(parsed.timestamp).toLocaleTimeString() : "";
                         const message = parsed.message || parsed.req?.route || "No message";
                         const method = parsed.req?.method || "";
                         const route = parsed.req?.route || "";
-
                         return (
-                            <div
-                                key={index}
-                                className="bg-black/90 text-white px-4 py-2 rounded shadow border-l-4 border-green-500"
-                            >
-                                <p className="text-xs text-gray-400">{timestamp}</p>
-                                <p className="font-semibold">{message}</p>
-                                {route && (
-                                    <p className="text-xs text-gray-300 mt-1">
-                                        <span className="font-bold">{method}</span> {route}
-                                    </p>
-                                )}
+                            <div key={index} className="mb-1.5 flex items-start gap-2">
+                                <span className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                                    level === "error" ? "bg-red-400" : level === "warn" ? "bg-amber-400" : "bg-emerald-400"
+                                }`} />
+                                <span className="shrink-0 text-slate-500">{timestamp}</span>
+                                <span className={`break-all ${level === "error" ? "text-red-300" : "text-slate-300"}`}>
+                                    {message}
+                                    {route && <span className="text-slate-500"> — <span className="font-bold text-indigo-300">{method}</span> {route}</span>}
+                                </span>
                             </div>
                         );
                     } catch (err) {
-                        console.error("Error in logviewer: ", err)
                         return (
-                            <div key={index} className="text-red-400 font-mono">
-                                {line}
+                            <div key={index} className="mb-1.5 flex items-start gap-2">
+                                <span className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                                    level === "error" ? "bg-red-400" : "bg-slate-500"
+                                }`} />
+                                <span className="break-all text-slate-400">{line}</span>
                             </div>
                         );
                     }
                 })}
-                <div ref={logEndRef}></div>
+                <div ref={logEndRef} />
             </div>
         </div>
     );

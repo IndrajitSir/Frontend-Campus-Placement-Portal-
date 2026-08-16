@@ -50,7 +50,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
     };
 
     return (
-        <div className="p-4 space-y-6 bg-white rounded shadow-md">
+        <div className="space-y-5 p-3">
             {
                 isInterviewer ?
                     <>
@@ -68,7 +68,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
                                 ))}
                             </select>
                             <Button disabled={selectedQuestionIndex === ""} onClick={handleSendPredefinedQuestion}
-                                className="w-full bg-green-600 hover:bg-green-500 mt-2 cursor-pointer"
+                                className="w-full mt-2 cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 disabled:opacity-40"
                             >
                                 Send Selected Question
                             </Button>
@@ -82,7 +82,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
                                 className="border p-2 rounded w-full"
                             />
                             <Button onClick={handleSendManualQuestion}
-                                className="w-full bg-blue-600 hover:bg-blue-500 mt-2 cursor-pointer"
+                                className="w-full mt-2 cursor-pointer bg-gradient-to-r from-fuchsia-500 to-violet-500"
                             >
                                 Send Manual Question
                             </Button>
