@@ -9,20 +9,32 @@ export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [isSocketReady, setIsSocketReady] = useState(false);
 
+    // userInfo is normally { user, student }, but be tolerant of a raw user object too
+    const userId = userInfo?.user?._id || userInfo?._id;
+
     useEffect(() => {
-        if (!role) return;
+        // Only connect once we have both a role and a user id
+        if (!role || !userId) return;
 
         const newSocket = io(API_URL, {
-            query: { role: role, userId: userInfo.user._id }
+            query: { role: role, userId: userId },
         });
 
         setSocket(newSocket);
+        setIsSocketReady(false);
 
-        return () => newSocket.disconnect();
-    }, [role]);
+        newSocket.on("connect", () => setIsSocketReady(true));
+        newSocket.on("disconnect", () => setIsSocketReady(false));
+
+        return () => {
+            newSocket.off("connect");
+            newSocket.off("disconnect");
+            newSocket.disconnect();
+        };
+    }, [role, userId]);
 
     return (
-        <SocketContext.Provider value={{socket, isSocketReady, setIsSocketReady}}>
+        <SocketContext.Provider value={{ socket, isSocketReady, setIsSocketReady }}>
             {children}
         </SocketContext.Provider>
     );

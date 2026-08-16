@@ -15,7 +15,7 @@ export default function UpdateUserDialog({ isOpen, setIsOpen, userInfo }) {
         phoneNumber: userInfo?.user?.phoneNumber || ""
       };
 
-      if (userInfo.user.role === "student") {
+      if (userInfo?.user?.role === "student") {
         setFormData({
           ...base,
           location: userInfo.student?.location || "",

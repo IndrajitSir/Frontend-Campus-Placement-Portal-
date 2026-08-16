@@ -210,13 +210,13 @@ export default function ProfilePage() {
         {editMode ? (
           <div>
             <Label>Name</Label>
-            <Input name="user.name" value={editedUser.user.name} onChange={handleEditChange} />
+            <Input name="user.name" value={editedUser?.user?.name || ""} onChange={handleEditChange} />
             <Label>Location</Label>
-            <Input name="student.location" value={editedUser.student.location} onChange={handleEditChange} />
+            <Input name="student.location" value={editedUser?.student?.location || ""} onChange={handleEditChange} />
             <Label>Contact</Label>
-            <Input name="user.phoneNumber" value={editedUser.user.phoneNumber} onChange={handleEditChange} />
+            <Input name="user.phoneNumber" value={editedUser?.user?.phoneNumber || ""} onChange={handleEditChange} />
             <Label>About</Label>
-            <Input name="student.about" value={editedUser.student.about} onChange={handleEditChange} />
+            <Input name="student.about" value={editedUser?.student?.about || ""} onChange={handleEditChange} />
             <Button variant="outline" className="mt-2 cursor-pointer" onClick={() => setEditMode(false)}>Cancel</Button>
             <Button className="mt-2 ml-4 cursor-pointer" onClick={saveChanges}>Save</Button>
           </div>

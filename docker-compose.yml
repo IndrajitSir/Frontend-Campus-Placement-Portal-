@@ -1,0 +1,22 @@
+# Campus Placement — Frontend stack
+# Deployed separately from the backend. Serves the built React app with nginx.
+#
+# The API base URL is baked into the bundle at build time and must be
+# reachable from the *browser*, so point VITE_API_URL at wherever the
+# backend is deployed:
+#   VITE_API_URL=https://api.example.com docker compose up -d --build
+
+name: campusplace-frontend
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:6005}
+        VITE_API_VERSION: ${VITE_API_VERSION:-2}
+    image: campusplace-frontend
+    container_name: campusplace-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"

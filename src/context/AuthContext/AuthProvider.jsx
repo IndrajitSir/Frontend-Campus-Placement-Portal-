@@ -14,18 +14,24 @@ export const AuthCrediantialsProvider = ({ children }) => {
   const fetchUserData = async () => {
     try {
       const res = await fetch(`${API_URL}/api/v1/users/current-user`, { method: "GET", credentials: "include", });
-      console.log('fetching current-user data');
 
       const response = await res.json();
-      setRole(response?.data.user.role);
-      setAccessToken(response?.data.accessToken);
-      setRefreshToken(response?.data.refreshToken);
+      // Not logged in / session expired / error payload — clear stale state
+      if (!response?.success || !response?.data?.user) {
+        setRole("");
+        setAccessToken("");
+        setRefreshToken("");
+        setUserInfo({});
+        return;
+      }
+      setRole(response.data.user.role);
+      setAccessToken(response?.data?.accessToken);
+      setRefreshToken(response?.data?.refreshToken);
       setUserInfo((prevUser) => ({
         ...prevUser,
-        user: response?.data.user,
-        student: response?.data.student
+        user: response.data.user,
+        student: response?.data?.student
       }))
-      console.log("User data fetched: ", response);
     } catch (error) {
       console.error("Session fetch error", error);
     } finally {

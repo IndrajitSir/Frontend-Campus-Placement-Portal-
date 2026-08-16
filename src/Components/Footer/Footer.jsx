@@ -1,12 +1,13 @@
 import React from "react";
 import { FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa";
-import "./footer.css"
+import "./footer.css";
+
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-col">
-          <h3 className="web-name">Placement Portal</h3>
+          <h3 className="web-name">CampusPlace</h3>
           <p>Your gateway to career success.</p>
         </div>
         <div className="footer-col">
@@ -20,15 +21,15 @@ const Footer = () => {
         </div>
         <div className="footer-col">
           <h3>Connect with Us</h3>
-          <div className="flex items-center justify-center m-3 cursor-pointer gap-5 text-xl">
-            <i className="hover:bg-gray-500 rounded-xl"><FaLinkedin/></i>
-            <i className="hover:bg-gray-500 rounded-xl"><FaGithub/></i>
-            <i className="hover:bg-gray-500 rounded-xl"><FaInstagram/></i>
+          <div className="footer-social flex items-center gap-4 text-xl">
+            <i className="cursor-pointer"><FaLinkedin /></i>
+            <i className="cursor-pointer"><FaGithub /></i>
+            <i className="cursor-pointer"><FaInstagram /></i>
           </div>
         </div>
         <div className="footer-col">
           <h3>Contact</h3>
-          <p>Email: support@placementportal.com</p>
+          <p>Email: support@campusplace.dev</p>
           <p>Phone: +91 98765 43210</p>
         </div>
       </div>

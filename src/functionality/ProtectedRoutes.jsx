@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
 // CONTEXT api
 import { useUserData } from "../context/AuthContext/AuthContext.jsx";
@@ -9,23 +9,29 @@ import Home from "../pages/Home/Home.jsx";
 
 const ProtectedRoute = () => {
   const { accessToken, fetchUserData } = useUserData();
-  const [loading, setLoading] = useState(false);
-  console.log("Access Token in ProtectedRoute: ", accessToken);
-  if(!accessToken || accessToken === "" || accessToken === undefined || accessToken === null){
-    console.log("No access token, fetching user data...");
-    setLoading(true);
-    useEffect(() => {
-      const checkAuth = async () => {
-        await fetchUserData(); 
-        setLoading(false); 
-        console.log("User data fetched in ProtectedRoute");
-      };
-      checkAuth();
-    }, []);
-  }
-  if (loading) return <CircleLoader/>; 
+  const [loading, setLoading] = useState(true);
+  // Capture the token state at mount time so the one-time auth check below
+  // doesn't re-run on every context update.
+  const tokenAtMount = useRef(accessToken);
+
+  useEffect(() => {
+    let active = true;
+    const checkAuth = async () => {
+      // Fresh page load / expired session -> restore the session first.
+      if (!tokenAtMount.current) {
+        await fetchUserData();
+      }
+      if (active) setLoading(false);
+    };
+    checkAuth();
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (loading) return <CircleLoader />;
   if (!accessToken) return <Navigate to="/login" replace />;
-  console.log("Access Token present, rendering Home component.");
   return <Home />;
 };
 

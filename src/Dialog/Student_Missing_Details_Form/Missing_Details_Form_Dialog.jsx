@@ -38,11 +38,11 @@ function Missing_Details_Form_Dialog({ onCancel }) {
         if (userInfo?.user && userInfo?.student) {
             setFormData((prev) => ({
                 ...prev,
-                phoneNumber: userInfo?.user.phoneNumber,
-                location: userInfo?.student.location,
-                about: userInfo?.student.about,
-                professional_skill: userInfo?.student.professional_skill,
-                department: userInfo?.student.department,
+                phoneNumber: userInfo?.user?.phoneNumber,
+                location: userInfo?.student?.location,
+                about: userInfo?.student?.about,
+                professional_skill: userInfo?.student?.professional_skill,
+                department: userInfo?.student?.department,
             }))
         }
     }, [userInfo]);
@@ -160,6 +160,10 @@ function Missing_Details_Form_Dialog({ onCancel }) {
                 professional_skill_payload = {};
                 department_payload = {};
             } else if (step === 3) {
+                if (!userInfo?.student?.student_id) {
+                    toast.error("Student profile not found. Please refresh and try again.");
+                    return;
+                }
                 payload = {
                     projects: [formData.project],
                 };

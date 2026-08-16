@@ -37,24 +37,35 @@ export default function NewMessagePage() {
   const { getUserById } = useApi();
 
   useEffect(() => {
+    let cancelled = false;
     const fetchUsers = async () => {
       try {
         setLoading(true);
         const response = await fetch(`${API_URL}/api/v2/users?page=${page}&limit=30`);
         const res = await response.json();
-        if (res?.data?.users?.length === 0) {
+        if (cancelled) return;
+        const newUsers = Array.isArray(res?.data?.users) ? res?.data?.users : [];
+        if (newUsers.length === 0) {
           setHasMore(false);
           return;
         }
-        setUsers(prev => [...prev, ...res?.data?.users]);
+        // De-dupe by _id so StrictMode/repeated triggers never duplicate entries
+        setUsers(prev => {
+          const existing = new Set((Array.isArray(prev) ? prev : []).map(u => u?._id));
+          const fresh = newUsers.filter(u => u?._id && !existing.has(u._id));
+          return [...(Array.isArray(prev) ? prev : []), ...fresh];
+        });
       } catch (err) {
-        console.error("Failed to fetch users", err);
+        if (!cancelled) console.error("Failed to fetch users", err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     if (hasMore) fetchUsers();
+    return () => {
+      cancelled = true;
+    };
   }, [page]);
 
   useEffect(() => {
