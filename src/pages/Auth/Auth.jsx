@@ -12,6 +12,27 @@ import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Render's free tier sleeps after ~15 min without traffic; the first request
+// after a cold start is often dropped at the network level ("Failed to fetch" /
+// net::ERR_INTERNET_DISCONNECTED). Retrying a few times rides out the wake-up
+// window. Only network-level throws are retried; HTTP responses (400/409/500)
+// pass through untouched.
+const fetchWithRetry = async (url, options, retries = 4) => {
+  let lastError;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await fetch(url, options);
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      const delay = attempt * 2500; // 2.5s, 5s, 7.5s
+      console.warn(`Network error on ${url} (attempt ${attempt}/${retries}), retrying in ${delay / 1000}s`, error);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+};
+
 const fadeUp = {
   hidden: { opacity: 0, y: 14 },
   visible: (i = 0) => ({
@@ -48,7 +69,7 @@ function Auth() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/login`, {
+      const res = await fetchWithRetry(`${API_URL}/api/v1/auth/login`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -83,7 +104,7 @@ function Auth() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/register`, {
+      const res = await fetchWithRetry(`${API_URL}/api/v1/auth/register`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
