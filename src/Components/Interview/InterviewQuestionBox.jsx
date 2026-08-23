@@ -5,7 +5,7 @@ import { Textarea } from "../ui/textarea";
 import { toast } from "react-toastify";
 import { predefinedQuestions } from "../../constants/constants.js";
 
-export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
+export function InterviewQuestionsBox({ roomId, socket, isInterviewer, onNewQuestion }) {
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState("");
     const [manualQuestion, setManualQuestion] = useState("");
     const [manualCode, setManualCode] = useState("");
@@ -14,12 +14,8 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer }) {
     useEffect(() => {
         if (socket) {
             socket.on("receive-set-question", ({ question, code }) => {
-                let arr = [];
-                let obj = { question: question, code: code };
-                arr.push(obj);
-                if (Array.isArray(arr) && arr.length > 0) {
-                    setQuestion(arr);
-                }
+                if (onNewQuestion) onNewQuestion();
+                setQuestion([{ question, code }]);
             });
 
             return () => {

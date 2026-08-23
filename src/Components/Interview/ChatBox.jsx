@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ClockFading, Check, CheckCheck, TriangleAlert } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-export default function ChatBox({ roomId, userName }) {
+export default function ChatBox({ roomId, userName, onNewMessage }) {
     const { socket } = useSocket();
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
@@ -22,6 +22,7 @@ export default function ChatBox({ roomId, userName }) {
         if (!socket) return;
 
         socket.on("chat:newMessage", (newMessage) => {
+            if (onNewMessage && newMessage.senderName !== userName) onNewMessage();
             setMessages((prev) => {
                 const exists = prev?.find(m => m.id === newMessage.id);
                 if (!exists) { return [...prev, { ...newMessage, status: newMessage.senderName === userName ? "sent" : "delivered" }]; }
