@@ -50,7 +50,7 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
   const monacoRef = useRef(null);
   const editorRef = useRef(null);
   const { socket, isSocketReady } = useSocket();
-  const { role } = useUserData();
+  const { role, accessToken } = useUserData();
 
   useEffect(() => {
     if (language && defaultCodeByLanguage[language]) {
@@ -101,9 +101,10 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
     try {
       const response = await fetch(`${API_URL}/api/v1/code-execution/execute`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({ language, code }),
       });
