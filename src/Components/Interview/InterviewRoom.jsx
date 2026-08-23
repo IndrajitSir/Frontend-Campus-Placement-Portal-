@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 // Icons
-import { Copy, Check, Video, Timer, MessageSquare, FileQuestion, UserPlus, X, Users, ChevronDown } from 'lucide-react';
+import { Copy, Check, Video, Timer, MessageSquare, FileQuestion, UserPlus, X, Users, ChevronDown, Search } from 'lucide-react';
 // Shadcn Components
 import { Card } from '../../Components/ui/card';
 import { Button } from '../../Components/ui/button';
@@ -35,6 +36,8 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
   const [inviteResults, setInviteResults] = useState([]);
   const [invitedUsers, setInvitedUsers] = useState([]);
   const [participants, setParticipants] = useState([]);
+  const inviteBtnRef = useRef(null);
+  const [inviteBtnPos, setInviteBtnPos] = useState(null);
   const [sidebarTab, setSidebarTab] = useState("questions");
   const [questionCount, setQuestionCount] = useState(0);
   const [chatUnread, setChatUnread] = useState(0);
@@ -169,60 +172,75 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
 
             {/* Invite */}
             {isInterviewer && (
-              <div className="relative" style={{ zIndex: 60 }}>
-                <button onClick={() => setShowInvite(!showInvite)}
+              <div className="relative">
+                <button ref={inviteBtnRef} onClick={() => {
+                  if (inviteBtnRef.current) {
+                    setInviteBtnPos(inviteBtnRef.current.getBoundingClientRect());
+                  }
+                  setShowInvite(!showInvite);
+                }}
                   className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 shadow-sm transition hover:border-indigo-300 hover:text-indigo-600">
                   <UserPlus className="h-3 w-3" /> Invite
                 </button>
-                <AnimatePresence>
-                  {showInvite && (
-                    <>
-                      <div className="fixed inset-0 z-[59]" onClick={() => setShowInvite(false)} />
-                      <motion.div initial={{ opacity: 0, y: -6, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.95 }}
-                        className="absolute right-0 top-full z-[60] mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
-                        <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
-                          <h4 className="text-xs font-bold text-slate-900">Invite to Interview</h4>
-                          <button onClick={() => setShowInvite(false)} className="cursor-pointer text-slate-400 hover:text-slate-600"><X className="h-3.5 w-3.5" /></button>
-                        </div>
-                        <div className="p-3">
-                          <Input placeholder="Search by name or email..." value={inviteSearch} onChange={(e) => handleInviteSearch(e.target.value)} className="h-8 text-xs" />
-                          {inviteResults.length > 0 && (
-                            <div className="mt-2 max-h-48 overflow-y-auto">
-                              {inviteResults.map((u) => (
-                                <button key={u._id} onClick={() => handleInviteUser(u)}
-                                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition hover:bg-indigo-50">
-                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-[9px] font-bold text-indigo-600">
-                                    {(u.name || "?")[0].toUpperCase()}
-                                  </div>
-                                  <div className="min-w-0">
-                                    <p className="truncate text-xs font-semibold text-slate-900">{u.name}</p>
-                                    <p className="truncate text-[10px] text-slate-400">{u.email}</p>
-                                  </div>
-                                  {invitedUsers.some(iu => iu._id === u._id) && <span className="ml-auto shrink-0 text-[10px] font-semibold text-emerald-500">Invited</span>}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                          {inviteSearch && inviteResults.length === 0 && <p className="mt-2 text-center text-xs text-slate-400">No users found</p>}
-                        </div>
-                        {invitedUsers.length > 0 && (
-                          <div className="border-t border-slate-100 px-3 py-2">
-                            <p className="mb-1 text-[10px] font-bold text-slate-400">Invited</p>
-                            <div className="flex flex-wrap gap-1">
-                              {invitedUsers.map((u) => (
-                                <span key={u._id} className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
-                                  {u.name}
-                                  <button onClick={() => setInvitedUsers(prev => prev.filter(p => p._id !== u._id))} className="cursor-pointer text-emerald-400 hover:text-emerald-600"><X className="h-2.5 w-2.5" /></button>
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
               </div>
+            )}
+
+            {/* Invite dropdown rendered via Portal to escape stacking contexts */}
+            {isInterviewer && showInvite && createPortal(
+              <>
+                <div className="fixed inset-0 z-[9998]" onClick={() => setShowInvite(false)} />
+                <motion.div initial={{ opacity: 0, y: -8, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                  className="fixed z-[9999] w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
+                  style={{ top: inviteBtnPos?.bottom ? inviteBtnPos.bottom + 8 : 100, right: 16 }}>
+                  <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2.5">
+                    <h4 className="text-xs font-bold text-slate-900">Invite to Interview</h4>
+                    <button onClick={() => setShowInvite(false)} className="cursor-pointer rounded p-0.5 text-slate-400 hover:text-slate-600"><X className="h-3.5 w-3.5" /></button>
+                  </div>
+                  <div className="p-3">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                      <input placeholder="Search by name or email..."
+                        value={inviteSearch}
+                        onChange={(e) => handleInviteSearch(e.target.value)}
+                        autoFocus
+                        className="h-8 w-full rounded-lg border border-slate-200 bg-slate-50 pl-8 pr-3 text-xs text-slate-900 placeholder-slate-400 outline-none transition focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-100" />
+                    </div>
+                    {inviteResults.length > 0 && (
+                      <div className="mt-2 max-h-56 overflow-y-auto">
+                        {inviteResults.map((u) => (
+                          <button key={u._id} onClick={() => handleInviteUser(u)}
+                            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-indigo-50">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-[10px] font-bold text-white">
+                              {(u.name || "?")[0].toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-semibold text-slate-900">{u.name}</p>
+                              <p className="truncate text-[10px] text-slate-400">{u.email}</p>
+                            </div>
+                            {invitedUsers.some(iu => iu._id === u._id) && <span className="ml-auto shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">Invited</span>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {inviteSearch && inviteResults.length === 0 && <p className="mt-3 text-center text-xs text-slate-400">No users found</p>}
+                    {!inviteSearch && <p className="mt-2 text-center text-[10px] text-slate-300">Type a name or email to search</p>}
+                  </div>
+                  {invitedUsers.length > 0 && (
+                    <div className="border-t border-slate-100 px-3 py-2.5">
+                      <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Invited ({invitedUsers.length})</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {invitedUsers.map((u) => (
+                          <span key={u._id} className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 ring-1 ring-emerald-200">
+                            {(u.name || "?")[0].toUpperCase()} {u.name}
+                            <button onClick={() => setInvitedUsers(prev => prev.filter(p => p._id !== u._id))} className="cursor-pointer text-emerald-400 hover:text-emerald-600"><X className="h-2.5 w-2.5" /></button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </>,
+              document.body
             )}
 
             {/* Live + Timer */}

@@ -34,7 +34,7 @@ const PISTON_LANG_MAP = {
   sql: { language: "sqlite3", version: "3.36.0" },
 };
 
-const PISTON_API = "https://emkc.org/api/v2/piston/execute";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage }) => {
   const [code, setCode] = useState(defaultCodeByLanguage.javascript);
@@ -90,53 +90,35 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
     if (socket) socket.emit("interview:languageChange", { roomId: interviewId, language: newLang });
   };
 
-  // Real code execution via Piston API
+  // Real code execution via backend proxy
   const handleRunCode = async () => {
     if (!code.trim()) { toast.warning("Write some code first"); return; }
     setRunning(true);
     setShowOutput(true);
     setOutputError(false);
-    setOutput("⏳ Compiling and running...");
-
-    const pistonLang = PISTON_LANG_MAP[language];
-    if (!pistonLang) {
-      setOutputError(true);
-      setOutput(`❌ Execution not supported for "${language}" yet.`);
-      setRunning(false);
-      return;
-    }
-
-    // For SQL, wrap in a create + insert + select if it's just a SELECT
-    let codeToSend = code;
-    if (language === "sql" && code.trim().toUpperCase().startsWith("SELECT")) {
-      codeToSend = `CREATE TABLE IF NOT EXISTS hello (greeting TEXT);\nINSERT OR IGNORE INTO hello VALUES ('Hello, World!');\n${code}`;
-    }
+    setOutput("Compiling and running...");
 
     try {
-      const response = await fetch(PISTON_API, {
+      const response = await fetch(`${API_URL}/api/v1/code-execution/execute`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          language: pistonLang.language,
-          version: pistonLang.version,
-          files: [{ name: language === "java" ? "Main.java" : `main.${language}`, content: codeToSend }],
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("accessToken") || ""}`,
+        },
+        body: JSON.stringify({ language, code }),
       });
 
       const result = await response.json();
 
-      if (result.message) {
-        // API error
+      if (!response.ok || !result?.data?.success) {
+        const errMsg = result?.data?.compileError || result?.data?.stderr || result?.message || "Execution failed";
         setOutputError(true);
-        setOutput(`❌ Error: ${result.message}`);
+        setOutput(errMsg);
       } else {
-        const stdout = result.run?.stdout || "";
-        const stderr = result.run?.stderr || "";
-        const compileErr = result.compile?.stderr || "";
-
-        if (compileErr) {
+        const { stdout, stderr, compileError } = result.data;
+        if (compileError) {
           setOutputError(true);
-          setOutput(compileErr);
+          setOutput(compileError);
         } else if (stderr) {
           setOutputError(true);
           setOutput(stdout ? `${stdout}\n\n${stderr}` : stderr);
@@ -147,7 +129,7 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
       }
     } catch (err) {
       setOutputError(true);
-      setOutput(`❌ Network error: could not reach code execution service.\n${err.message}`);
+      setOutput(`Network error: could not reach code execution service.\n${err.message}`);
     } finally {
       setRunning(false);
     }
