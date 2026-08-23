@@ -18,17 +18,17 @@ function CreateJobPost({ onCancel }) {
     };
     const handleCreateJobPost = async () => {
         try {
-            const res = await axios.post(`${API_URL}/api/v1/placements`, { newPost }, {
+            const res = await axios.post(`${API_URL}/api/v1/placements`, newPost, {
                 credentials: "include",
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
-            console.log("response: ", res);
-            if (!res.status < 400) {
-                toast.error(res.response.data.message);
+            if (res.status < 400) {
+                toast.success(res.data?.message || "Post created successfully!");
+                onCancel(false);
             }
-            toast.success(res.response.data.message);
-            onCancel(false)
         } catch (error) {
+            const msg = error.response?.data?.message || "Failed to create post";
+            toast.error(msg);
             console.error(error);
         }
     }

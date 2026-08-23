@@ -15,7 +15,7 @@ import SearchDialog from "../../Dialog/Search_Dialog/SearchDialog.jsx";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 // Icons
-import { ArrowLeftCircleIcon, UserPlus, Search, Users } from "lucide-react";
+import { ArrowLeftCircleIcon, UserPlus, Users } from "lucide-react";
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 const DEFAULT_AVATAR = "/defaultUserAvatar.jpeg";
@@ -127,10 +127,7 @@ function ManageUsers() {
           >
             <UserPlus className="h-4 w-4" /> Create New {role === "placement_staff" ? "Student" : "User"}
           </Button>
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 shadow-sm">
-            <Search className="h-3.5 w-3.5" />
-            <SearchDialog data={usersNameAndEmail} onQuery={searchQueryFromChild} placeholderValue="Search user by name and email" />
-          </div>
+          <SearchDialog data={usersNameAndEmail} onQuery={searchQueryFromChild} placeholderValue="Search user by name and email" />
         </div>
       </div>
 

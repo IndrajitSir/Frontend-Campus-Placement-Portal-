@@ -118,25 +118,29 @@ const InfinitePlacements = () => {
 
   const handleUpdate = async () => {
     setEditMode(false);
-    let payload = { newPlacementPost: placementInfo };
-    const res = await fetch(`${API_URL}/api/v1/placements/${placementInfo?._id}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Error ${res.status}: ${res.statusText} - ${errorText}`);
+    try {
+      const { _id, company_name, job_title, description, eligibility, location, last_date } = editedInfo;
+      const payload = { company_name, job_title, description, eligibility, location, last_date };
+      const res = await fetch(`${API_URL}/api/v1/placements/${_id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const response = await res.json();
+      if (!res.ok) {
+        toast.error(response.message || "Update failed");
+        return;
+      }
+      toast.success(response.message || "Updated successfully!");
+      setPlacementInfoDialog(false);
+    } catch (error) {
+      toast.error("Failed to update placement");
+      console.error(error);
     }
-
-    const text = await res.text(); // get raw response
-    const response = text ? await res.json() : {}; // safely parse if not empty
-    toast.success(response.message || "Updated successfully!");
-    setPlacementInfoDialog(false);
   }
 
   const searchQueryFromChild = (query) => {

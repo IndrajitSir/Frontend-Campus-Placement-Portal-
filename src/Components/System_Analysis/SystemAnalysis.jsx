@@ -45,7 +45,7 @@ function SystemAnalysis() {
         <>
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {stats.map(stat => (
-                    <Card key={stat.title} className="w-110">
+                    <Card key={stat.title} className="w-full">
                         <CardContent className="p-4">
                             <h3 className="text-lg font-medium">{stat.title}</h3>
                             <p className="text-2xl font-bold">{stat.value}</p>

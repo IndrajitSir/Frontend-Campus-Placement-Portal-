@@ -15,6 +15,7 @@ import DeletePlacementPostDialog from "../../Dialog/DeletePlacement_dialog/Delet
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 import { usePlacementData } from "../../context/PlacementContext/PlacementContext.jsx";
+import CircleLoader from "../../Components/Loader/CircleLoader.jsx";
 // icons
 import { ArrowLeftCircleIcon } from "lucide-react";
 import { Trash } from "lucide-react";
@@ -22,7 +23,7 @@ import { Trash } from "lucide-react";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Placements = () => {
-  const { placements, setPlacements } = usePlacementData();
+  const { placements, setPlacements, loadingPlacements } = usePlacementData();
   const { accessToken, role } = useUserData();
   const [applyPlacementDialog, setApplyPlacementDialog] = useState(false);
   const [appliedConfirmationDialog, setAppliedConfirmationDialog] = useState(false);
@@ -85,25 +86,29 @@ const Placements = () => {
 
   const handleUpdate = async () => {
     setEditMode(false);
-    let payload = { newPlacementPost: placementInfo };
-    const res = await fetch(`${API_URL}/api/v1/placements/${placementInfo?._id}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Error ${res.status}: ${res.statusText} - ${errorText}`);
+    try {
+      const { _id, company_name, job_title, description, eligibility, location, last_date } = editedInfo;
+      const payload = { company_name, job_title, description, eligibility, location, last_date };
+      const res = await fetch(`${API_URL}/api/v1/placements/${_id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const response = await res.json();
+      if (!res.ok) {
+        toast.error(response.message || "Update failed");
+        return;
+      }
+      toast.success(response.message || "Updated successfully!");
+      setPlacementInfoDialog(false);
+    } catch (error) {
+      toast.error("Failed to update placement");
+      console.error(error);
     }
-
-    const text = await res.text(); // get raw response
-    const response = text ? await res.json() : {}; // safely parse if not empty
-    toast.success(response.message || "Updated successfully!");
-    setPlacementInfoDialog(false);
   }
 
   const searchQueryFromChild = (query) => {
@@ -112,6 +117,14 @@ const Placements = () => {
     setShowSearchResult(true);
   }
 
+
+  if (loadingPlacements) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <CircleLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">

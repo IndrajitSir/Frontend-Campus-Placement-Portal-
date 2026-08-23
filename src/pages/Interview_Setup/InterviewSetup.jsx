@@ -14,6 +14,7 @@ import { Video, PlusCircle, KeyRound, LoaderCircle } from 'lucide-react';
 
 function InterviewSetup() {
   const [roomId, setRoomID] = useState(localStorage.getItem("roomId") || "");
+  const [language, setLanguage] = useState("javascript");
   const [joinId, setJoinId] = useState("");
   const [isLive, setIsLive] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -87,7 +88,7 @@ function InterviewSetup() {
   return (
     <div className="mx-auto w-full max-w-7xl px-2">
       {isLive ? (
-        <InterviewRoom user={userInfo?.user} isInterviewer={isInterviewer} roomId={roomId} />
+        <InterviewRoom user={userInfo?.user} isInterviewer={isInterviewer} roomId={roomId} language={language} setLanguage={setLanguage} />
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 16 }}

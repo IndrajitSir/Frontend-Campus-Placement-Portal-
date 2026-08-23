@@ -28,7 +28,35 @@ export const animation = {
     },
 };
 
-export const languages = ["javascript", "python", "cpp", "java"];
+export const languages = [
+  { id: "javascript", label: "JavaScript", monaco: "javascript" },
+  { id: "typescript", label: "TypeScript", monaco: "typescript" },
+  { id: "python", label: "Python", monaco: "python" },
+  { id: "java", label: "Java", monaco: "java" },
+  { id: "c", label: "C", monaco: "c" },
+  { id: "cpp", label: "C++", monaco: "cpp" },
+  { id: "php", label: "PHP", monaco: "php" },
+  { id: "kotlin", label: "Kotlin", monaco: "kotlin" },
+  { id: "rust", label: "Rust", monaco: "rust" },
+  { id: "go", label: "Go", monaco: "go" },
+  { id: "dart", label: "Dart", monaco: "dart" },
+  { id: "sql", label: "SQL", monaco: "sql" },
+];
+
+export const defaultCodeByLanguage = {
+  javascript: `// JavaScript\nfunction greet(name) {\n  console.log(\`Hello, \${name}!\`);\n}\n\ngreet("World");`,
+  typescript: `// TypeScript\nfunction greet(name: string): void {\n  console.log(\`Hello, \${name}!\`);\n}\n\ngreet("World");`,
+  python: `# Python\ndef greet(name):\n    print(f"Hello, {name}!")\n\ngreet("World")`,
+  java: `// Java\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}`,
+  c: `// C\n#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\n");\n    return 0;\n}`,
+  cpp: `// C++\n#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}`,
+  php: `<?php\n// PHP\nfunction greet($name) {\n    echo "Hello, $name!";\n}\n\ngreet("World");\n?>`,
+  kotlin: `// Kotlin\nfun main() {\n    println("Hello, World!")\n}`,
+  rust: `// Rust\nfn main() {\n    println!("Hello, World!");\n}`,
+  go: `// Go\npackage main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}`,
+  dart: `// Dart\nvoid main() {\n  print('Hello, World!');\n}`,
+  sql: `-- SQL\nSELECT 'Hello, World!' AS greeting;`,
+};
 
 export const predefinedQuestions = [
     { question: "Explain closures in JavaScript", code: "function outer() {\n  let counter = 0;\n  return function inner() {\n    counter++;\n    console.log(counter);\n  }\n}" },

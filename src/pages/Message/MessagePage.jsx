@@ -16,7 +16,7 @@ import { useApi } from '../../context/ApiContext/ApiContext';
 // Hooks
 import useAllUsersNameAndEmail from '../../hooks/Users_Name_and_Email/useAllUsersNameAndEmail.js';
 // Icons
-import { Check, X, MessageCircle, LoaderCircle, UserPlus, Search, Users } from 'lucide-react';
+import { Check, X, MessageCircle, LoaderCircle, UserPlus, Users } from 'lucide-react';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 const DEFAULT_AVATAR = '/defaultUserAvatar.jpeg';
@@ -88,7 +88,7 @@ export default function NewMessagePage() {
     const fetchFriends = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/api/v2/friend-request/${myId}`, {
+        const response = await fetch(`${API_URL}/api/v2/friend-request/friends`, {
           credentials: "include",
           method: "GET",
           headers: {
@@ -293,10 +293,7 @@ export default function NewMessagePage() {
               </h2>
               <p className="mt-0.5 text-xs text-slate-400">Search for someone or pick from everyone on the platform.</p>
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-500">
-              <Search className="h-3.5 w-3.5" />
-              <SearchDialog data={data} searchCriteria={["name", "email"]} onQuery={searchQueryFromChild} placeholderValue="Search user by name or email" />
-            </div>
+            <SearchDialog data={data} searchCriteria={["name", "email"]} onQuery={searchQueryFromChild} placeholderValue="Search user by name or email" />
           </div>
 
           <div className="mt-4 grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 xl:grid-cols-3">
