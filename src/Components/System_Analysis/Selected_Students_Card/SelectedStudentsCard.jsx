@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion';
 // Chart
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 // Shadcn Components
 import { Card, CardContent } from "../../../Components/ui/card";
 // Hooks
