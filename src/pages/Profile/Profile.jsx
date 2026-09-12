@@ -276,7 +276,7 @@ export default function ProfilePage() {
                     onClick={() => setDeleteResumeDialog(true)}
                     className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-red-400/25 bg-red-500/10 px-3.5 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
                   >
-                    <Trash2Icon className="h-4 w-4" /> Delete
+                    <Trash2Icon className="h-4 w-4" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
