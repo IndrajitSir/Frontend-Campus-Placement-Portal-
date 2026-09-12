@@ -274,27 +274,22 @@ export default function NewMessagePage() {
         setFriends(normalizedFriends);
         setFriendsLoading(false);
         // ---------------- Incoming requests ----------------
-        if (!resIncoming.ok || !dataIncoming?.success) {
-          throw new Error(
-            dataIncoming?.message || "Failed to fetch incoming requests"
-          );
+        if (
+          dataIncoming?.success &&
+          Array.isArray(dataIncoming?.data?.requests)
+        ) {
+          const pendingRequests = dataIncoming.data.requests
+            .map((req) => ({
+              ...(req?.sender || {}),
+              requestId: req?._id,
+            }))
+            .filter((u) => u?._id);
+
+          setFriendRequest({
+            newFriend: pendingRequests.length > 0,
+            friends: pendingRequests,
+          });
         }
-
-        const pendingRequests = (
-          Array.isArray(dataIncoming?.data)
-            ? dataIncoming.data
-            : []
-        )
-          .map((request) => ({
-            ...(request?.sender || {}),
-            requestId: request?._id,
-          }))
-          .filter((user) => user?._id);
-
-        setFriendRequest({
-          newFriend: pendingRequests.length > 0,
-          friends: pendingRequests,
-        });
         setPeopleLoading(false);
       } catch (error) {
         if (!cancelled) {
@@ -782,7 +777,6 @@ export default function NewMessagePage() {
                     result,
                     <>
                       <FriendRequestButton
-                        senderId={myId}
                         receiverId={result?._id}
                       />
 
@@ -830,7 +824,6 @@ export default function NewMessagePage() {
                       user,
                       <>
                         <FriendRequestButton
-                          senderId={myId}
                           receiverId={user?._id}
                         />
 
@@ -1229,7 +1222,6 @@ export default function NewMessagePage() {
 
               <div className="flex items-center gap-1.5">
                 <FriendRequestButton
-                  senderId={myId}
                   receiverId={suggestedPeer?._id}
                 />
 

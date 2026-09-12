@@ -6,29 +6,57 @@ import { useUserData } from '../../context/AuthContext/AuthContext';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
-const FriendRequestButton = ({ senderId, receiverId }) => {
+const FriendRequestButton = ({ receiverId }) => {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const { accessToken } = useUserData();
 
   const sendRequest = async () => {
-    if (!senderId || !receiverId || sending) return;
+    if (sending) return;
+
+    if (!receiverId) {
+      toast.error("Receiver ID is missing. Cannot send friend request.");
+      return;
+    }
+
     setSending(true);
+
     try {
-      const response = await fetch(`${API_URL}/api/v2/friend-request/send`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({ senderId: senderId, receiverId: receiverId })
-      });
+      const response = await fetch(
+        `${API_URL}/api/v2/friend-request/send`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            receiverId: String(receiverId),
+          }),
+        }
+      );
+
       const res = await response.json();
-      if (!res.success) { toast.warn(res.message); }
+
+      if (!response.ok || !res?.success) {
+        toast.error(
+          res?.message || "Failed to send friend request."
+        );
+        return;
+      }
+
       setSent(true);
+
+      toast.success(
+        res?.message || "Friend request sent successfully!"
+      );
     } catch (err) {
-      console.error(err);
+      console.error("Failed to send friend request:", err);
+
+      toast.error(
+        "Unable to send friend request. Please try again."
+      );
     } finally {
       setSending(false);
     }

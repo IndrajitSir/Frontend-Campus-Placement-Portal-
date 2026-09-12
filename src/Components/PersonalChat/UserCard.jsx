@@ -14,9 +14,27 @@ export const UserCard = ({ user, currentUser }) => {
         <h3 className="font-semibold text-slate-800">{user?.name || "User"}</h3>
         {user?.email && <p className="text-xs text-slate-400">{user.email}</p>}
       </div>
-      <div className="flex gap-2 items-center">
-        <FriendRequestButton senderId={currentUserId} receiverId={user?._id} />
-        <ChatIconButton onClick={() => setChatOpen(true)} />
+      <div className="flex items-center gap-2">
+        <FriendRequestButton
+          onClick={() => {
+            if (!user?._id) {
+              toast.error("User ID is missing. Cannot open chat.");
+              return;
+            }
+          }}
+          receiverId={user?._id}
+        />
+
+        <ChatIconButton
+          onClick={() => {
+            if (!user?._id) {
+              toast.error("User ID is missing. Cannot open chat.");
+              return;
+            }
+
+            setChatOpen(true);
+          }}
+        />
       </div>
 
       {chatOpen && (
