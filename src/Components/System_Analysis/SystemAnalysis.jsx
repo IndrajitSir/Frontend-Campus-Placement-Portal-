@@ -12,6 +12,7 @@ import StudentApprovalStats from './Student_Approval_Stats_Card/StudentApprovalS
 import StudentByLocationCard from './Student_By_Location_Card/StudentByLocationCard';
 import StudentsPerDepartmentCard from './Students_Per_Department_Card/StudentsPerDepartmentCard';
 import UserCountCard from './User_Count_Card/UserCountCard';
+import { Analytics } from '@vercel/analytics/react';
 // Hooks
 import { useTotalStudents, useTotalPlacements, useTotalApplications } from '../../hooks/Analytics/useAnalytics.js';
 // Components
@@ -69,6 +70,9 @@ function SystemAnalysis() {
                 <ResumeUploadStatsCard />
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className='col-span-1 md:col-span-2'>
                     <ActiveStudentsCard />
+                </motion.div>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className='col-span-1 md:col-span-2'>
+                    <Analytics />
                 </motion.div>
             </motion.div>
         </>
