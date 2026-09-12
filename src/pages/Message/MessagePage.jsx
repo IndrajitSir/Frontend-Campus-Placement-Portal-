@@ -30,12 +30,31 @@ import {
   UserPlus,
   Users,
   ChevronLeft,
+  Sparkles,
 } from "lucide-react";
 
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
 const DEFAULT_AVATAR = "/defaultUserAvatar.jpeg";
+
+// ============================================================
+// Design tokens (kept local so no tailwind.config changes are
+// required — "brand" from the Stitch export maps 1:1 onto the
+// default Tailwind "violet" scale).
+// ============================================================
+const PANEL_SHADOW =
+  "shadow-[0_4px_20px_-2px_rgba(124,58,237,0.06),0_2px_6px_-1px_rgba(0,0,0,0.03)]";
+const CARD_SHADOW =
+  "shadow-[0_1px_3px_rgba(0,0,0,0.03),0_3px_8px_rgba(124,58,237,0.02)]";
+
+const DIRECTORY_FILTERS = [
+  "All Students",
+  "Computer Science",
+  "Design & Arts",
+  "Business",
+  "Faculty",
+];
 
 export default function NewMessagePage() {
   // ---------- Users ----------
@@ -59,6 +78,10 @@ export default function NewMessagePage() {
     newFriend: false,
     friends: [],
   });
+
+  // ---------- UI-only state (design layer) ----------
+  const [activeFriendsTab, setActiveFriendsTab] = useState("all"); // "all" | "online" | "requests"
+  const [activeFilter, setActiveFilter] = useState(DIRECTORY_FILTERS[0]); // decorative until backend exposes a category field
 
   const { ref, inView } = useInView();
 
@@ -472,6 +495,20 @@ export default function NewMessagePage() {
   };
 
   // ============================================================
+  // Derived values (design layer)
+  // ============================================================
+
+  // A single not-yet-friended person to spotlight in the Friends
+  // panel. Purely a client-side pick from what's already loaded —
+  // no dedicated "suggestions" endpoint exists yet.
+  const suggestedPeer = users.find(
+    (user) =>
+      user?._id &&
+      user._id !== myId &&
+      !friends.some((friend) => friend?._id === user._id)
+  );
+
+  // ============================================================
   // Person card
   // ============================================================
 
@@ -480,27 +517,29 @@ export default function NewMessagePage() {
       key={person?._id}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:shadow-md"
+      className={`group flex flex-col justify-between rounded-xl border border-slate-200/90 bg-white p-3 ${CARD_SHADOW} transition-all duration-200 hover:shadow-md hover:border-violet-200`}
     >
-      <div className="flex items-center gap-3">
-        <img
-          src={avatarOf(person)}
-          alt={nameOf(person)}
-          className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-indigo-100"
-        />
+      <div>
+        <div className="mb-2.5 flex items-center space-x-2.5">
+          <img
+            src={avatarOf(person)}
+            alt={nameOf(person)}
+            className="h-10 w-10 shrink-0 rounded-full object-cover shadow-sm ring-2 ring-white"
+          />
 
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-slate-900">
-            {nameOf(person)}
-          </p>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <p className="truncate text-xs font-bold text-slate-800 transition-colors group-hover:text-violet-600">
+              {nameOf(person)}
+            </p>
 
-          <p className="truncate text-xs text-slate-400">
-            {emailOf(person) || "Student"}
-          </p>
+            <p className="truncate text-[11px] text-slate-400">
+              {emailOf(person) || "Student"}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="flex items-center gap-1.5 border-t border-slate-100 pt-2">
         {actions}
       </div>
     </motion.div>
@@ -511,7 +550,16 @@ export default function NewMessagePage() {
   // ============================================================
 
   return (
-    <div className="relative flex min-h-[560px] h-[calc(100vh-7.5rem)] w-full min-w-0 gap-6">
+    <div className="relative flex min-h-[560px] h-[calc(100vh-7.5rem)] w-full min-w-0 gap-5">
+      {/* Custom scrollbars — scoped, no tailwind.config changes needed */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
       {/* ========================================================
           Messages
@@ -521,101 +569,71 @@ export default function NewMessagePage() {
         className={`
           flex w-72 shrink-0 flex-col overflow-hidden
           rounded-2xl border border-slate-200/80
-          bg-white shadow-sm
+          bg-white ${PANEL_SHADOW}
           ${showChatPanel ? "hidden lg:flex" : "flex"}
         `}
       >
-        <MessagesContainer
-          activeConversationId={
-            showChatPanel
-              ? activeConversation?._id
-              : null
-          }
-          onSelectConversation={handleSelectConversation}
-        />
-      </aside>
+        {/* Panel header */}
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-3.5">
+          <div className="flex items-center space-x-2.5">
+            <div className="rounded-lg bg-violet-50 p-1.5 text-violet-600">
+              <MessageCircle className="h-4 w-4" />
+            </div>
+            <h2 className="font-display text-sm font-bold text-slate-800">
+              Messages
+            </h2>
+          </div>
 
-      {/* ========================================================
-          Friends
-      ======================================================== */}
-
-      <aside
-        className={`
-          flex w-72 shrink-0 flex-col overflow-hidden
-          rounded-2xl border border-slate-200/80
-          bg-white shadow-sm
-          ${showChatPanel ? "hidden lg:flex" : "flex"}
-        `}
-      >
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-          <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900">
-            <Users className="h-4 w-4 text-indigo-600" />
-            Friends
-          </h2>
-
-          <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
+          <span className="rounded-full bg-violet-100/80 px-2 py-0.5 text-xs font-bold text-violet-700 ring-1 ring-inset ring-violet-600/10">
             {friends.length}
           </span>
         </div>
 
-        <div className="flex-1 space-y-1.5 overflow-y-auto p-3">
-          {friends.length === 0 && (
-            <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
-                <UserPlus className="h-6 w-6" />
-              </span>
-
-              <p className="text-sm font-medium text-slate-400">
-                No friends yet
-              </p>
-
-              <p className="px-4 text-xs text-slate-300">
-                Send a friend request from the people list to start chatting.
-              </p>
+        {/* Quick access strip — built from real friends, not mock data */}
+        {friends.length > 0 && (
+          <div className="border-b border-slate-100 bg-slate-50/30 px-3 py-2">
+            <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              Quick access
             </div>
-          )}
+            <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-0.5">
+              {friends.slice(0, 10).map((friend) => (
+                <button
+                  key={friend?._id}
+                  type="button"
+                  onClick={() => openChatWith(friend)}
+                  className="group flex flex-shrink-0 cursor-pointer flex-col items-center"
+                >
+                  <img
+                    src={avatarOf(friend)}
+                    alt={nameOf(friend)}
+                    className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+                  />
+                  <span className="mt-0.5 max-w-[40px] truncate text-[9px] text-slate-500 group-hover:text-violet-600">
+                    {nameOf(friend).split(" ")[0]}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
-          {friends.map((friend) => {
-            const isActive =
-              showChatPanel &&
-              activeConversation?._id === friend?._id;
+        {/* Conversation list — MessagesContainer owns its own empty state */}
+        <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto">
+          <MessagesContainer
+            activeConversationId={
+              showChatPanel
+                ? activeConversation?._id
+                : null
+            }
+            onSelectConversation={handleSelectConversation}
+          />
+        </div>
 
-            return (
-              <button
-                key={friend?._id}
-                onClick={() => openChatWith(friend)}
-                className={`
-                  flex w-full cursor-pointer items-center gap-3
-                  rounded-xl p-2.5 text-left transition-all
-                  ${isActive
-                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
-                    : "text-slate-700 hover:bg-indigo-50"
-                  }
-                `}
-              >
-                <img
-                  src={avatarOf(friend)}
-                  alt={nameOf(friend)}
-                  className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-indigo-100"
-                />
-
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">
-                    {nameOf(friend)}
-                  </p>
-
-                  <p
-                    className={`truncate text-xs ${isActive
-                        ? "text-indigo-100"
-                        : "text-slate-400"
-                      }`}
-                  >
-                    Tap to chat
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+        {/* Panel footer */}
+        <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/80 p-3 text-[11px] text-slate-400">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" /> Instant Messenger
+          </span>
         </div>
       </aside>
 
@@ -623,7 +641,7 @@ export default function NewMessagePage() {
           Right Content
       ======================================================== */}
 
-      <section className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <section className={`flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white ${PANEL_SHADOW}`}>
 
         <AnimatePresence mode="wait" initial={false}>
 
@@ -638,31 +656,69 @@ export default function NewMessagePage() {
 
               {/* People header */}
 
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
-                <div>
-                  <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900">
-                    <MessageCircle className="h-4 w-4 text-indigo-600" />
-                    Start a conversation
-                  </h2>
+              <div className="border-b border-slate-100 p-4 sm:p-5">
+                <div className="mb-3.5 flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="rounded-lg bg-violet-50 p-1.5 text-violet-600">
+                        <MessageCircle className="h-4 w-4" />
+                      </span>
+                      <h1 className="font-display text-lg font-bold tracking-tight text-slate-900">
+                        Start a conversation
+                      </h1>
+                    </div>
 
-                  <p className="mt-0.5 text-xs text-slate-400">
-                    Search for someone or pick from everyone on the platform.
-                  </p>
+                    <p className="text-xs text-slate-500">
+                      Search for someone or pick from everyone on the platform.
+                    </p>
+                  </div>
+
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                    {users.length}+ People
+                  </span>
                 </div>
 
-                <SearchDialog
-                  data={(Array.isArray(data) ? data : []).filter(
-                    (user) => user?._id !== myId
-                  )}
-                  searchCriteria={["name", "email"]}
-                  onQuery={searchQueryFromChild}
-                  placeholderValue="Search user by name or email"
-                />
+                {/* Search */}
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="min-w-0 flex-1">
+                    <SearchDialog
+                      data={(Array.isArray(data) ? data : []).filter(
+                        (user) => user?._id !== myId
+                      )}
+                      searchCriteria={["name", "email"]}
+                      onQuery={searchQueryFromChild}
+                      placeholderValue="Search user by name or email"
+                    />
+                  </div>
+                </div>
+
+                {/* Quick filter chips — visual grouping only until the
+                    backend exposes a category/major field to filter on */}
+                <div className="no-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-0.5 text-xs">
+                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-400">
+                    Filter by:
+                  </span>
+                  {DIRECTORY_FILTERS.map((filter) => (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setActiveFilter(filter)}
+                      className={`whitespace-nowrap rounded-full px-2.5 py-1 transition-colors ${
+                        activeFilter === filter
+                          ? "border border-violet-200/60 bg-violet-50 font-semibold text-violet-700 hover:bg-violet-100"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* People grid */}
 
-              <div className="mt-4 grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto px-5 pb-5 pr-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="custom-scrollbar grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto bg-slate-50/50 px-5 py-4 sm:grid-cols-2 xl:grid-cols-3">
 
                 {result &&
                   renderPersonCard(
@@ -713,7 +769,7 @@ export default function NewMessagePage() {
 
                 {loading && (
                   <div className="col-span-full flex items-center justify-center gap-2 py-4 text-sm text-slate-400">
-                    <LoaderCircle className="h-4 w-4 animate-spin text-indigo-500" />
+                    <LoaderCircle className="h-4 w-4 animate-spin text-violet-500" />
                     Loading people…
                   </div>
                 )}
@@ -725,6 +781,21 @@ export default function NewMessagePage() {
                   />
                 )}
 
+              </div>
+
+              {/* Directory footer — reflects real infinite-scroll state
+                  rather than a fake numbered pager */}
+              <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-4 py-2.5 text-xs text-slate-500">
+                <span>
+                  Showing {users.length} {users.length === 1 ? "person" : "people"}
+                </span>
+                <span>
+                  {loading
+                    ? "Loading more…"
+                    : hasMore
+                      ? "Scroll for more"
+                      : "You've reached the end"}
+                </span>
               </div>
             </motion.div>
           ) : (
@@ -743,7 +814,7 @@ export default function NewMessagePage() {
 
               {/* Chat header */}
 
-              <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-5 py-4 text-white">
+              <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-600 via-indigo-600 to-fuchsia-600 px-5 py-4 text-white">
 
                 <div className="flex min-w-0 items-center gap-3">
 
@@ -801,86 +872,263 @@ export default function NewMessagePage() {
       </section>
 
       {/* ========================================================
-          Friend requests
-          ======================================================== */}
+          Friends & Network
+      ======================================================== */}
 
-      {friendRequest.newFriend && !showChatPanel && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
-          <Card className="pointer-events-auto w-full max-w-3xl border-amber-200/70 bg-amber-50/95 p-4 shadow-xl backdrop-blur">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="font-display text-sm font-bold text-slate-900">
-                Friend requests
-              </h2>
-
-              <button
-                onClick={() =>
-                  setFriendRequest({
-                    newFriend: false,
-                    friends: [],
-                  })
-                }
-                className="cursor-pointer rounded-lg p-1 text-slate-400 hover:bg-white/70 hover:text-slate-700"
-                title="Close friend requests"
-              >
-                <X className="h-4 w-4" />
-              </button>
+      <aside
+        className={`
+          flex w-72 shrink-0 flex-col overflow-hidden
+          rounded-2xl border border-slate-200/80
+          bg-white ${PANEL_SHADOW}
+          ${showChatPanel ? "hidden lg:flex" : "flex"}
+        `}
+      >
+        {/* Panel header */}
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-3.5">
+          <div className="flex items-center space-x-2.5">
+            <div className="rounded-lg bg-indigo-50 p-1.5 text-indigo-600">
+              <Users className="h-4 w-4" />
             </div>
+            <h2 className="font-display text-sm font-bold text-slate-800">
+              Friends &amp; Network
+            </h2>
+          </div>
 
-            <div className="mt-3 flex flex-wrap gap-3">
-              {friendRequest.friends.map((friend) => (
-                <div
-                  key={friend?.requestId || friend?._id}
-                  className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 pr-4 shadow-sm"
-                >
-                  <img
-                    src={avatarOf(friend)}
-                    alt={nameOf(friend)}
-                    className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
-                  />
+          <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700 ring-1 ring-inset ring-indigo-500/10">
+            {friends.length}
+          </span>
+        </div>
 
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900">
-                      {nameOf(friend)}
-                    </p>
+        {/* Sub tabs */}
+        <div className="flex border-b border-slate-100 bg-white px-3 pt-2 text-xs font-medium text-slate-500">
+          <button
+            type="button"
+            onClick={() => setActiveFriendsTab("all")}
+            className={`px-2.5 pb-2 ${
+              activeFriendsTab === "all"
+                ? "border-b-2 border-violet-600 font-semibold text-violet-600"
+                : "hover:text-slate-700"
+            }`}
+          >
+            All ({friends.length})
+          </button>
 
-                    <p className="truncate text-xs text-slate-400">
-                      {emailOf(friend)}
-                    </p>
+          <button
+            type="button"
+            onClick={() => setActiveFriendsTab("online")}
+            className={`px-2.5 pb-2 ${
+              activeFriendsTab === "online"
+                ? "border-b-2 border-violet-600 font-semibold text-violet-600"
+                : "hover:text-slate-700"
+            }`}
+          >
+            Online
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveFriendsTab("requests")}
+            className={`flex items-center gap-1 px-2.5 pb-2 ${
+              activeFriendsTab === "requests"
+                ? "border-b-2 border-violet-600 font-semibold text-violet-600"
+                : "hover:text-slate-700"
+            }`}
+          >
+            <span>Requests</span>
+            {friendRequest.friends.length > 0 && (
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+            )}
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="custom-scrollbar flex flex-1 flex-col justify-between overflow-y-auto p-3.5">
+          <div className="space-y-2">
+            {activeFriendsTab === "all" && (
+              friends.length === 0 ? (
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 text-indigo-500 shadow-inner">
+                    <UserPlus className="h-6 w-6 opacity-75" />
                   </div>
+                  <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                    No friends added yet
+                  </h3>
+                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                    Send friend requests to connect with classmates, mentors, and study partners.
+                  </p>
+                </div>
+              ) : (
+                friends.map((friend) => {
+                  const isActive =
+                    showChatPanel &&
+                    activeConversation?._id === friend?._id;
 
-                  <div className="ml-2 flex items-center gap-2">
+                  return (
                     <button
-                      title="Accept"
-                      onClick={() =>
-                        handleResponseToFriendRequest(
-                          "accepted",
-                          friend?.requestId
-                        )
-                      }
-                      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-600"
+                      key={friend?._id}
+                      type="button"
+                      onClick={() => openChatWith(friend)}
+                      className={`
+                        flex w-full cursor-pointer items-center gap-3
+                        rounded-xl p-2.5 text-left transition-all
+                        ${isActive
+                          ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/25"
+                          : "text-slate-700 hover:bg-violet-50"
+                        }
+                      `}
                     >
-                      <Check className="h-4 w-4" />
-                    </button>
+                      <img
+                        src={avatarOf(friend)}
+                        alt={nameOf(friend)}
+                        className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white"
+                      />
 
-                    <button
-                      title="Decline"
-                      onClick={() =>
-                        handleResponseToFriendRequest(
-                          "rejected",
-                          friend?.requestId
-                        )
-                      }
-                      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white transition hover:bg-red-600"
-                    >
-                      <X className="h-4 w-4" />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {nameOf(friend)}
+                        </p>
+
+                        <p
+                          className={`truncate text-xs ${
+                            isActive ? "text-indigo-100" : "text-slate-400"
+                          }`}
+                        >
+                          Tap to chat
+                        </p>
+                      </div>
                     </button>
+                  );
+                })
+              )
+            )}
+
+            {activeFriendsTab === "online" && (
+              <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
+                <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                  Online status coming soon
+                </h3>
+                <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                  We don't track live presence yet — check the "All" tab to reach any friend.
+                </p>
+              </div>
+            )}
+
+            {activeFriendsTab === "requests" && (
+              friendRequest.friends.length === 0 ? (
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
+                  <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                    No pending requests
+                  </h3>
+                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                    New friend requests will show up here.
+                  </p>
+                </div>
+              ) : (
+                friendRequest.friends.map((friend) => (
+                  <Card
+                    key={friend?.requestId || friend?._id}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200/80 p-3 shadow-sm"
+                  >
+                    <img
+                      src={avatarOf(friend)}
+                      alt={nameOf(friend)}
+                      className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-slate-900">
+                        {nameOf(friend)}
+                      </p>
+                      <p className="truncate text-xs text-slate-400">
+                        {emailOf(friend)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        title="Accept"
+                        onClick={() =>
+                          handleResponseToFriendRequest(
+                            "accepted",
+                            friend?.requestId
+                          )
+                        }
+                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-600"
+                      >
+                        <Check className="h-4 w-4" />
+                      </button>
+
+                      <button
+                        title="Decline"
+                        onClick={() =>
+                          handleResponseToFriendRequest(
+                            "rejected",
+                            friend?.requestId
+                          )
+                        }
+                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white transition hover:bg-red-600"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </Card>
+                ))
+              )
+            )}
+          </div>
+
+          {/* Suggested peer spotlight — a real not-yet-friended user,
+              not mock data */}
+          {suggestedPeer && (
+            <div className={`mt-3 rounded-xl border border-slate-200/80 bg-white p-3 ${CARD_SHADOW}`}>
+              <div className="mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                  Suggested Peer
+                </span>
+              </div>
+
+              <div className="mb-2.5 flex items-center space-x-2.5">
+                <img
+                  src={avatarOf(suggestedPeer)}
+                  alt={nameOf(suggestedPeer)}
+                  className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-xs font-semibold text-slate-800">
+                    {nameOf(suggestedPeer)}
+                  </div>
+                  <div className="truncate text-[10px] text-slate-400">
+                    {emailOf(suggestedPeer) || "Student"}
                   </div>
                 </div>
-              ))}
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <FriendRequestButton
+                  senderId={myId}
+                  receiverId={suggestedPeer?._id}
+                />
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 cursor-pointer"
+                  onClick={() => openChatWith(suggestedPeer)}
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Quick Connect
+                </Button>
+              </div>
             </div>
-          </Card>
+          )}
         </div>
-      )}
+
+        {/* Panel footer */}
+        <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/80 p-3 text-[11px] text-slate-400">
+          <span className="font-medium text-slate-500">Campus Directory</span>
+        </div>
+      </aside>
 
     </div>
   );
