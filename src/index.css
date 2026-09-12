@@ -265,3 +265,42 @@
 [data-radix-dialog-close] {
   cursor: pointer !important;
 }
+
+/* ---------- Status pills ---------- */
+.pill {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide;
+}
+.pill-applied {
+  @apply pill bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:ring-indigo-500/30;
+}
+.pill-shortlisted {
+  @apply pill bg-amber-50 text-amber-600 ring-1 ring-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-500/30;
+}
+.pill-selected {
+  @apply pill bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-500/30;
+}
+.pill-rejected {
+  @apply pill bg-rose-50 text-rose-600 ring-1 ring-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:ring-rose-500/30;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark glass for dashboard chrome in dark mode */
+.dark .glass {
+  background: color-mix(in oklch, #0b1020 72%, transparent);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.2), 0 8px 24px -8px rgb(0 0 0 / 0.4);
+}
+.dark .card-elevate:hover {
+  box-shadow: 0 20px 40px -18px rgb(0 0 0 / 0.6);
+}

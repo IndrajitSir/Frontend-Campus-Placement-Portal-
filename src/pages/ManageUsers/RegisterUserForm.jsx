@@ -72,29 +72,32 @@ function RegisterUserForm({ onCancel }) {
   return (
     <div className="w-full space-y-4">
       <div className="space-y-1.5">
-        <Label>Full name</Label>
-        <Input type="text" name="name" value={signupInfo.name} placeholder="e.g. Priya Sharma" onChange={handleChangeSignup} />
+        <Label className="dark:text-slate-300">Full name</Label>
+        <Input type="text" name="name" value={signupInfo.name} placeholder="e.g. Priya Sharma" onChange={handleChangeSignup}
+          className="focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200" />
       </div>
       <div className="space-y-1.5">
-        <Label>Email</Label>
-        <Input type="email" name="email" value={signupInfo.email} placeholder="name@example.com" onChange={handleChangeSignup} />
+        <Label className="dark:text-slate-300">Email</Label>
+        <Input type="email" name="email" value={signupInfo.email} placeholder="name@example.com" onChange={handleChangeSignup}
+          className="focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200" />
       </div>
       <div className="space-y-1.5">
-        <Label>Password</Label>
-        <Input type="password" name="password" value={signupInfo.password} placeholder="Min 6 characters" onChange={handleChangeSignup} />
+        <Label className="dark:text-slate-300">Password</Label>
+        <Input type="password" name="password" value={signupInfo.password} placeholder="Min 6 characters" onChange={handleChangeSignup}
+          className="focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200" />
       </div>
       <div className="space-y-1.5">
-        <Label>Role</Label>
+        <Label className="dark:text-slate-300">Role</Label>
         <div className="flex flex-wrap gap-2">
           {visibleRoles.map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => setSignupInfo({ ...signupInfo, role: r })}
-              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95 ${
                 signupInfo.role === r
                   ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
-                  : "border border-slate-200 bg-white text-slate-600 hover:border-indigo-300"
+                  : "border border-slate-200 bg-white text-slate-600 hover:border-indigo-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300 dark:hover:border-indigo-400/50"
               }`}
             >
               {ROLE_LABELS[r]}
@@ -103,9 +106,10 @@ function RegisterUserForm({ onCancel }) {
         </div>
       </div>
       <div className="flex justify-end gap-3 pt-2">
-        <Button variant="outline" className="cursor-pointer" onClick={() => onCancel(false)}>Cancel</Button>
+        <Button variant="outline" className="cursor-pointer dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/10" onClick={() => onCancel(false)}>Cancel</Button>
         <Button
-          className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500"
+          variant="gradient"
+          className="cursor-pointer"
           onClick={handleRegister}
           disabled={submitting}
         >

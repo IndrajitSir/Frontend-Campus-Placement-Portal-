@@ -569,29 +569,29 @@ export default function NewMessagePage() {
       key={person?._id}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`group flex flex-col justify-between rounded-xl border border-slate-200/90 bg-white p-3 ${CARD_SHADOW} transition-all duration-200 hover:shadow-md hover:border-violet-200`}
+      className={`group flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white/[0.04] p-3 ${CARD_SHADOW} transition-all duration-200 hover:shadow-md hover:border-violet-200 dark:hover:border-violet-500/30`}
     >
       <div>
         <div className="mb-2.5 flex items-center space-x-2.5">
           <img
             src={avatarOf(person)}
             alt={nameOf(person)}
-            className="h-10 w-10 shrink-0 rounded-full object-cover shadow-sm ring-2 ring-white"
+            className="h-10 w-10 shrink-0 rounded-full object-cover shadow-sm ring-2 ring-white dark:ring-white/15"
           />
 
           <div className="min-w-0 flex-1 overflow-hidden">
-            <p className="truncate text-xs font-bold text-slate-800 transition-colors group-hover:text-violet-600">
+            <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-100 transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400">
               {nameOf(person)}
             </p>
 
-            <p className="truncate text-[11px] text-slate-400">
+            <p className="truncate text-[11px] text-slate-400 dark:text-slate-500">
               {emailOf(person) || "Student"}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 border-t border-slate-100 pt-2">
+      <div className="flex items-center gap-1.5 border-t border-slate-100 dark:border-white/10 pt-2">
         {actions}
       </div>
     </motion.div>
@@ -620,31 +620,31 @@ export default function NewMessagePage() {
       <aside
         className={`
           flex w-72 shrink-0 flex-col overflow-hidden
-          rounded-2xl border border-slate-200/80
-          bg-white ${PANEL_SHADOW}
+          rounded-2xl border border-slate-200/80 dark:border-white/10
+          bg-white dark:bg-[#0d1322] ${PANEL_SHADOW}
           ${showChatPanel ? "hidden lg:flex" : "flex"}
         `}
       >
         {/* Panel header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-3.5">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.03] p-3.5">
           <div className="flex items-center space-x-2.5">
-            <div className="rounded-lg bg-violet-50 p-1.5 text-violet-600">
+            <div className="rounded-lg bg-violet-50 dark:bg-violet-500/15 p-1.5 text-violet-600 dark:text-violet-400">
               <MessageCircle className="h-4 w-4" />
             </div>
-            <h2 className="font-display text-sm font-bold text-slate-800">
+            <h2 className="font-display text-sm font-bold text-slate-800 dark:text-slate-100">
               Messages
             </h2>
           </div>
 
-          <span className="rounded-full bg-violet-100/80 px-2 py-0.5 text-xs font-bold text-violet-700 ring-1 ring-inset ring-violet-600/10">
+          <span className="rounded-full bg-violet-100/80 dark:bg-violet-500/15 px-2 py-0.5 text-xs font-bold text-violet-700 dark:text-violet-300 ring-1 ring-inset ring-violet-600/10 dark:ring-violet-400/20">
             {friends.length}
           </span>
         </div>
 
         {/* Quick access strip — built from real friends, not mock data */}
         {friends.length > 0 && (
-          <div className="border-b border-slate-100 bg-slate-50/30 px-3 py-2">
-            <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <div className="border-b border-slate-100 dark:border-white/10 bg-slate-50/30 dark:bg-white/[0.02] px-3 py-2">
+            <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Quick access
             </div>
             <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-0.5">
@@ -658,9 +658,9 @@ export default function NewMessagePage() {
                   <img
                     src={avatarOf(friend)}
                     alt={nameOf(friend)}
-                    className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
+                    className="h-8 w-8 rounded-full object-cover ring-2 ring-white dark:ring-white/15 transition group-hover:ring-violet-300 dark:group-hover:ring-violet-500/40"
                   />
-                  <span className="mt-0.5 max-w-[40px] truncate text-[9px] text-slate-500 group-hover:text-violet-600">
+                  <span className="mt-0.5 max-w-[40px] truncate text-[9px] text-slate-500 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400">
                     {nameOf(friend).split(" ")[0]}
                   </span>
                 </button>
@@ -682,7 +682,7 @@ export default function NewMessagePage() {
         </div>
 
         {/* Panel footer */}
-        <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/80 p-3 text-[11px] text-slate-400">
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.03] p-3 text-[11px] text-slate-400 dark:text-slate-500">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-emerald-500" /> Instant Messenger
           </span>
@@ -693,7 +693,7 @@ export default function NewMessagePage() {
           Right Content
       ======================================================== */}
 
-      <section className={`flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white ${PANEL_SHADOW}`}>
+      <section className={`flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#0d1322] ${PANEL_SHADOW}`}>
 
         <AnimatePresence mode="wait" initial={false}>
 
@@ -708,24 +708,24 @@ export default function NewMessagePage() {
 
               {/* People header */}
 
-              <div className="border-b border-slate-100 p-4 sm:p-5">
+              <div className="border-b border-slate-100 dark:border-white/10 p-4 sm:p-5">
                 <div className="mb-3.5 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <div className="mb-1 flex items-center gap-2">
-                      <span className="rounded-lg bg-violet-50 p-1.5 text-violet-600">
+                      <span className="rounded-lg bg-violet-50 dark:bg-violet-500/15 p-1.5 text-violet-600 dark:text-violet-400">
                         <MessageCircle className="h-4 w-4" />
                       </span>
-                      <h1 className="font-display text-lg font-bold tracking-tight text-slate-900">
+                      <h1 className="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                         Start a conversation
                       </h1>
                     </div>
 
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Search for someone or pick from everyone on the platform.
                     </p>
                   </div>
 
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20 dark:ring-emerald-400/20">
                     <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                     {users.length}+ People
                   </span>
@@ -748,7 +748,7 @@ export default function NewMessagePage() {
                 {/* Quick filter chips — visual grouping only until the
                     backend exposes a category/major field to filter on */}
                 <div className="no-scrollbar mt-3 flex items-center gap-2 overflow-x-auto pb-0.5 text-xs">
-                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-400">
+                  <span className="whitespace-nowrap text-[11px] font-medium text-slate-400 dark:text-slate-500">
                     Filter by:
                   </span>
                   {DIRECTORY_FILTERS.map((filter) => (
@@ -757,8 +757,8 @@ export default function NewMessagePage() {
                       type="button"
                       onClick={() => setActiveFilter(filter)}
                       className={`whitespace-nowrap rounded-full px-2.5 py-1 transition-colors ${activeFilter === filter
-                        ? "border border-violet-200/60 bg-violet-50 font-semibold text-violet-700 hover:bg-violet-100"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        ? "border border-violet-200/60 dark:border-violet-500/30 bg-violet-50 dark:bg-violet-500/15 font-semibold text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-500/25"
+                        : "bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10"
                         }`}
                     >
                       {filter}
@@ -774,7 +774,7 @@ export default function NewMessagePage() {
 
               {/* People grid */}
 
-              <div className="custom-scrollbar grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto bg-slate-50/50 px-5 py-4 sm:grid-cols-2">
+              <div className="custom-scrollbar grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto bg-slate-50/50 dark:bg-white/[0.02] px-5 py-4 sm:grid-cols-2">
 
                 {result &&
                   renderPersonCard(
@@ -863,7 +863,7 @@ export default function NewMessagePage() {
 
               {/* Directory footer — reflects real infinite-scroll state
                   rather than a fake numbered pager */}
-              <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-4 py-2.5 text-xs text-slate-500">
+              <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] px-4 py-2.5 text-xs text-slate-500 dark:text-slate-400">
                 <span>
                   Showing {users.length} {users.length === 1 ? "person" : "people"}
                 </span>
@@ -956,35 +956,35 @@ export default function NewMessagePage() {
       <aside
         className={`
           flex w-72 shrink-0 flex-col overflow-hidden
-          rounded-2xl border border-slate-200/80
-          bg-white ${PANEL_SHADOW}
+          rounded-2xl border border-slate-200/80 dark:border-white/10
+          bg-white dark:bg-[#0d1322] ${PANEL_SHADOW}
           ${showChatPanel ? "hidden lg:flex" : "flex"}
         `}
       >
         {/* Panel header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-3.5">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.03] p-3.5">
           <div className="flex items-center space-x-2.5">
-            <div className="rounded-lg bg-indigo-50 p-1.5 text-indigo-600">
+            <div className="rounded-lg bg-indigo-50 dark:bg-indigo-500/15 p-1.5 text-indigo-600 dark:text-indigo-400">
               <Users className="h-4 w-4" />
             </div>
-            <h2 className="font-display text-sm font-bold text-slate-800">
+            <h2 className="font-display text-sm font-bold text-slate-800 dark:text-slate-100">
               Friends &amp; Network
             </h2>
           </div>
 
-          <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700 ring-1 ring-inset ring-indigo-500/10">
+          <span className="rounded-full bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-500/10 dark:ring-indigo-400/20">
             {activeFriendsTab === "requests" ? friendRequest.friends.length : friends.length}
           </span>
         </div>
 
         {/* Sub tabs */}
-        <div className="flex border-b border-slate-100 bg-white px-3 pt-2 text-xs font-medium text-slate-500">
+        <div className="flex border-b border-slate-100 dark:border-white/10 bg-white dark:bg-transparent px-3 pt-2 text-xs font-medium text-slate-500 dark:text-slate-400">
           <button
             type="button"
             onClick={() => setActiveFriendsTab("all")}
             className={`px-2.5 pb-2 ${activeFriendsTab === "all"
-              ? "border-b-2 border-violet-600 font-semibold text-violet-600"
-              : "hover:text-slate-700"
+              ? "border-b-2 border-violet-600 dark:border-violet-400 font-semibold text-violet-600 dark:text-violet-400"
+              : "hover:text-slate-700 dark:hover:text-slate-200"
               }`}
           >
             All ({friends.length})
@@ -994,8 +994,8 @@ export default function NewMessagePage() {
             type="button"
             onClick={() => setActiveFriendsTab("online")}
             className={`px-2.5 pb-2 ${activeFriendsTab === "online"
-              ? "border-b-2 border-violet-600 font-semibold text-violet-600"
-              : "hover:text-slate-700"
+              ? "border-b-2 border-violet-600 dark:border-violet-400 font-semibold text-violet-600 dark:text-violet-400"
+              : "hover:text-slate-700 dark:hover:text-slate-200"
               }`}
           >
             Online ({friends.length})
@@ -1005,8 +1005,8 @@ export default function NewMessagePage() {
             type="button"
             onClick={() => setActiveFriendsTab("requests")}
             className={`flex items-center gap-1.5 px-2.5 pb-2 ${activeFriendsTab === "requests"
-              ? "border-b-2 border-violet-600 font-semibold text-violet-600"
-              : "hover:text-slate-700"
+              ? "border-b-2 border-violet-600 dark:border-violet-400 font-semibold text-violet-600 dark:text-violet-400"
+              : "hover:text-slate-700 dark:hover:text-slate-200"
               }`}
           >
             <span>Requests ({friendRequest.friends.length})</span>
@@ -1021,14 +1021,14 @@ export default function NewMessagePage() {
           <div className="space-y-2">
             {activeFriendsTab === "all" && (
               friends.length === 0 ? (
-                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
-                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 text-indigo-500 shadow-inner">
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] p-4 text-center">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 shadow-inner">
                     <UserPlus className="h-6 w-6 opacity-75" />
                   </div>
-                  <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                  <h3 className="mb-1 text-xs font-semibold text-slate-800 dark:text-slate-100">
                     No friends added yet
                   </h3>
-                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
                     Send friend requests to connect with classmates, mentors, and study partners.
                   </p>
                 </div>
@@ -1048,7 +1048,7 @@ export default function NewMessagePage() {
                         rounded-xl p-2.5 text-left transition-all
                         ${isActive
                           ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/25"
-                          : "text-slate-700 hover:bg-violet-50"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-violet-50 dark:hover:bg-white/[0.06]"
                         }
                       `}
                     >
@@ -1078,11 +1078,11 @@ export default function NewMessagePage() {
 
             {activeFriendsTab === "online" && (
               friends.length === 0 ? (
-                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
-                  <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] p-4 text-center">
+                  <h3 className="mb-1 text-xs font-semibold text-slate-800 dark:text-slate-100">
                     No friends online right now
                   </h3>
-                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
                     Check back later or message your friends from the All tab.
                   </p>
                 </div>
@@ -1102,7 +1102,7 @@ export default function NewMessagePage() {
                         rounded-xl p-2.5 text-left transition-all
                         ${isActive
                           ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/25"
-                          : "text-slate-700 hover:bg-violet-50"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-violet-50 dark:hover:bg-white/[0.06]"
                         }
                       `}
                     >
@@ -1135,11 +1135,11 @@ export default function NewMessagePage() {
 
             {activeFriendsTab === "requests" && (
               friendRequest.friends.length === 0 ? (
-                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
-                  <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] p-4 text-center">
+                  <h3 className="mb-1 text-xs font-semibold text-slate-800 dark:text-slate-100">
                     No pending requests
                   </h3>
-                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
                     New friend requests will show up here.
                   </p>
                 </div>
@@ -1150,20 +1150,20 @@ export default function NewMessagePage() {
                   return (
                     <Card
                       key={friend?.requestId}
-                      className="flex items-center gap-3 rounded-xl border border-slate-200/80 p-3 shadow-sm"
+                      className="flex items-center gap-3 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/[0.04] p-3 shadow-sm"
                     >
                       <img
                         src={avatarOf(sender)}
                         alt={nameOf(sender)}
-                        className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
+                        className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100 dark:ring-indigo-500/25"
                       />
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-slate-900">
+                        <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
                           {nameOf(sender)}
                         </p>
 
-                        <p className="truncate text-xs text-slate-400">
+                        <p className="truncate text-xs text-slate-400 dark:text-slate-500">
                           {emailOf(sender)}
                         </p>
                       </div>
@@ -1204,9 +1204,9 @@ export default function NewMessagePage() {
           {/* Suggested peer spotlight — a real not-yet-friended user,
               not mock data */}
           {suggestedPeer && (
-            <div className={`mt-3 rounded-xl border border-slate-200/80 bg-white p-3 ${CARD_SHADOW}`}>
+            <div className={`mt-3 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-white/[0.04] p-3 ${CARD_SHADOW}`}>
               <div className="mb-2 flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-200">
                   <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                   Suggested Peer
                 </span>
@@ -1216,13 +1216,13 @@ export default function NewMessagePage() {
                 <img
                   src={avatarOf(suggestedPeer)}
                   alt={nameOf(suggestedPeer)}
-                  className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white"
+                  className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white dark:ring-white/15"
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-xs font-semibold text-slate-800">
+                  <div className="truncate text-xs font-semibold text-slate-800 dark:text-slate-100">
                     {nameOf(suggestedPeer)}
                   </div>
-                  <div className="truncate text-[10px] text-slate-400">
+                  <div className="truncate text-[10px] text-slate-400 dark:text-slate-500">
                     {emailOf(suggestedPeer) || "Student"}
                   </div>
                 </div>
@@ -1248,7 +1248,7 @@ export default function NewMessagePage() {
         </div>
 
         {/* Panel footer */}
-        <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/80 p-3 text-[11px] text-slate-400">
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.03] p-3 text-[11px] text-slate-400 dark:text-slate-500">
           <span className="font-medium text-slate-500">Campus Directory</span>
         </div>
       </aside>

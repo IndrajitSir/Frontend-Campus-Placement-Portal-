@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, Menu, X, LogIn, ArrowRight, LayoutDashboard, Briefcase, FileText, User, MessageCircle } from "lucide-react";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
+import NotificationBell from "../Notifications/NotificationBell.jsx";
+import ThemeToggle from "../Theme/ThemeToggle.jsx";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -84,6 +86,8 @@ const Navbar = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden items-center gap-2 md:flex">
+            {accessToken && <NotificationBell />}
+            {!onLanding && <ThemeToggle />}
             {accessToken ? (
               <Link
                 to={role === "student" ? "/home/profile" : "/home/dashboard"}
@@ -112,13 +116,17 @@ const Navbar = () => {
           </div>
 
           {/* Mobile toggle */}
-          <button
-            onClick={() => setMobileOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-200 transition-colors hover:bg-white/10 md:hidden cursor-pointer"
-            aria-label="Toggle navigation menu"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-1 md:hidden">
+            {accessToken && <NotificationBell />}
+            {!onLanding && <ThemeToggle />}
+            <button
+              onClick={() => setMobileOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-200 transition-colors hover:bg-white/10 cursor-pointer"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
       </div>
 

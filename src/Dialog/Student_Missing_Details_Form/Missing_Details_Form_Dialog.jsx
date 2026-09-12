@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { motion, AnimatePresence } from 'framer-motion';
 // Shadcn UI
 import { Label } from '../../Components/ui/label';
 import { Input } from '../../Components/ui/input';
 import { Button } from '../../Components/ui/button';
+// Shared motion presets
+import { fadeUp, EASE } from '../../lib/motion';
 // Icons
-import { UploadCloudIcon } from "lucide-react";
+import { UploadCloudIcon, CheckCircle2, Phone, MapPin, Briefcase, Loader2 } from "lucide-react";
 // Components
 import CircleLoader from '../../Components/Loader/CircleLoader.jsx';
 // Context
@@ -15,12 +18,19 @@ import ImageUploadDialog from '../Image_Upload_Dialog/ImageUploadDialog';
 // Environment Variable
 const API_URL = import.meta.env.VITE_API_URL;
 
+const STEPS = [
+    { n: 1, label: "Contact", icon: Phone },
+    { n: 2, label: "Details", icon: MapPin },
+    { n: 3, label: "Resume & Projects", icon: Briefcase },
+];
+
 function Missing_Details_Form_Dialog({ onCancel }) {
     console.count("MISSING_DETAILS_FORM_DIALOG render")
     const { accessToken, userInfo, handleResumeUpload } = useUserData();
     // const [numberOFProjects, setNumberOFProjects] = useState(null);
     const [resumeUploadDialog, setResumeUploadDialog] = useState(false);
     const [isResumeUploaded, setIsResumeUploaded] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         phoneNumber: '',
@@ -82,6 +92,7 @@ function Missing_Details_Form_Dialog({ onCancel }) {
     };
 
     const saveStepData = async () => {
+        setSaving(true);
         try {
             let payload = {};
 
@@ -191,78 +202,142 @@ function Missing_Details_Form_Dialog({ onCancel }) {
         } catch (err) {
             toast.error("Failed to save data.");
             console.error(err);
+        } finally {
+            setSaving(false);
         }
     };
 
     return (
-        <div className="p-4 text-black-600 space-y-4 overflow-y-auto max-h-[70vh]">
-            {step === 1 &&
-                <>
-                    <Label>Phone Number</Label>
-                    <Input className="mt-2" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button onClick={saveStepData} className="cursor-pointer">Save & Continue</Button>
-                    </div>
-                </>
-            }
-            {
-                step === 2 &&
-                <>
-                    <Label className="mt-2">Location</Label>
-                    <Input name="location" value={formData.location} onChange={handleChange} />
+        <div className="p-4 text-slate-800 space-y-4 overflow-y-auto max-h-[70vh] dark:text-slate-200">
+            {/* Step indicator */}
+            <div className="flex items-center justify-center gap-2 pb-1">
+                {STEPS.map(({ n, label }) => (
+                    <React.Fragment key={n}>
+                        <div className="flex items-center gap-1.5">
+                            <span
+                                className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold transition-colors ${
+                                    step > n
+                                        ? "bg-emerald-500 text-white dark:bg-emerald-500/90"
+                                        : step === n
+                                            ? "bg-gradient-to-br from-indigo-500 to-violet-500 text-white"
+                                            : "bg-slate-100 text-slate-400 dark:bg-white/10 dark:text-slate-500"
+                                }`}
+                            >
+                                {step > n ? <CheckCircle2 className="h-3.5 w-3.5" /> : n}
+                            </span>
+                            <span className={`hidden text-xs font-medium sm:inline ${step === n ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"}`}>
+                                {label}
+                            </span>
+                        </div>
+                        {n < STEPS.length && <span className="h-px w-4 bg-slate-200 dark:bg-white/10 sm:w-8" />}
+                    </React.Fragment>
+                ))}
+            </div>
 
-                    <Label className="mt-2">About</Label>
-                    <Input name="about" value={formData.about} onChange={handleChange} />
+            <AnimatePresence mode="wait">
+                {step === 1 &&
+                    <motion.div
+                        key="step-1"
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        exit={{ opacity: 0, y: -10, transition: { duration: 0.2, ease: EASE } }}
+                    >
+                        <Label>Phone Number</Label>
+                        <Input className="mt-2" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="gradient" onClick={saveStepData} disabled={saving} className="cursor-pointer">
+                                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {saving ? "Saving…" : "Save & Continue"}
+                            </Button>
+                        </div>
+                    </motion.div>
+                }
+                {step === 2 &&
+                    <motion.div
+                        key="step-2"
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        exit={{ opacity: 0, y: -10, transition: { duration: 0.2, ease: EASE } }}
+                    >
+                        <Label className="mt-2">Location</Label>
+                        <Input name="location" value={formData.location} onChange={handleChange} />
 
-                    <Label className="mt-2">Professional Skill</Label>
-                    <Input name="professional_skill" value={formData.professional_skill} onChange={handleChange} />
+                        <Label className="mt-2">About</Label>
+                        <Input name="about" value={formData.about} onChange={handleChange} />
 
-                    <Label className="mt-2">Department</Label>
-                    <Input name="department" value={formData.department} onChange={handleChange} />
+                        <Label className="mt-2">Professional Skill</Label>
+                        <Input name="professional_skill" value={formData.professional_skill} onChange={handleChange} />
 
-                    <div className="flex justify-end gap-2 mt-4">
-                        {/* <Button variant="outline" className="cursor-pointer" onClick={() => setStep(step - 1)}>Back</Button> */}
-                        <Button onClick={saveStepData} className="cursor-pointer">Save & Continue</Button>
-                    </div>
-                </>
-            }
+                        <Label className="mt-2">Department</Label>
+                        <Input name="department" value={formData.department} onChange={handleChange} />
 
-            {step === 3 &&
-                <>
-                    <div className='flex items-center justify-center gap-6'>
-                        {
-                            <Label className={`mt-2 text-xl ${isResumeUploaded && "text-green-500"}`}>{isResumeUploaded ? "Resume Uploaded" : "Resume"}</Label>
-                            // : <CircleLoader />
-                        }
-                        <Button variant="outline" onClick={() => { setResumeUploadDialog(true) }} className="cursor-pointer w-8 h-8"><UploadCloudIcon className="w-5 h-5 cursor-pointer" /></Button>
-                    </div>
-                    <ImageUploadDialog isOpen={resumeUploadDialog} onClose={() => setResumeUploadDialog(false)}
-                        onUpload={async (file) => {
-                            try {
-                                // setLoading(true);
-                                const success = await handleResumeUpload(file);
-                                setIsResumeUploaded(success);
-                            } catch (error) {
-                                console.error("Upload failed", error);
-                                toast.error("Upload failed");
-                            } finally {
-                                // setLoading(false)
+                        <div className="flex justify-end gap-2 mt-4">
+                            {/* <Button variant="outline" className="cursor-pointer" onClick={() => setStep(step - 1)}>Back</Button> */}
+                            <Button variant="gradient" onClick={saveStepData} disabled={saving} className="cursor-pointer">
+                                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {saving ? "Saving…" : "Save & Continue"}
+                            </Button>
+                        </div>
+                    </motion.div>
+                }
+
+                {step === 3 &&
+                    <motion.div
+                        key="step-3"
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        exit={{ opacity: 0, y: -10, transition: { duration: 0.2, ease: EASE } }}
+                    >
+                        <div className='flex items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4 dark:border-white/10 dark:bg-white/[0.03]'>
+                            {
+                                <Label className={`mt-2 text-xl ${isResumeUploaded ? "text-emerald-500 dark:text-emerald-400" : "text-slate-700 dark:text-slate-200"}`}>{isResumeUploaded ? "Resume Uploaded" : "Resume"}</Label>
+                                // : <CircleLoader />
                             }
-                        }} />
-                    <Label className="mt-2">Projects</Label>
-                    <Label className="mt-1">Title</Label>
-                    <Input name="title" value={formData.project.title} onChange={handleProjectChange} />
-                    <Label className="mt-1">Description</Label>
-                    <Input name="description" value={formData.project.description} onChange={handleProjectChange} />
-                    <Label className="mt-1">Link</Label>
-                    <Input name="link" value={formData.project.link} onChange={handleProjectChange} />
+                            {isResumeUploaded && <CheckCircle2 className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />}
+                            <Button variant="outline" onClick={() => { setResumeUploadDialog(true) }} className="cursor-pointer w-8 h-8"><UploadCloudIcon className="w-5 h-5 cursor-pointer" /></Button>
+                        </div>
+                        <ImageUploadDialog isOpen={resumeUploadDialog} onClose={() => setResumeUploadDialog(false)}
+                            onUpload={async (file) => {
+                                try {
+                                    // setLoading(true);
+                                    const success = await handleResumeUpload(file);
+                                    setIsResumeUploaded(success);
+                                } catch (error) {
+                                    console.error("Upload failed", error);
+                                    toast.error("Upload failed");
+                                } finally {
+                                    // setLoading(false)
+                                }
+                            }} />
+                        <Label className="mt-4">Projects</Label>
+                        <div className="mt-1 space-y-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4 dark:border-white/10 dark:bg-white/[0.03]">
+                            <div className="space-y-1">
+                                <Label>Title</Label>
+                                <Input name="title" value={formData.project.title} onChange={handleProjectChange} />
+                            </div>
+                            <div className="space-y-1">
+                                <Label>Description</Label>
+                                <Input name="description" value={formData.project.description} onChange={handleProjectChange} />
+                            </div>
+                            <div className="space-y-1">
+                                <Label>Link</Label>
+                                <Input name="link" value={formData.project.link} onChange={handleProjectChange} />
+                            </div>
+                        </div>
 
-                    <div className="flex justify-end gap-2 mt-4">
-                        {/* <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button> */}
-                        <Button onClick={saveStepData} className="cursor-pointer">Save</Button>
-                    </div>
-                </>
-            }
+                        <div className="flex justify-end gap-2 mt-4">
+                            {/* <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button> */}
+                            <Button variant="gradient" onClick={saveStepData} disabled={saving} className="cursor-pointer">
+                                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {saving ? "Saving…" : "Save"}
+                            </Button>
+                        </div>
+                    </motion.div>
+                }
+            </AnimatePresence>
         </div>
     );
 }

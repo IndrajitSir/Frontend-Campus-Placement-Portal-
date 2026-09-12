@@ -11,7 +11,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 // Icons
 import { Trash, Eye, GraduationCap, BadgeCheck, UserX } from "lucide-react";
 // Components
-import CircleLoader from "../../../Components/Loader/CircleLoader.jsx";
 // Dialog Boxes
 import DeleteUserDialog from '../../../Dialog/DeleteUser_dialog/DeleteUserDialog.jsx';
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
@@ -26,6 +25,7 @@ function Students() {
   const [deleteUserDialog, setdeleteUserDialog] = useState(false);
   const [userDetailsDialog, setUserDetailsDialog] = useState(false);
   const [approvalDialog, setapprovalDialog] = useState(false);
+  const [approving, setApproving] = useState(false);
   const [student_id, setStudent_id] = useState("");
   const [isApproved, setIsApproved] = useState(false);
   const [specificUserDetails, setSpecificUserDetails] = useState({});
@@ -89,8 +89,13 @@ function Students() {
 
   if (loading) {
     return (
-      <div className="w-full">
-        <CircleLoader fullScreen={false} label="Loading students…" />
+      <div className="w-full space-y-5">
+        <div className="skeleton-shimmer mt-2 h-9 w-52 rounded-xl" />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="skeleton-shimmer h-52 rounded-2xl border border-slate-200/80 dark:border-white/10" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -98,17 +103,22 @@ function Students() {
   return (
     <div className="w-full space-y-5">
       <div className="flex items-center gap-2 pt-2">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300">
           <GraduationCap className="h-4 w-4" />
         </span>
-        <h2 className="font-display text-lg font-bold text-slate-900">Students</h2>
-        <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
+        <h2 className="font-display text-lg font-bold text-slate-900 dark:text-slate-100">Students</h2>
+        <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300">
           {Array.isArray(students) ? students.length : 0}
         </span>
       </div>
 
       {Array.isArray(students) && students.length === 0 && (
-        <p className="py-10 text-center text-sm text-slate-400 italic">No students found.</p>
+        <div className="flex flex-col items-center justify-center py-14 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-300 dark:bg-indigo-500/10 dark:text-indigo-400/60">
+            <UserX className="h-7 w-7" />
+          </span>
+          <p className="mt-3 text-sm font-medium text-slate-400 dark:text-slate-500">No students found.</p>
+        </div>
       )}
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -119,34 +129,34 @@ function Students() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: (i % 9) * 0.04 }}
           >
-            <Card className="card-elevate h-full border-slate-200/80 p-5">
+            <Card className="card-elevate h-full rounded-2xl border-slate-200/80 p-5 dark:border-white/10 dark:bg-white/[0.04]">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-3">
-                  <img src={avatarOf(user)} alt={user?.student_id?.name} className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-indigo-100" />
+                  <img src={avatarOf(user)} alt={user?.student_id?.name} className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-indigo-100 dark:ring-indigo-500/20" />
                   <div className="min-w-0">
-                    <h3 className="truncate font-display text-sm font-semibold text-slate-900">{user?.student_id?.name}</h3>
-                    <p className="truncate text-xs text-slate-400">{user?.student_id?.email}</p>
+                    <h3 className="truncate font-display text-sm font-semibold text-slate-900 dark:text-slate-100">{user?.student_id?.name}</h3>
+                    <p className="truncate text-xs text-slate-400 dark:text-slate-500">{user?.student_id?.email}</p>
                   </div>
                 </div>
-                <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${user?.approved ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+                <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${user?.approved ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300" : "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-300"
                   }`}>
                   <BadgeCheck className="h-3 w-3" />
                   {user?.approved ? "Approved" : "Pending"}
                 </span>
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-slate-500">
-                <p><span className="font-semibold text-slate-700">Department</span><br />{user?.department || "N/A"}</p>
-                <p><span className="font-semibold text-slate-700">Location</span><br />{user?.location || "N/A"}</p>
-                <p><span className="font-semibold text-slate-700">Skill</span><br />{user?.professional_skill || "N/A"}</p>
-                <p><span className="font-semibold text-slate-700">Contact</span><br />{user?.student_id?.phoneNumber || "N/A"}</p>
+              <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
+                <p><span className="font-semibold text-slate-700 dark:text-slate-300">Department</span><br />{user?.department || "N/A"}</p>
+                <p><span className="font-semibold text-slate-700 dark:text-slate-300">Location</span><br />{user?.location || "N/A"}</p>
+                <p><span className="font-semibold text-slate-700 dark:text-slate-300">Skill</span><br />{user?.professional_skill || "N/A"}</p>
+                <p><span className="font-semibold text-slate-700 dark:text-slate-300">Contact</span><br />{user?.student_id?.phoneNumber || "N/A"}</p>
               </div>
 
-              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                <a href={user?.resume} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-indigo-600 hover:underline">
+              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-white/10">
+                <a href={user?.resume} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
                   View resume →
                 </a>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500">
                   {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""}
                 </span>
               </div>
@@ -155,7 +165,7 @@ function Students() {
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}>
+                      <Button size="sm" variant="outline" className="cursor-pointer dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/10" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}>
                         <Eye className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
@@ -221,8 +231,8 @@ function Students() {
       {
         version !== 1 &&
         <div className="flex items-center justify-center gap-3 pt-2">
-          <Button variant="outline" onClick={() => setPage(p => Math.max(p - 1, 1))} className="cursor-pointer">Previous</Button>
-          <span className="text-xs font-semibold text-slate-400">Page {page}</span>
+          <Button variant="outline" onClick={() => setPage(p => Math.max(p - 1, 1))} className="cursor-pointer dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/10">Previous</Button>
+          <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">Page {page}</span>
           <Button onClick={() => setPage(p => p + 1)} className="cursor-pointer">Next</Button>
         </div>
       }
@@ -230,23 +240,32 @@ function Students() {
       <Display_User_Details_Dialog displayUserDetailsDialog={userDetailsDialog} setDisplayUserDetailsDialog={setUserDetailsDialog} data={specificUserDetails} />
       <DeleteUserDialog deleteUserDialog={deleteUserDialog} setdeleteUserDialog={setdeleteUserDialog} userID={student_id} />
       <Dialog open={approvalDialog} onOpenChange={setapprovalDialog}>
-        <DialogContent>
-          <DialogTitle>Approve User</DialogTitle>
-          <DialogHeader>Are you sure you want to {isApproved ? "remove approval of" : "approve"} the student?</DialogHeader>
-          <DialogFooter>
-            <Button className="cursor-pointer" variant="secondary" onClick={() => setapprovalDialog(false)}>Cancel</Button>
-            <Button
-              className="cursor-pointer"
-              onClick={async () => {
-                const success = await handleApproval(student_id);
-                if (success) {
-                  setapprovalDialog(false)
-                } else {
-                  toast.error("Try Again!")
-                }
-              }}
-            >{isApproved ? "Remove" : "Approve"}</Button>
-          </DialogFooter>
+        <DialogContent className="rounded-2xl dark:border-white/10 dark:bg-slate-900">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+          >
+            <DialogTitle className="dark:text-slate-100">{isApproved ? "Remove Approval" : "Approve User"}</DialogTitle>
+            <DialogHeader className="dark:text-slate-400">Are you sure you want to {isApproved ? "remove approval of" : "approve"} the student?</DialogHeader>
+            <DialogFooter>
+              <Button className="cursor-pointer" variant="secondary" onClick={() => setapprovalDialog(false)}>Cancel</Button>
+              <Button
+                className={`cursor-pointer ${isApproved ? "" : "bg-emerald-500 hover:bg-emerald-600"}`}
+                disabled={approving}
+                onClick={async () => {
+                  setApproving(true);
+                  const success = await handleApproval(student_id);
+                  setApproving(false);
+                  if (success) {
+                    setapprovalDialog(false)
+                  } else {
+                    toast.error("Try Again!")
+                  }
+                }}
+              >{approving ? "Working…" : (isApproved ? "Remove" : "Approve")}</Button>
+            </DialogFooter>
+          </motion.div>
         </DialogContent>
       </Dialog>
     </div>

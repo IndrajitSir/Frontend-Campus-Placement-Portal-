@@ -22,6 +22,18 @@ import { Trash } from "lucide-react";
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Shared visual classes for the raw browse cards (kept identical across all three branches).
+const rawCardClass =
+  "rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition-colors hover:border-indigo-200/80 hover:shadow-lg hover:shadow-indigo-500/10 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:border-indigo-400/30";
+const rawTitleClass = "text-xl font-semibold text-slate-900 dark:text-slate-100";
+const rawMetaClass = "text-sm text-slate-500 dark:text-slate-400";
+const applyBtnClass =
+  "mt-3 inline-block cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-white shadow-md shadow-indigo-500/25 hover:brightness-110";
+const updateBtnClass =
+  "cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-white shadow-md shadow-indigo-500/25 hover:brightness-110";
+const deleteBtnClass =
+  "ml-4 cursor-pointer border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10";
+
 const Placements = () => {
   const { placements, setPlacements, loadingPlacements } = usePlacementData();
   const { accessToken, role } = useUserData();
@@ -129,47 +141,47 @@ const Placements = () => {
   return (
     <div className="p-6">
       <ToastContainer position="top-right" autoClose={3000} />
-      <div className="flex items-center justify-between gap-55 w-full">
-        <h2 className="text-2xl font-bold mb-4 w-60">Available Placements</h2>
-        <div className="flex items-center justify-between">
+      <div className="mb-6 flex w-full flex-wrap items-center justify-between gap-4">
+        <h2 className="mb-0 w-60 text-2xl font-bold text-slate-900 dark:text-slate-100">Available Placements</h2>
+        <div className="flex flex-wrap items-center gap-3">
           {
             !showSearchResult && role !== "student" &&
-            <Button className="cursor-pointer" onClick={() => setCreatePostDialog(true)}>Create Post</Button>
+            <Button variant="gradient" className="cursor-pointer" onClick={() => setCreatePostDialog(true)}>Create Post</Button>
           }
           {showSearchResult &&
-            <Button onClick={() => { cleanSearchedData(); }} className="bg-black cursor-pointer rounded-[70px] hover:bg-gray-600"> <ArrowLeftCircleIcon /></Button>
+            <Button onClick={() => { cleanSearchedData(); }} className="cursor-pointer rounded-xl bg-slate-900 text-white hover:bg-slate-700 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/20" aria-label="Clear search"> <ArrowLeftCircleIcon /></Button>
           }
           <PlacementSearch onQuery={searchQueryFromChild} />
           {/* <SearchDialogUpdated data={placements} searchCriteria={["company_name", "job_title"]} onQuery={searchQueryFromChild}  placeholderValue={"Search by company or job title"}/> */}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {showSearchResult ? (
           filteredPlacement !== null ? (
-            <div key={filteredPlacement?._id} className="border p-4 rounded shadow-md bg-white">
-              <h3 className="text-xl font-semibold">
+            <div key={filteredPlacement?._id} className={rawCardClass}>
+              <h3 className={rawTitleClass}>
                 {filteredPlacement?.job_title} at {filteredPlacement?.company_name}
               </h3>
-              <p className="text-gray-600">{filteredPlacement?.description}</p>
-              <p>Location: {filteredPlacement?.location || "Not found"}</p>
-              <p>Eligibility: {filteredPlacement?.eligibility}</p>
-              <p>Last Date : {filteredPlacement?.last_date}</p>
+              <p className={`${rawMetaClass} mt-1`}>{filteredPlacement?.description}</p>
+              <p className={`mt-1 ${rawMetaClass}`}>Location: {filteredPlacement?.location || "Not found"}</p>
+              <p className={rawMetaClass}>Eligibility: {filteredPlacement?.eligibility}</p>
+              <p className={rawMetaClass}>Last Date : {filteredPlacement?.last_date}</p>
               {role === "student" ? (
                 <Button onClick={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement?._id); }}
-                  className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                  className={applyBtnClass}
                 >
                   Apply
                 </Button>
               ) : (
-                <div className="flex items-end mt-3">
+                <div className="mt-3 flex items-end">
                   <Button onClick={() => { setPlacementInfo(filteredPlacement); setEditedInfo(filteredPlacement); setPlacementInfoDialog(true); }}
-                    className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                    className={updateBtnClass}
                   >
                     Update
                   </Button>
                   <Button onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                     variant="destructive" size="icon"
-                    className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
+                    className={deleteBtnClass}
                   >
                     <Trash size={16} />
                   </Button>
@@ -183,17 +195,17 @@ const Placements = () => {
               p.job_title.toLowerCase().includes(searchQuery.toLowerCase())
             )
               .map((placement) => (
-                <div key={placement?._id} className="border p-4 rounded shadow-md bg-white">
-                  <h3 className="text-xl font-semibold">
+                <div key={placement?._id} className={rawCardClass}>
+                  <h3 className={rawTitleClass}>
                     {placement?.job_title} at {placement?.company_name}
                   </h3>
-                  <p className="text-gray-600">{placement?.description}</p>
-                  <p>Location: {placement?.location || "Not found"}</p>
-                  <p>Eligibility: {placement?.eligibility}</p>
-                  <p>Last Date : {placement?.last_date}</p>
+                  <p className={`${rawMetaClass} mt-1`}>{placement?.description}</p>
+                  <p className={`mt-1 ${rawMetaClass}`}>Location: {placement?.location || "Not found"}</p>
+                  <p className={rawMetaClass}>Eligibility: {placement?.eligibility}</p>
+                  <p className={rawMetaClass}>Last Date : {placement?.last_date}</p>
                   {role === "student" ? (
                     <Button
-                      className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                      className={applyBtnClass}
                       onClick={() => {
                         setApplyPlacementDialog(true);
                         setPostID(placement?._id);
@@ -202,9 +214,9 @@ const Placements = () => {
                       Apply
                     </Button>
                   ) : (
-                    <div className="flex items-end mt-3">
+                    <div className="mt-3 flex items-end">
                       <Button
-                        className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                        className={updateBtnClass}
                         onClick={() => {
                           setPlacementInfo(placement);
                           setEditedInfo(placement);
@@ -214,7 +226,7 @@ const Placements = () => {
                         Update
                       </Button>
                       <Button variant="destructive" size="icon"
-                        className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
+                        className={deleteBtnClass}
                         onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                       >
                         <Trash size={16} />
@@ -227,14 +239,14 @@ const Placements = () => {
         ) : (
           // Default case: show all placements
           placements.map((placement) => (
-            <div key={placement?._id} className="border p-4 rounded shadow-md bg-white">
-              <h3 className="text-xl font-semibold">
+            <div key={placement?._id} className={rawCardClass}>
+              <h3 className={rawTitleClass}>
                 {placement?.job_title} at {placement?.company_name}
               </h3>
-              <p className="text-gray-600">{placement?.description}</p>
-              <p>Location: {placement?.location || "Not found"}</p>
-              <p>Eligibility: {placement?.eligibility}</p>
-              <p>Last Date : {new Date(placement?.last_date).toLocaleString("en-IN", {
+              <p className={`${rawMetaClass} mt-1`}>{placement?.description}</p>
+              <p className={`mt-1 ${rawMetaClass}`}>Location: {placement?.location || "Not found"}</p>
+              <p className={rawMetaClass}>Eligibility: {placement?.eligibility}</p>
+              <p className={rawMetaClass}>Last Date : {new Date(placement?.last_date).toLocaleString("en-IN", {
                 day: "2-digit",
                 month: "short",
                 year: "numeric",
@@ -244,7 +256,7 @@ const Placements = () => {
               })}</p>
               {role === "student" ? (
                 <Button
-                  className="mt-2 inline-block bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                  className={applyBtnClass}
                   onClick={() => {
                     setApplyPlacementDialog(true);
                     setPostID(placement?._id);
@@ -253,9 +265,9 @@ const Placements = () => {
                   Apply
                 </Button>
               ) : (
-                <div className="flex items-end mt-3">
+                <div className="mt-3 flex items-end">
                   <Button
-                    className="bg-blue-700 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400"
+                    className={updateBtnClass}
                     onClick={() => {
                       setPlacementInfo(placement);
                       setEditedInfo(placement);
@@ -265,7 +277,7 @@ const Placements = () => {
                     Update
                   </Button>
                   <Button variant="destructive" size="icon"
-                    className="ml-4 text-white px-4 py-2 rounded cursor-pointer hover:bg-red-400"
+                    className={deleteBtnClass}
                     onClick={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
                   >
                     <Trash size={16} />
@@ -285,7 +297,7 @@ const Placements = () => {
           <Missing_Details_Form_Dialog onCancel={setMissingDetailsFillFormDialog} />
           <DialogFooter>
             <Button className="cursor-pointer" variant="outline" onClick={() => setApplyPlacementDialog(false)}>Cancel</Button>
-            <Button className="cursor-pointer" onClick={applyForPlacement}>{missingDetailsFillFormDialog ? "Skip & Apply" : "GO"}</Button>
+            <Button className="cursor-pointer" variant="gradient" onClick={applyForPlacement}>{missingDetailsFillFormDialog ? "Skip & Apply" : "GO"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -295,7 +307,7 @@ const Placements = () => {
           <DialogHeader>Applied</DialogHeader>
           <DialogFooter>
             {/* <Button className="cursor-pointer" variant="secondary" onClick={() => setApplyPlacementDialog(false)}>Cancel</Button> */}
-            <Button className="cursor-pointer" onClick={() => { setAppliedConfirmationDialog(false); setApplyPlacementDialog(false) }}>OK</Button>
+            <Button className="cursor-pointer" variant="gradient" onClick={() => { setAppliedConfirmationDialog(false); setApplyPlacementDialog(false) }}>OK</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -329,7 +341,7 @@ const Placements = () => {
                   <Input name="eligibility" value={editedInfo.eligibility} onChange={handleEditChange} />
                   <Label>Last Date</Label>
                   <Input type="date" name="last_date" value={editedInfo.last_date} onChange={handleEditChange} />
-                  <Button className="mt-2 cursor-pointer" onClick={saveChanges}>Save Changes</Button>
+                  <Button className="mt-2 cursor-pointer" variant="gradient" onClick={saveChanges}>Save Changes</Button>
                 </div>
               ) : (
                 <CardContent>
@@ -345,7 +357,7 @@ const Placements = () => {
           </DialogHeader>
           <DialogFooter>
             <Button className="cursor-pointer" variant="outline" onClick={() => { setEditMode(false); setPlacementInfoDialog(false); }}>Cancel</Button>
-            <Button className="cursor-pointer" onClick={handleUpdate}>Update</Button>
+            <Button className="cursor-pointer" variant="gradient" onClick={handleUpdate}>Update</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

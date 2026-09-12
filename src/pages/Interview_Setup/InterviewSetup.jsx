@@ -94,15 +94,17 @@ function InterviewSetup() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-12"
+          className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0a0e1f] p-8 text-center shadow-sm dark:shadow-black/40 sm:p-12"
         >
           <div className="bg-grid-light absolute inset-0 opacity-60" aria-hidden="true" />
           <div className="relative">
             <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/30">
               <Video className="h-8 w-8" />
             </span>
-            <h2 className="mt-5 font-display text-2xl font-bold text-slate-900">Technical Interview</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+            <h2 className="mt-5 font-display text-2xl font-bold text-slate-900 dark:text-white">
+              Technical <span className="text-gradient">Interview</span>
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-slate-500 dark:text-slate-400">
               {isInterviewer
                 ? "Create a room to start an interview, or join one with an invite ID."
                 : "Join your interview using the room ID shared by the interviewer."}
@@ -110,10 +112,10 @@ function InterviewSetup() {
 
             <div className="mx-auto mt-8 grid max-w-xl gap-4 sm:grid-cols-2">
               {isInterviewer && (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                  <PlusCircle className="mx-auto h-6 w-6 text-indigo-600" />
-                  <h3 className="mt-2 font-display text-sm font-semibold text-slate-900">Create a new room</h3>
-                  <p className="mt-1 text-xs text-slate-400">Start a live interview room and share the ID with the candidate.</p>
+                <div className="rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/10 hover:border-indigo-200 dark:hover:border-indigo-500/30">
+                  <PlusCircle className="mx-auto h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                  <h3 className="mt-2 font-display text-sm font-semibold text-slate-900 dark:text-slate-100">Create a new room</h3>
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Start a live interview room and share the ID with the candidate.</p>
                   <Button
                     onClick={handleCreateNewRoom}
                     disabled={creating}
@@ -123,18 +125,19 @@ function InterviewSetup() {
                   </Button>
                 </div>
               )}
-              <div className={`rounded-2xl border border-slate-200 bg-slate-50 p-5 ${isInterviewer ? "" : "mx-auto w-full sm:col-span-2"}`}>
-                <KeyRound className="mx-auto h-6 w-6 text-fuchsia-600" />
-                <h3 className="mt-2 font-display text-sm font-semibold text-slate-900">Join with a room ID</h3>
-                <p className="mt-1 text-xs text-slate-400">Enter the ID the interviewer gave you.</p>
+              <div className={`rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-fuchsia-500/10 hover:border-fuchsia-200 dark:hover:border-fuchsia-500/30 ${isInterviewer ? "" : "mx-auto w-full sm:col-span-2"}`}>
+                <KeyRound className="mx-auto h-6 w-6 text-fuchsia-600 dark:text-fuchsia-400" />
+                <h3 className="mt-2 font-display text-sm font-semibold text-slate-900 dark:text-slate-100">Join with a room ID</h3>
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Enter the ID the interviewer gave you.</p>
                 <div className="mt-4 flex gap-2">
                   <Input
                     placeholder="Room ID"
                     value={joinId}
                     onChange={(e) => setJoinId(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleJoinRoom()}
+                    className="rounded-xl focus-visible:border-indigo-400 focus-visible:ring-2 focus-visible:ring-indigo-500/20 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-200"
                   />
-                  <Button onClick={handleJoinRoom} disabled={joining} variant="outline" className="shrink-0 cursor-pointer">
+                  <Button onClick={handleJoinRoom} disabled={joining} variant="outline" className="shrink-0 cursor-pointer rounded-xl">
                     {joining ? <LoaderCircle className="h-4 w-4 animate-spin" /> : "Join"}
                   </Button>
                 </div>

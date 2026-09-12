@@ -55,12 +55,12 @@ const Dashboard = () => {
         <div className="mb-5 flex items-center justify-between lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm cursor-pointer"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-indigo-300 hover:shadow cursor-pointer active:scale-[0.97] dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-200"
           >
             <Menu className="h-4 w-4" />
             Menu
           </button>
-          <span className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+          <span className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400">
             <GraduationCap className="h-4 w-4 text-indigo-500" /> CampusPlace
           </span>
         </div>

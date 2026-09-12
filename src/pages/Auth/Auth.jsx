@@ -161,7 +161,7 @@ function Auth() {
   const isAdmin = role === "admin" || role === "super_admin";
 
   const inputClass =
-    "w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition-all duration-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10";
+    "w-full rounded-xl border border-white/10 bg-white/80 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition-all duration-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:bg-white/[0.06] dark:text-slate-100 dark:placeholder:text-slate-500";
 
   return (
     <div className="relative flex min-h-screen w-full overflow-hidden bg-[#0a0e1f]">
@@ -411,16 +411,16 @@ function Auth() {
                     <button
                       type="button"
                       onClick={() => handleGoogleLogin("google")}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition-all hover:bg-white/10 cursor-pointer"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg hover:shadow-black/30 cursor-pointer"
                     >
-                      <FaGoogle className="h-4 w-4" /> Google
+                      <FaGoogle className="h-4 w-4 text-[#EA4335]" /> Google
                     </button>
                     <button
                       type="button"
                       onClick={() => handleGithubLogin("github")}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition-all hover:bg-white/10 cursor-pointer"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-slate-200 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg hover:shadow-black/30 cursor-pointer"
                     >
-                      <FaGithub className="h-4 w-4" /> GitHub
+                      <FaGithub className="h-4 w-4 text-white" /> GitHub
                     </button>
                   </div>
                 </motion.div>

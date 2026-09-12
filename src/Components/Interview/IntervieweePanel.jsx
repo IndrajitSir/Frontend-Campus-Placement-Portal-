@@ -34,9 +34,9 @@ export function IntervieweePanel({ roomId }) {
   return (
     <>
       <div className="relative">
-        <Button className="cursor-pointer bg-gray-600 hover:bg-gray-500" onClick={() => setShowQuestions(true)}>
+        <Button className="cursor-pointer bg-slate-700 hover:bg-slate-600 text-white shadow-sm" onClick={() => setShowQuestions(true)}>
           {questions.length > 0 &&
-            <span className="absolute top-[-10px] right-[-10px] bg-red-400 rounded-full h-5 w-5">{questions.length}</span>
+            <span className="absolute top-[-10px] right-[-10px] flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-[#0f1530]">{questions.length}</span>
           }
           <MessageSquare />
         </Button>
@@ -48,7 +48,7 @@ export function IntervieweePanel({ roomId }) {
             questions.length > 0 ?
               (
                 <select value={question} onChange={(e) => setQuestion(e.target.value)}
-                  className="border p-2 rounded bg-gray-800 text-white cursor-pointer">
+                  className="w-full cursor-pointer rounded-lg border border-slate-200 bg-slate-50 p-2 text-sm text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-200">
                   {
                     questions?.map((q, index) => (
                       <option key={index} value={index}>{`question ${index + 1}`}</option>)
@@ -56,22 +56,22 @@ export function IntervieweePanel({ roomId }) {
                   }
                 </select>
               )
-              : <p>No question asked!</p>
+              : <p className="text-center text-sm text-slate-500 dark:text-slate-400">No question asked yet!</p>
           }
           {
             questions.length > 0 &&
-            < div className="space-y-4 p-4 border rounded-lg shadow-md bg-white">
-              <h3 className="text-xl font-semibold text-gray-800">Question: {questions[question].question || ""}</h3>
-              <pre className="bg-gray-100 p-4 rounded text-sm text-gray-700">{questions[question].code || ""}</pre>
+            < div className="space-y-4 rounded-xl border border-slate-200 p-4 shadow-sm bg-white dark:border-white/10 dark:bg-white/[0.04]">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Question: {questions[question].question || ""}</h3>
+              <pre className="overflow-auto rounded-lg bg-slate-100 p-4 text-sm text-slate-700 dark:bg-[#0b1020] dark:text-slate-300">{questions[question].code || ""}</pre>
               <textarea
                 placeholder="Explain this code..."
-                className="w-full border p-3 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-200 p-3 text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-200"
                 value={explanation}
                 onChange={(e) => setExplanation(e.target.value)}
                 rows={6}
               />
               <div className="flex justify-end">
-                <Button className="bg-green-600 hover:bg-green-500 text-white cursor-pointer" onClick={handleSubmit}>Submit Explanation</Button>
+                <Button className="cursor-pointer bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/25" onClick={handleSubmit}>Submit Explanation</Button>
               </div>
             </div>
           }

@@ -156,25 +156,25 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                             <motion.div key={idx} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                                 className={`relative max-w-[80%] group ${isMine ? 'ml-auto' : ''}`}>
                                 {/* Sender name */}
-                                {!isMine && <span className="text-[10px] font-semibold text-indigo-500 ml-1 mb-0.5 block">{msg.senderName}</span>}
+                                {!isMine && <span className="text-[10px] font-semibold text-indigo-400 ml-1 mb-0.5 block">{msg.senderName}</span>}
 
                                 {/* Message bubble */}
                                 <div className={`relative rounded-2xl px-3 py-2 text-sm shadow-sm
                                     ${isMine
-                                        ? 'rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 text-white'
-                                        : 'rounded-bl-md bg-slate-100 text-slate-800'
+                                        ? 'rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-indigo-500/20'
+                                        : 'rounded-bl-md bg-white/[0.06] border border-white/10 text-slate-200'
                                     }`}>
                                     <p className="text-[13px] break-words leading-relaxed">{msg.text}</p>
 
                                     {/* Timestamp + status */}
-                                    <div className={`flex items-center justify-end gap-1 mt-0.5 ${isMine ? 'text-white/60' : 'text-slate-400'}`}>
+                                    <div className={`flex items-center justify-end gap-1 mt-0.5 ${isMine ? 'text-white/60' : 'text-slate-500'}`}>
                                         {msg.timestamp && <span className="text-[9px]">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>}
                                         {isMine && renderStatusIcon(msg.status)}
                                     </div>
 
                                     {/* Reaction trigger */}
                                     <button onClick={() => setShowReactionPicker(showReactionPicker === msg.id ? null : msg.id)}
-                                        className={`absolute -bottom-1 ${isMine ? '-left-6' : '-right-6'} hidden group-hover:flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-white shadow-md border border-slate-200 transition hover:scale-110`}>
+                                        className={`absolute -bottom-1 ${isMine ? '-left-6' : '-right-6'} hidden group-hover:flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-[#131a36] shadow-md border border-white/10 transition hover:scale-110`}>
                                         <SmilePlus className="h-3 w-3 text-slate-400" />
                                     </button>
                                 </div>
@@ -186,9 +186,9 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                                             <button key={emoji}
                                                 onClick={() => handleReact(msg.id, emoji)}
                                                 className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[11px] transition hover:scale-105
-                                                    ${users.length > 0 ? 'border-indigo-200 bg-indigo-50' : 'border-slate-200 bg-slate-50'}`}>
+                                                    ${users.length > 0 ? 'border-indigo-500/30 bg-indigo-500/15' : 'border-white/10 bg-white/[0.04]'}`}>
                                                 <span>{emoji}</span>
-                                                <span className="text-[9px] font-semibold text-slate-600">{users.length}</span>
+                                                <span className="text-[9px] font-semibold text-slate-300">{users.length}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -200,10 +200,10 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                                         <>
                                             <div className="fixed inset-0 z-40" onClick={() => setShowReactionPicker(null)} />
                                             <motion.div initial={{ opacity: 0, scale: 0.8, y: 4 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.8 }}
-                                                className={`absolute z-50 -bottom-10 ${isMine ? 'right-0' : 'left-0'} flex items-center gap-0.5 rounded-full border border-slate-200 bg-white px-2 py-1.5 shadow-xl`}>
+                                                className={`absolute z-50 -bottom-10 ${isMine ? 'right-0' : 'left-0'} flex items-center gap-0.5 rounded-full border border-white/10 bg-[#131a36] px-2 py-1.5 shadow-xl shadow-black/40`}>
                                                 {QUICK_REACTIONS.map(emoji => (
                                                     <button key={emoji} onClick={() => handleReact(msg.id, emoji)}
-                                                        className="cursor-pointer rounded-full p-1 text-sm transition hover:scale-125 hover:bg-slate-100">
+                                                        className="cursor-pointer rounded-full p-1 text-sm transition hover:scale-125 hover:bg-white/10">
                                                         {emoji}
                                                     </button>
                                                 ))}
@@ -220,29 +220,29 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
 
             {/* Typing indicator */}
             {isTyping && (
-                <div className="px-3 pb-1">
-                    <span className="text-[11px] text-slate-400 italic">
+                <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="px-3 pb-1">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 italic">
                         {typingUser || "Someone"} is typing
-                        <span className="inline-flex w-6 overflow-hidden">
-                            <span className="animate-[bounce_1.2s_infinite_0s]">.</span>
-                            <span className="animate-[bounce_1.2s_infinite_0.2s]">.</span>
-                            <span className="animate-[bounce_1.2s_infinite_0.4s]">.</span>
+                        <span className="inline-flex items-center gap-0.5">
+                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0s] rounded-full bg-indigo-400" />
+                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0.2s] rounded-full bg-violet-400" />
+                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0.4s] rounded-full bg-fuchsia-400" />
                         </span>
                     </span>
-                </div>
+                </motion.div>
             )}
 
             {/* Input */}
-            <div className="flex gap-2 border-t border-slate-100 p-2">
+            <div className="flex gap-2 border-t border-white/10 bg-white/[0.03] p-2">
                 <Input
                     placeholder="Type a message..."
                     value={message}
                     onChange={(e) => { setMessage(e.target.value); handleTyping(); }}
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                    className="text-sm"
+                    className="text-sm border-white/10 bg-white/[0.04] text-slate-200 placeholder:text-slate-500 focus-visible:ring-indigo-500/30 focus-visible:border-indigo-400/50"
                 />
                 <Button size="icon" onClick={handleSend} disabled={!message.trim()}
-                    className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 disabled:opacity-40">
+                    className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 shadow-md shadow-indigo-500/25 disabled:opacity-40">
                     <Send size={16} />
                 </Button>
             </div>

@@ -118,11 +118,11 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
 
       {!loading && conversations.length === 0 && (
         <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 dark:bg-white/[0.04] text-slate-300 dark:text-slate-600 ring-1 ring-slate-100 dark:ring-white/10">
             <MessageSquare className="h-6 w-6" />
           </span>
-          <p className="text-sm font-medium text-slate-400">No messages yet</p>
-          <p className="px-4 text-xs text-slate-300">
+          <p className="text-sm font-medium text-slate-400 dark:text-slate-500">No messages yet</p>
+          <p className="px-4 text-xs text-slate-300 dark:text-slate-600">
             Start a conversation from the people list.
           </p>
         </div>
@@ -140,27 +140,27 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
               className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all ${
                 isActive
                   ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
-                  : "text-slate-700 hover:bg-indigo-50"
+                  : "text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-white/[0.06]"
               }`}
             >
               <div className="relative shrink-0">
                 <img
                   src={avatarOf(conv.user)}
                   alt={nameOf(conv.user)}
-                  className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
+                  className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100 dark:ring-indigo-500/25"
                 />
                 {conv.unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white dark:ring-[#111827]">
                     {conv.unreadCount > 99 ? "99+" : conv.unreadCount}
                   </span>
                 )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
-                  <p className="truncate text-sm font-semibold">{nameOf(conv.user)}</p>
+                  <p className={`truncate text-sm ${conv.unreadCount > 0 && !isActive ? "font-bold" : "font-semibold"}`}>{nameOf(conv.user)}</p>
                   <span
                     className={`ml-1 shrink-0 text-[10px] ${
-                      isActive ? "text-indigo-100" : "text-slate-400"
+                      isActive ? "text-indigo-100" : "text-slate-400 dark:text-slate-500"
                     }`}
                   >
                     {formatTimestamp(conv.lastMessageAt)}
@@ -168,8 +168,8 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
                 </div>
                 <p
                   className={`truncate text-xs ${
-                    isActive ? "text-indigo-100" : "text-slate-400"
-                  } ${conv.unreadCount > 0 && !isActive ? "font-medium text-slate-600" : ""}`}
+                    isActive ? "text-indigo-100" : "text-slate-400 dark:text-slate-500"
+                  } ${conv.unreadCount > 0 && !isActive ? "font-semibold text-slate-700 dark:text-slate-200" : ""}`}
                 >
                   {conv.lastMessage || "Start chatting…"}
                 </p>

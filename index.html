@@ -7,6 +7,17 @@
     <meta name="description" content="CampusPlace — the next-generation campus placement platform connecting students, companies and placement offices. Apply to placement drives, track applications and manage recruitment in one place." />
     <meta name="theme-color" content="#6366f1" />
     <title>CampusPlace — Campus Placement & Recruitment System</title>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var t = localStorage.getItem("campusplace-theme");
+          if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

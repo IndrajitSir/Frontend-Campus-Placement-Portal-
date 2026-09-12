@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Check, UserPlus } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Check, UserPlus, LoaderCircle } from 'lucide-react';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext';
 // Environment variable
@@ -65,7 +66,7 @@ const FriendRequestButton = ({ receiverId }) => {
   if (sent) {
     return (
       <button
-        className="inline-flex cursor-default items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-600"
+        className="inline-flex cursor-default items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200 dark:ring-emerald-500/20"
         disabled
       >
         <Check className="h-3.5 w-3.5" /> Request Sent
@@ -74,13 +75,14 @@ const FriendRequestButton = ({ receiverId }) => {
   }
 
   return (
-    <button
+    <motion.button
+      whileTap={{ scale: 0.97 }}
       onClick={sendRequest}
       disabled={sending}
-      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:brightness-110 disabled:opacity-50"
+      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:brightness-110 hover:shadow-md hover:shadow-indigo-500/30 disabled:opacity-50"
     >
-      <UserPlus className="h-3.5 w-3.5" /> {sending ? "Sending…" : "Add Friend"}
-    </button>
+      {sending ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />} {sending ? "Sending…" : "Add Friend"}
+    </motion.button>
   );
 };
 

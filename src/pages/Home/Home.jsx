@@ -10,16 +10,16 @@ import { ApiProvider } from "../../context/ApiContext/ApiProvider.jsx";
 
 const Home = () => {
   return (
-    <div className="relative min-h-screen bg-slate-50/70">
+    <div className="relative min-h-screen bg-slate-50/70 dark:bg-[#0b1020]">
       <ToastContainer position="top-right" autoClose={3000} />
-      <Navbar />
-      <main className="mx-auto max-w-[1400px] px-4 pb-10 pt-6 sm:px-6">
-        <SocketProvider>
+      <SocketProvider>
+        <Navbar />
+        <main className="mx-auto max-w-[1400px] px-4 pb-10 pt-6 sm:px-6">
           <ApiProvider>
             <Outlet />
           </ApiProvider>
-        </SocketProvider>
-      </main>
+        </main>
+      </SocketProvider>
     </div>
   );
 };

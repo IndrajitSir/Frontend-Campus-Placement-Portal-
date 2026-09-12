@@ -175,27 +175,27 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
   return (
     <div className="flex h-full flex-col">
       {/* ── Toolbar ── */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-700 bg-[#252526] px-3 py-2">
+      <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-[#0f1530] px-3 py-2">
         <div className="flex items-center gap-2">
           <select value={language} onChange={(e) => handleLanguageChange(e.target.value)}
-            className="cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-2.5 py-1 text-xs font-medium text-white outline-none transition hover:border-indigo-500 focus:border-indigo-500">
-            {languages.map((lang) => (<option key={lang.id} value={lang.id}>{lang.label}</option>))}
+            className="cursor-pointer rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1 text-xs font-medium text-slate-200 outline-none transition hover:border-indigo-400/40 focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-500/20">
+            {languages.map((lang) => (<option key={lang.id} value={lang.id} className="bg-[#0f1530] text-slate-200">{lang.label}</option>))}
           </select>
         </div>
         <div className="flex items-center gap-1.5">
           <button onClick={handleRunCode} disabled={running}
-            className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-50">
+            className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm shadow-emerald-600/25 transition hover:bg-emerald-500 hover:shadow-md hover:shadow-emerald-500/25 disabled:cursor-not-allowed disabled:opacity-50">
             {running ? <LoaderCircle className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
-            Run
+            {running ? "Running…" : "Run"}
           </button>
           <button onClick={() => setShowOutput(!showOutput)}
-            className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-slate-600 px-2.5 py-1 text-[11px] font-semibold text-slate-400 transition hover:border-slate-500 hover:text-white">
+            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-semibold text-slate-400 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white">
             <Terminal className="h-3 w-3" /> Console
           </button>
           {role === "student" && (
             <>
               <button onClick={() => setShowExplainStep(true)}
-                className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-gradient-to-r from-green-600 to-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm transition hover:brightness-110">
+                className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm shadow-emerald-600/25 transition hover:brightness-110">
                 <Send className="h-3 w-3" /> Submit
               </button>
               <IntervieweePanel roomId={interviewId} />
@@ -239,9 +239,9 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
       <AnimatePresence>
         {showOutput && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: outputHeight, opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="shrink-0 overflow-hidden border-t border-slate-700 bg-[#1a1a2e]">
+            className="shrink-0 overflow-hidden border-t border-white/10 bg-[#0b1020]">
             {/* Resize handle */}
-            <div className="group flex h-5 cursor-ns-resize items-center justify-center bg-[#252526] transition hover:bg-slate-700"
+            <div className="group flex h-5 cursor-ns-resize items-center justify-center bg-[#0f1530] transition hover:bg-indigo-500/20"
               onMouseDown={(e) => {
                 e.preventDefault();
                 const startY = e.clientY;

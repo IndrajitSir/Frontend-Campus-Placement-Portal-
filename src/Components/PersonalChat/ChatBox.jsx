@@ -273,11 +273,11 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   const quickReplies = ["👍 Thanks!", "Can we hop on a quick call?", "Share system logs"];
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#F9FAFB]">
+    <div className="flex h-full min-h-0 flex-col bg-[#F9FAFB] dark:bg-[#0b1020]">
       {/* Date Separator */}
       <div className="flex items-center justify-center pt-4 pb-2 relative">
-         <div className="absolute w-full h-[1px] bg-slate-200"></div>
-         <span className="relative z-10 bg-white border border-slate-200 text-slate-400 text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Today</span>
+         <div className="absolute w-full h-[1px] bg-slate-200 dark:bg-white/10"></div>
+         <span className="relative z-10 bg-white dark:bg-[#0b1020] border border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500 text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Today</span>
       </div>
 
       {/* Message List */}
@@ -304,7 +304,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                 {!mine && (
                   <div className="w-8 shrink-0 mr-3">
                     {showAvatar && (
-                       <div className="h-8 w-8 rounded-full bg-[#6B46C1] flex items-center justify-center text-xs font-semibold text-white shadow-sm mt-5">
+                       <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 mt-5">
                           {getInitials(user?.name)}
                        </div>
                     )}
@@ -313,7 +313,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
 
                 <div className={`flex flex-col ${mine ? "items-end" : "items-start"} max-w-[70%]`}>
                   {!mine && showAvatar && (
-                    <span className="ml-1 mb-1 text-[11px] font-semibold text-[#6B46C1]">
+                    <span className="ml-1 mb-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
                       {user?.name || "Friend"}
                     </span>
                   )}
@@ -321,26 +321,26 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                   <div
                     className={`relative rounded-2xl px-4 py-2.5 text-[13px] shadow-sm ${
                       mine
-                        ? "rounded-br-sm bg-[#6B46C1] text-white"
-                        : "rounded-bl-sm bg-white border border-slate-100 text-slate-700"
+                        ? "rounded-br-sm bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-indigo-500/25"
+                        : "rounded-bl-sm bg-white dark:bg-white/[0.06] border border-slate-100 dark:border-white/10 text-slate-700 dark:text-slate-200"
                     }`}
                   >
                     <p className="break-words leading-relaxed whitespace-pre-wrap">{msg.text}</p>
 
                     {msg.reactions && Object.keys(msg.reactions).length > 0 && (
-                      <div className="absolute -bottom-2 right-2 bg-white rounded-full border border-slate-200 px-1 py-0.5 text-[10px] shadow-sm flex items-center gap-1 z-10">
+                      <div className="absolute -bottom-2 right-2 bg-white dark:bg-[#1a2235] rounded-full border border-slate-200 dark:border-white/10 px-1 py-0.5 text-[10px] shadow-sm flex items-center gap-1 z-10">
                          <span>{Object.keys(msg.reactions)[0]}</span>
-                         <span className="text-slate-600 font-medium">1</span>
+                         <span className="text-slate-600 dark:text-slate-300 font-medium">1</span>
                       </div>
                     )}
                   </div>
 
                   <div
-                    className={`mt-1 flex items-center gap-1 text-[10px] ${mine ? "mr-1 text-slate-400" : "ml-1 text-slate-400"}`}
+                    className={`mt-1 flex items-center gap-1 text-[10px] ${mine ? "mr-1 text-slate-400 dark:text-slate-500" : "ml-1 text-slate-400 dark:text-slate-500"}`}
                   >
                     <span>{formatTime(msg.sentAt)}</span>
                     {mine && (
-                       <span className="ml-0.5 text-[#6B46C1]">{renderStatusIcon(msg.status)}</span>
+                       <span className="ml-0.5 text-indigo-500 dark:text-indigo-400">{renderStatusIcon(msg.status)}</span>
                     )}
                   </div>
                 </div>
@@ -349,9 +349,19 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           })}
         </AnimatePresence>
         {isTyping && (
-          <div className="flex items-center gap-2 text-[11px] text-slate-400 italic pl-11">
-             {user?.name || "Friend"} is typing...
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center gap-2 pl-11 text-[11px] text-slate-400 dark:text-slate-500"
+          >
+            <span className="flex items-center gap-1 rounded-full bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2.5 py-1.5 shadow-sm">
+              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0s] rounded-full bg-indigo-500" />
+              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0.2s] rounded-full bg-violet-500" />
+              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0.4s] rounded-full bg-fuchsia-500" />
+            </span>
+            {user?.name || "Friend"} is typing…
+          </motion.div>
         )}
         <div ref={endRef} />
       </div>
@@ -359,16 +369,16 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
       {/* Quick Replies */}
       <div className="px-6 py-2 flex flex-wrap gap-2">
          {quickReplies.map((reply, i) => (
-            <button key={i} onClick={() => handleSend(reply)} className="bg-slate-100 hover:bg-slate-200 transition text-slate-600 text-[11px] font-medium px-3 py-1.5 rounded-full whitespace-nowrap cursor-pointer border border-slate-200">
+            <button key={i} onClick={() => handleSend(reply)} className="bg-white dark:bg-white/[0.06] hover:bg-indigo-50 dark:hover:bg-white/10 transition text-slate-600 dark:text-slate-300 text-[11px] font-medium px-3 py-1.5 rounded-full whitespace-nowrap cursor-pointer border border-slate-200 dark:border-white/10 hover:border-indigo-200 dark:hover:border-indigo-500/30">
                {reply}
             </button>
          ))}
       </div>
 
       {/* Input */}
-      <div className="px-6 pb-6 pt-1">
-        <div className="flex items-center bg-white rounded-full border border-slate-200 pr-1.5 pl-3 py-1.5 shadow-sm">
-          <button className="p-2 text-slate-400 hover:text-slate-600 transition">
+      <div className="sticky bottom-0 px-6 pb-6 pt-1 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB] dark:from-[#0b1020] dark:via-[#0b1020] to-transparent">
+        <div className="flex items-center bg-white dark:bg-white/[0.06] rounded-full border border-slate-200 dark:border-white/10 pr-1.5 pl-3 py-1.5 shadow-md shadow-slate-200/60 dark:shadow-black/30 focus-within:border-indigo-300 dark:focus-within:border-indigo-500/40 focus-within:ring-2 focus-within:ring-indigo-500/15 transition">
+          <button className="p-2 text-slate-400 hover:text-indigo-500 transition">
              <Paperclip className="h-4 w-4" />
           </button>
 
@@ -381,23 +391,24 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
               handleTyping();
             }}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            className="flex-1 bg-transparent px-2 text-[13px] text-slate-700 outline-none placeholder:text-slate-400"
+            className="flex-1 bg-transparent px-2 text-[13px] text-slate-700 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
 
-          <button className="p-2 text-slate-400 hover:text-slate-600 transition">
+          <button className="p-2 text-slate-400 hover:text-indigo-500 transition">
              <Smile className="h-4 w-4" />
           </button>
-          <button className="p-2 text-slate-400 hover:text-slate-600 transition mr-1">
+          <button className="p-2 text-slate-400 hover:text-indigo-500 transition mr-1">
              <Mic className="h-4 w-4" />
           </button>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={() => handleSend()}
             disabled={sending || !message.trim()}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#6B46C1] text-white shadow-md transition hover:bg-[#553C9A] disabled:opacity-50"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 disabled:opacity-50"
           >
             {sending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>

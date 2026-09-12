@@ -110,22 +110,22 @@ function ManageUsers() {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="font-display text-2xl font-bold text-slate-900">
+          <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-slate-100">
             {role === "placement_staff" ? "Manage Students" : "Manage Users"}
           </h2>
-          <p className="mt-1 text-sm text-slate-400">Create accounts, search people and manage roles.</p>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Create accounts, search people and manage roles.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {role !== "placement_staff" && (
-            <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+            <div className="flex items-center gap-1 rounded-2xl border border-slate-200 bg-white p-1 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
               {ROLE_TABS.map((tab) => (
                 <button
                   key={tab.value}
                   onClick={() => setFilterRole(tab.value)}
-                  className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                  className={`cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     filterRole === tab.value
                       ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
-                      : "text-slate-500 hover:bg-slate-50"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
                   }`}
                 >
                   {tab.label}
@@ -135,7 +135,8 @@ function ManageUsers() {
           )}
           <Button
             onClick={() => setRegisterFormDialog(true)}
-            className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 shadow-md shadow-indigo-500/25"
+            variant="gradient"
+            className="cursor-pointer"
           >
             <UserPlus className="h-4 w-4" /> Create New {role === "placement_staff" ? "Student" : "User"}
           </Button>
@@ -146,29 +147,29 @@ function ManageUsers() {
       {/* Search result */}
       {showSearchResult && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="border-slate-200/80 p-6">
+          <Card className="card-elevate rounded-2xl border-slate-200/80 p-6 dark:border-white/10 dark:bg-white/[0.04]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <img
                   src={filterdUser?.avatar || filterdUser?.student_id?.avatar || DEFAULT_AVATAR}
                   alt={resultName || "User"}
-                  className="h-12 w-12 rounded-full object-cover ring-2 ring-indigo-100"
+                  className="h-12 w-12 rounded-full object-cover ring-2 ring-indigo-100 dark:ring-indigo-500/20"
                 />
                 <div>
-                  <h3 className="font-display text-base font-bold text-slate-900">{resultName || "Unknown"}</h3>
-                  <p className="text-sm text-slate-400">{resultEmail || "—"}</p>
+                  <h3 className="font-display text-base font-bold text-slate-900 dark:text-slate-100">{resultName || "Unknown"}</h3>
+                  <p className="text-sm text-slate-400 dark:text-slate-500">{resultEmail || "—"}</p>
                 </div>
               </div>
-              <Button onClick={cleanSearchedData} variant="outline" className="cursor-pointer">
+              <Button onClick={cleanSearchedData} variant="outline" className="cursor-pointer dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/10">
                 <ArrowLeftCircleIcon className="h-4 w-4" /> Back
               </Button>
             </div>
-            <div className="mt-4 grid gap-3 border-t border-slate-100 pt-4 text-sm text-slate-600 sm:grid-cols-2">
-              <p><span className="font-semibold text-slate-800">Contact:</span> {filterdUser?.phoneNumber || "N/A"}</p>
-              <p><span className="font-semibold text-slate-800">Department:</span> {filterdUser?.department || "N/A"}</p>
-              <p><span className="font-semibold text-slate-800">Professional skill:</span> {filterdUser?.professional_skill || "N/A"}</p>
-              <p><span className="font-semibold text-slate-800">Location:</span> {filterdUser?.location || "N/A"}</p>
-              <p className="sm:col-span-2"><span className="font-semibold text-slate-800">About:</span> {filterdUser?.about || "N/A"}</p>
+            <div className="mt-4 grid gap-3 border-t border-slate-100 pt-4 text-sm text-slate-600 sm:grid-cols-2 dark:border-white/10 dark:text-slate-400">
+              <p><span className="font-semibold text-slate-800 dark:text-slate-200">Contact:</span> {filterdUser?.phoneNumber || "N/A"}</p>
+              <p><span className="font-semibold text-slate-800 dark:text-slate-200">Department:</span> {filterdUser?.department || "N/A"}</p>
+              <p><span className="font-semibold text-slate-800 dark:text-slate-200">Professional skill:</span> {filterdUser?.professional_skill || "N/A"}</p>
+              <p><span className="font-semibold text-slate-800 dark:text-slate-200">Location:</span> {filterdUser?.location || "N/A"}</p>
+              <p className="sm:col-span-2"><span className="font-semibold text-slate-800 dark:text-slate-200">About:</span> {filterdUser?.about || "N/A"}</p>
             </div>
           </Card>
         </motion.div>
@@ -185,7 +186,7 @@ function ManageUsers() {
 
       {/* Create user form Dialog */}
       <Dialog open={registerFormDialog} onOpenChange={setRegisterFormDialog}>
-        <DialogContent>
+        <DialogContent className="rounded-2xl dark:border-white/10 dark:bg-slate-900">
           <DialogTitle>Create User</DialogTitle>
           {/* <DialogHeader>Create a new user 👍</DialogHeader> */}
           <DialogDescription>

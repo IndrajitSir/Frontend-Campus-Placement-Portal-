@@ -9,10 +9,10 @@ export const UserCard = ({ user, currentUser }) => {
   const currentUserId = typeof currentUser === 'object' ? (currentUser?.user?._id || currentUser?._id) : currentUser;
 
   return (
-    <div className="border rounded p-4 flex justify-between items-center bg-white shadow-sm hover:shadow-md transition">
+    <div className="border border-slate-200 dark:border-white/10 rounded-xl p-4 flex justify-between items-center bg-white dark:bg-white/[0.04] shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/30 transition">
       <div>
-        <h3 className="font-semibold text-slate-800">{user?.name || "User"}</h3>
-        {user?.email && <p className="text-xs text-slate-400">{user.email}</p>}
+        <h3 className="font-semibold text-slate-800 dark:text-slate-100">{user?.name || "User"}</h3>
+        {user?.email && <p className="text-xs text-slate-400 dark:text-slate-500">{user.email}</p>}
       </div>
       <div className="flex items-center gap-2">
         <FriendRequestButton
@@ -38,9 +38,9 @@ export const UserCard = ({ user, currentUser }) => {
       </div>
 
       {chatOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
-          <div className="flex h-[520px] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-black/60 p-4 backdrop-blur-sm">
+          <div className="flex h-[520px] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0b1020] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-white">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm">{user?.name || "Chat"}</span>
               </div>
