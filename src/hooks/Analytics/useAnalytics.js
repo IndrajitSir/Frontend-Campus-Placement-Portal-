@@ -5,19 +5,29 @@ import { useUserData } from "../../context/AuthContext/AuthContext";
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
-const useFetchData = (endpoint, delayMs = 0) => {
+const useFetchData = (endpoint, delayMs = 0, params = {}) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { accessToken } = useUserData();
 
+    const paramsKey = JSON.stringify(params);
+
     useEffect(() => {
         const fetch = async () => {
             try {
                 setLoading(true);
-                // Add delay before fetching
-                await new Promise((res) => setTimeout(res, delayMs));
-                const response = await axios.get(`${API_URL}${endpoint}`, {
+                if (delayMs > 0) {
+                    await new Promise((res) => setTimeout(res, delayMs));
+                }
+
+                const queryParams = new URLSearchParams();
+                if (params?.year && params.year !== "all") queryParams.append("year", params.year);
+                if (params?.month && params.month !== "all") queryParams.append("month", params.month);
+
+                const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+
+                const response = await axios.get(`${API_URL}${endpoint}${queryString}`, {
                     withCredentials: 'include',
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -35,46 +45,46 @@ const useFetchData = (endpoint, delayMs = 0) => {
             }
         };
         fetch();
-    }, [endpoint, accessToken, delayMs]);
+    }, [endpoint, accessToken, delayMs, paramsKey]);
 
     return { data, loading, error };
 };
 
-export const useUserCountByRole = () =>
-    useFetchData("/api/v1/analytics/user-count-by-role", 200);
+export const useUserCountByRole = (params) =>
+    useFetchData("/api/v1/analytics/user-count-by-role", 100, params);
 
-export const useStudentsPerDepartment = () =>
-    useFetchData("/api/v1/analytics/students-per-department", 300);
+export const useStudentsPerDepartment = (params) =>
+    useFetchData("/api/v1/analytics/students-per-department", 150, params);
 
-export const useSelectedStudentsPerDepartment = () =>
-    useFetchData("/api/v1/analytics/selected-student-per-department", 400);
+export const useSelectedStudentsPerDepartment = (params) =>
+    useFetchData("/api/v1/analytics/selected-student-per-department", 200, params);
 
-export const usePlacementsCreatedPerMonth = () =>
-    useFetchData("/api/v1/analytics/placement-created-per-month", 600);
+export const usePlacementsCreatedPerMonth = (params) =>
+    useFetchData("/api/v1/analytics/placement-created-per-month", 250, params);
 
-export const useApplicationsPerMonth = () =>
-    useFetchData("/api/v1/analytics/applications-per-month", 800);
+export const useApplicationsPerMonth = (params) =>
+    useFetchData("/api/v1/analytics/applications-per-month", 300, params);
 
-export const useApplicationStatusSummary = () =>
-    useFetchData("/api/v1/analytics/application-status-summary", 1000);
+export const useApplicationStatusSummary = (params) =>
+    useFetchData("/api/v1/analytics/application-status-summary", 350, params);
 
-export const useResumeUploadStats = () =>
-    useFetchData("/api/v1/analytics/resume-upload-statistics", 1200);
+export const useResumeUploadStats = (params) =>
+    useFetchData("/api/v1/analytics/resume-upload-statistics", 400, params);
 
-export const useStudentsByLocation = () =>
-    useFetchData("/api/v1/analytics/student-by-location", 1400);
+export const useStudentsByLocation = (params) =>
+    useFetchData("/api/v1/analytics/student-by-location", 450, params);
 
-export const useStudentApprovalStats = () =>
-    useFetchData("/api/v1/analytics/student-approval-statistics", 1600);
+export const useStudentApprovalStats = (params) =>
+    useFetchData("/api/v1/analytics/student-approval-statistics", 500, params);
 
-export const useTopActiveStudents = () =>
-    useFetchData("/api/v1/analytics/top-active-students", 1800);
+export const useTopActiveStudents = (params) =>
+    useFetchData("/api/v1/analytics/top-active-students", 550, params);
 
-export const useTotalStudents = () =>
-    useFetchData("/api/v1/analytics/total-users", 0);
+export const useTotalStudents = (params) =>
+    useFetchData("/api/v1/analytics/total-users", 0, params);
 
-export const useTotalPlacements = () =>
-    useFetchData("/api/v1/analytics/total-placements", 100);
+export const useTotalPlacements = (params) =>
+    useFetchData("/api/v1/analytics/total-placements", 50, params);
 
-export const useTotalApplications = () =>
-    useFetchData("/api/v1/analytics/total-applications", 150);
+export const useTotalApplications = (params) =>
+    useFetchData("/api/v1/analytics/total-applications", 75, params);

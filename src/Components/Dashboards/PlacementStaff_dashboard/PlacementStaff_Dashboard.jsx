@@ -19,7 +19,7 @@ function PlacementStaff_Dashboard() {
             <CardTitle>Manage Jobs</CardTitle>
           </CardHeader>
           <CardContent>
-            <Button className="mt-2 cursor-pointer" onClick={() => navigate("/home/placements")}>Manage Job Listing</Button>
+            <Button className="mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/placements")}>Manage Job Listing</Button>
           </CardContent>
         </Card>
         <Card>

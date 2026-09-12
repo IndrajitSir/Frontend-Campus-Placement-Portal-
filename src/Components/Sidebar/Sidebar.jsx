@@ -1,14 +1,119 @@
-import { NavLink } from "react-router-dom";
-import "./sidebar.css";
+import { useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 // Icons
-import { LayoutDashboard, Briefcase, Users, UserCheck, CheckCircle2, XCircle, ClipboardList, Settings2, MonitorCog, UserCircle2, GraduationCap } from "lucide-react";
+import {
+  LayoutDashboard,
+  Briefcase,
+  Users,
+  UserCheck,
+  CheckCircle2,
+  XCircle,
+  ClipboardList,
+  Settings2,
+  MonitorCog,
+  UserCircle2,
+  GraduationCap,
+  ChevronDown
+} from "lucide-react";
+import "./sidebar.css";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
+
+const SidebarSection = ({ title, items, defaultOpen = true }) => {
+  const location = useLocation();
+
+  // Check if any item in this section is currently active
+  const isAnyChildActive = items.some((item) => {
+    if (item.exact) {
+      return location.pathname === item.to;
+    }
+    return location.pathname.startsWith(item.to);
+  });
+
+  const [isOpen, setIsOpen] = useState(defaultOpen || isAnyChildActive);
+
+  useEffect(() => {
+    if (isAnyChildActive) {
+      setIsOpen(true);
+    }
+  }, [isAnyChildActive, location.pathname]);
+
+  const linkClass = ({ isActive }) =>
+    isActive ? "sidebar-link active-link" : "sidebar-link";
+
+  return (
+    <div className="mb-2">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="sidebar-section-header group flex w-full items-center justify-between px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 transition-all hover:text-indigo-600 hover:bg-slate-100/70 rounded-xl cursor-pointer"
+      >
+        <span className="flex items-center gap-1.5">
+          {title}
+          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-slate-100 px-1 text-[10px] font-semibold text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600">
+            {items.length}
+          </span>
+        </span>
+        <ChevronDown
+          className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 group-hover:text-indigo-600 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: "easeInOut" }}
+            className="overflow-hidden flex flex-col gap-1 mt-1 pl-1"
+          >
+            {items.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.exact}
+                className={linkClass}
+              >
+                <item.icon className="h-4 w-4 shrink-0 transition-transform group-hover:scale-110" />
+                <span className="truncate">{item.label}</span>
+              </NavLink>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const Sidebar = () => {
   const { role } = useUserData();
 
-  const linkClass = ({ isActive }) => (isActive ? "sidebar-link active-link" : "sidebar-link");
+  const overviewItems = role !== "student" ? [
+    { label: "Dashboard", icon: LayoutDashboard, to: "/home/dashboard", exact: true },
+    { label: "Placement Drives", icon: Briefcase, to: "/home/dashboard/placements" },
+    { label: "Students", icon: Users, to: "/home/dashboard/students" },
+  ] : [
+    { label: "Browse Jobs", icon: Briefcase, to: "/home/dashboard/placements" },
+    { label: "My Applications", icon: ClipboardList, to: "/home/dashboard/applied-jobs" },
+    { label: "My Profile", icon: UserCircle2, to: "/home/profile" },
+  ];
+
+  const recruitmentItems = [
+    { label: "Applied", icon: ClipboardList, to: "/home/dashboard/manage-applications/applied-candidates" },
+    { label: "Shortlisted", icon: UserCheck, to: "/home/dashboard/manage-applications/shortlisted-candidates" },
+    { label: "Selected", icon: CheckCircle2, to: "/home/dashboard/manage-applications/selected-candidates" },
+    { label: "Rejected", icon: XCircle, to: "/home/dashboard/manage-applications/rejected-candidates" },
+  ];
+
+  const managementItems = [
+    { label: "Manage Users", icon: UserCircle2, to: "/home/dashboard/manage-users" },
+    { label: "Interview Setup", icon: Settings2, to: "/home/dashboard/interview-setup" },
+    { label: "Monitor System", icon: MonitorCog, to: "/home/dashboard/monitor-system" },
+  ];
 
   return (
     <nav className="flex h-full flex-col overflow-y-auto px-3 py-5" aria-label="Dashboard navigation">
@@ -21,60 +126,16 @@ const Sidebar = () => {
         </span>
       </NavLink>
 
-      {role !== "student" && (
-        <>
-          <p className="sidebar-section-title">Overview</p>
-          <NavLink to="/home/dashboard" end className={linkClass}>
-            <LayoutDashboard className="h-4 w-4" /> Dashboard
-          </NavLink>
-          <NavLink to="/home/placements" className={linkClass}>
-            <Briefcase className="h-4 w-4" /> Placement Drives
-          </NavLink>
-          <NavLink to="/home/dashboard/students" className={linkClass}>
-            <Users className="h-4 w-4" /> Students
-          </NavLink>
+      <div className="flex-1 space-y-1">
+        <SidebarSection title="Overview" items={overviewItems} defaultOpen={true} />
 
-          <p className="sidebar-section-title">Recruitment</p>
-          <NavLink to="/home/dashboard/manage-applications/applied-candidates" className={linkClass}>
-            <ClipboardList className="h-4 w-4" /> Applied
-          </NavLink>
-          <NavLink to="/home/dashboard/manage-applications/shortlisted-candidates" className={linkClass}>
-            <UserCheck className="h-4 w-4" /> Shortlisted
-          </NavLink>
-          <NavLink to="/home/dashboard/manage-applications/selected-candidates" className={linkClass}>
-            <CheckCircle2 className="h-4 w-4" /> Selected
-          </NavLink>
-          <NavLink to="/home/dashboard/manage-applications/rejected-candidates" className={linkClass}>
-            <XCircle className="h-4 w-4" /> Rejected
-          </NavLink>
-
-          <p className="sidebar-section-title">Management</p>
-          <NavLink to="/home/dashboard/manage-users" className={linkClass}>
-            <UserCircle2 className="h-4 w-4" /> Manage Users
-          </NavLink>
-          <NavLink to="/home/dashboard/interview-setup" className={linkClass}>
-            <Settings2 className="h-4 w-4" /> Interview Setup
-          </NavLink>
-          <NavLink to="/home/dashboard/monitor-system" className={linkClass}>
-            <MonitorCog className="h-4 w-4" /> Monitor System
-          </NavLink>
-        </>
-      )}
-
-      {role === "student" && (
-        <>
-          <p className="sidebar-section-title">Overview</p>
-          <NavLink to="/home" className={linkClass}>
-            <Briefcase className="h-4 w-4" /> Browse Jobs
-          </NavLink>
-          <NavLink to="/home/dashboard/applied-jobs" className={linkClass}>
-            <ClipboardList className="h-4 w-4" /> My Applications
-          </NavLink>
-          <NavLink to="/home/profile" className={linkClass}>
-            <UserCircle2 className="h-4 w-4" /> My Profile
-          </NavLink>
-        </>
-      )}
+        {role !== "student" && (
+          <>
+            <SidebarSection title="Recruitment" items={recruitmentItems} defaultOpen={true} />
+            <SidebarSection title="Management" items={managementItems} defaultOpen={true} />
+          </>
+        )}
+      </div>
     </nav>
   );
 };

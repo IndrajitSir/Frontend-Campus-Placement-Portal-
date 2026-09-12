@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion';
 // Chart
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -8,8 +8,12 @@ import { Card, CardContent } from "../../../Components/ui/card";
 import { useUserCountByRole } from '../../../hooks/Analytics/useAnalytics.js';
 // Components
 import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
+import CardFilterHeader from '../CardFilterHeader.jsx';
+
 function UserCountCard() {
-    const { data, loading, error } = useUserCountByRole();
+    const [year, setYear] = useState('all');
+    const [month, setMonth] = useState('all');
+    const { data, loading, error } = useUserCountByRole({ year, month });
 
     if (loading) return <CircleLoader />;
     if (error) return <p className="text-sm text-red-500">Error fetching User Count By Role analysis data!</p>;
@@ -17,7 +21,7 @@ function UserCountCard() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="w-full shadow-md">
                 <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Users by Role</h2>
+                    <CardFilterHeader title="Users by Role" year={year} setYear={setYear} month={month} setMonth={setMonth} />
                     <div className="h-[280px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data}>

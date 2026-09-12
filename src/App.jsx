@@ -110,7 +110,7 @@ const Hero = () => {
               </Link>
             )}
             <Link
-              to={accessToken ? "/home/placements" : "/login"}
+              to={accessToken ? "/home/dashboard/placements" : "/login"}
               className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/10"
             >
               Explore placements

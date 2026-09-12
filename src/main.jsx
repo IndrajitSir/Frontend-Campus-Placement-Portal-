@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from 'react-router-dom'
 // -- PAGES imported
 import App from './App.jsx'
 import Auth from './pages/Auth/Auth.jsx'
@@ -34,12 +34,13 @@ const router = createBrowserRouter(
         <Route path="/login" element={<Auth />} />
         <Route path="/register" element={<Auth />} />
         <Route path="/home" element={<ProtectedRoute />} >
-          <Route path="" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
-          <Route path="placements" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
+          <Route path="" element={<Navigate to="/home/dashboard/placements" replace />} />
+          <Route path="placements" element={<Navigate to="/home/dashboard/placements" replace />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="message" element={<NewMessagePage />} />
           <Route path="dashboard" element={<Dashboard />} >
             <Route path="" element={<DashBoardContent />} />
+            <Route path="placements" element={<PlacementDataProvider><InfinitePlacements /></PlacementDataProvider>} />
             <Route path="students" element={<Students />} />
             <Route path="applied-jobs" element={<AppliedForJobs />} />
             <Route path="manage-users" element={<ManageUsers />} />

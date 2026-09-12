@@ -39,7 +39,7 @@ function Admin_Dashboard() {
                         <CardTitle>Placement Records</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/placements")}>
+                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/placements")}>
                             Check Records
                         </Button>
                     </CardContent>

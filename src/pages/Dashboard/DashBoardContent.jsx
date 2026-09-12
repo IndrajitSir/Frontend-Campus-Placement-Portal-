@@ -44,7 +44,7 @@ function DashBoardContent() {
       ? [
           { icon: Users, label: "Students", desc: "View & manage students", to: "/home/dashboard/students" },
           { icon: ClipboardList, label: "Applications", desc: "Review candidates", to: "/home/dashboard/manage-applications/applied-candidates" },
-          { icon: Briefcase, label: "Placement Drives", desc: "Create & manage jobs", to: "/home/placements" },
+          { icon: Briefcase, label: "Placement Drives", desc: "Create & manage jobs", to: "/home/dashboard/placements" },
           { icon: MonitorCog, label: "System Status", desc: "Monitor the platform", to: "/home/dashboard/monitor-system" },
         ]
       : [
