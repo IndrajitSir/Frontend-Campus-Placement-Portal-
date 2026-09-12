@@ -215,7 +215,7 @@ export default function NewMessagePage() {
     const fetchFriendsAndRequests = async () => {
       try {
         setFriendsLoading(true);
-        setpeopleLoading(true);
+        setPeopleLoading(true);
 
         const headers = {
           "Content-Type": "application/json",
@@ -272,7 +272,7 @@ export default function NewMessagePage() {
           .filter(Boolean);
 
         setFriends(normalizedFriends);
-
+        setFriendsLoading(false);
         // ---------------- Incoming requests ----------------
         if (!resIncoming.ok || !dataIncoming?.success) {
           throw new Error(
@@ -295,6 +295,7 @@ export default function NewMessagePage() {
           newFriend: pendingRequests.length > 0,
           friends: pendingRequests,
         });
+        setPeopleLoading(false);
       } catch (error) {
         if (!cancelled) {
           console.error(
@@ -308,7 +309,7 @@ export default function NewMessagePage() {
         }
       } finally {
         if (!cancelled) {
-          setpeopleLoading(false);
+          setPeopleLoading(false);
           setFriendsLoading(false);
         }
       }
