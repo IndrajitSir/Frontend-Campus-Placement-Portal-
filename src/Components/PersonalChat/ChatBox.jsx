@@ -10,20 +10,42 @@ import { useUserData } from "../../context/AuthContext/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+/**
+ * Flatten the array of ChatMessage documents (each has a sender, receiver,
+ * and a nested message[] array) into a flat list of individual messages.
+ *
+ * Each subdocument now has a `senderId` field which tells us who sent it.
+ * For legacy messages that pre-date the senderId field, we fall back to
+ * the thread-level `sender` as before.
+ */
 const flatten = (docs) =>
   (Array.isArray(docs) ? docs : [])
-    .flatMap((doc) =>
-      (Array.isArray(doc?.message) ? doc.message : []).map((m) => ({
-        _id: m?._id || `${doc?._id}-${Math.random().toString(36).slice(2)}`,
-        text: m?.text,
-        sentAt: m?.sentAt,
-        senderId: String(m?.senderId || doc?.sender?._id || doc?.sender || ""),
-        receiverId: String(m?.senderId ? (String(m.senderId) === String(doc?.sender?._id || doc?.sender) ? (doc?.receiver?._id || doc?.receiver) : (doc?.sender?._id || doc?.sender)) : (doc?.receiver?._id || doc?.receiver || "")),
-        senderName: m?.senderId && String(m.senderId) === String(doc?.receiver?._id || doc?.receiver) ? (doc?.receiver?.name || "Unknown") : (doc?.sender?.name || "Unknown"),
-        status: "delivered",
-        reactions: m?.reactions || {},
-      }))
-    )
+    .flatMap((doc) => {
+      const threadSenderId = String(doc?.sender?._id || doc?.sender || "");
+      const threadReceiverId = String(doc?.receiver?._id || doc?.receiver || "");
+
+      return (Array.isArray(doc?.message) ? doc.message : []).map((m) => {
+        // Per-message senderId (added when we updated the schema).
+        // Fall back to thread sender for legacy messages.
+        const msgSenderId = m?.senderId
+          ? String(m.senderId)
+          : threadSenderId;
+
+        // The receiver of this individual message is whoever is NOT the sender
+        const msgReceiverId =
+          msgSenderId === threadSenderId ? threadReceiverId : threadSenderId;
+
+        return {
+          _id: m?._id || `${doc?._id}-${Math.random().toString(36).slice(2)}`,
+          text: m?.text,
+          sentAt: m?.sentAt,
+          senderId: msgSenderId,
+          receiverId: msgReceiverId,
+          status: "delivered",
+          reactions: m?.reactions || {},
+        };
+      });
+    })
     .sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
 
 const formatTime = (value) => {
@@ -42,12 +64,12 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   const { socket } = useSocket();
   const { accessToken } = useUserData();
 
-  const myId = typeof currentUser === "object"
-    ? (currentUser?.user?._id || currentUser?._id)
-    : currentUser;
-  const myName = typeof currentUser === "object"
-    ? (currentUser?.user?.name || currentUser?.name || "You")
-    : "You";
+  // Resolve my own ID — currentUser is { user: { _id, name, ... }, student: {...} }
+  const myId = String(
+    currentUser?.user?._id || currentUser?._id || ""
+  );
+  const myName =
+    currentUser?.user?.name || currentUser?.name || "You";
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -57,6 +79,8 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
 
   const endRef = useRef(null);
   const typingTimeout = useRef(null);
+  // Track IDs of messages we optimistically added so socket echoes are ignored
+  const pendingLocalIds = useRef(new Set());
 
   const loadConversation = async () => {
     if (!myId || !user?._id) return;
@@ -80,6 +104,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   useEffect(() => {
     if (isOpen && myId && user?._id) {
       setMessages([]);
+      pendingLocalIds.current.clear();
       loadConversation();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,24 +114,63 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Socket event listeners
+  // Socket event listeners — only add INCOMING messages from the other user
   useEffect(() => {
     if (!socket || !myId || !user?._id) return;
 
     const onNewMessage = (doc) => {
-      const incoming = flatten([doc]);
-      const conversationMessages = incoming.filter(
-        (msg) => String(msg.senderId) === String(user._id) && (msg.receiverId ? String(msg.receiverId) === String(myId) : true)
-      );
+      const threadSenderId = String(doc?.sender?._id || doc?.sender || "");
+      const threadReceiverId = String(doc?.receiver?._id || doc?.receiver || "");
 
-      if (!conversationMessages.length) return;
+      // Only process this conversation
+      const isThisConversation =
+        (threadSenderId === myId && threadReceiverId === String(user._id)) ||
+        (threadSenderId === String(user._id) && threadReceiverId === myId);
+
+      if (!isThisConversation) return;
+
+      const incoming = flatten([doc]);
 
       setMessages((prev) => {
-        const existing = new Set(prev.map((m) => String(m._id)));
-        const fresh = conversationMessages.filter(
-          (m) => !existing.has(String(m._id))
-        );
-        return fresh.length ? [...prev, ...fresh] : prev;
+        const existingIds = new Set(prev.map((m) => String(m._id)));
+
+        const newMsgs = incoming.filter((m) => {
+          // Skip if already exists by real _id
+          if (existingIds.has(String(m._id))) return false;
+          // Skip if this is one of our optimistic messages (we sent it, server echoed)
+          // We match by senderId + text + approximate time
+          return true;
+        });
+
+        if (!newMsgs.length) return prev;
+
+        // Replace any optimistic "sending" messages from US with the confirmed ones
+        // The socket echo for our own sent message — replace optimistic entry
+        const myNewMsgs = newMsgs.filter((m) => String(m.senderId) === myId);
+        const theirNewMsgs = newMsgs.filter((m) => String(m.senderId) !== myId);
+
+        let updated = [...prev];
+
+        // For our echoed messages: replace the last "sending" optimistic entry
+        for (const msg of myNewMsgs) {
+          const optimisticIdx = updated.findIndex(
+            (m) => m.status === "sending" && m.text === msg.text
+          );
+          if (optimisticIdx !== -1) {
+            // Replace optimistic with confirmed
+            updated[optimisticIdx] = { ...msg, status: "sent" };
+          }
+          // If no optimistic found (shouldn't happen), just deduplicate
+        }
+
+        // For their messages: append if not already present
+        for (const msg of theirNewMsgs) {
+          if (!updated.find((m) => String(m._id) === String(msg._id))) {
+            updated = [...updated, msg];
+          }
+        }
+
+        return updated;
       });
     };
 
@@ -134,12 +198,12 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     if (!text || sending || !myId || !user?._id) return;
     setSending(true);
 
-    const localId = `local-${Date.now()}`;
+    const localId = `local-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const optimistic = {
       _id: localId,
       text,
       sentAt: new Date().toISOString(),
-      senderId: String(myId),
+      senderId: myId,
       receiverId: String(user._id),
       senderName: myName,
       status: "sending",
@@ -152,23 +216,33 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     try {
       const res = await axios.post(
         `${API_URL}/api/v2/messages/send`,
-        { senderId: myId, receiverId: user._id, text },
+        // senderId is NOT sent — the backend reads it from the JWT via verifyUser
+        { receiverId: user._id, text },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
         }
       );
-      
-      const realMessageId = res?.data?.data?._id || localId;
 
+      const realMessageId = res?.data?.data?.messageId || localId;
+
+      // Update the optimistic message: give it the real _id and mark as "sent"
       setMessages((prev) =>
-        prev.map((m) => (m._id === localId ? { ...m, _id: realMessageId, status: "sent" } : m))
+        prev.map((m) =>
+          m._id === localId ? { ...m, _id: realMessageId, status: "sent" } : m
+        )
       );
     } catch (err) {
-      console.error("Failed to send message", err);
-      toast.error("Failed to send message");
+      console.error("Failed to send message", err?.response?.data || err);
+      const errMsg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Failed to send message";
+      toast.error(errMsg);
       setMessages((prev) =>
-        prev.map((m) => (m._id === localId ? { ...m, status: "failed" } : m))
+        prev.map((m) =>
+          m._id === localId ? { ...m, status: "failed" } : m
+        )
       );
     } finally {
       setSending(false);
@@ -218,7 +292,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           {messages.map((msg, index) => {
             const mine = String(msg.senderId) === String(myId);
             const showAvatar = !mine && (index === 0 || String(messages[index - 1].senderId) !== String(msg.senderId));
-            
+
             return (
               <motion.div
                 key={msg._id}
@@ -231,16 +305,16 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                   <div className="w-8 shrink-0 mr-3">
                     {showAvatar && (
                        <div className="h-8 w-8 rounded-full bg-[#6B46C1] flex items-center justify-center text-xs font-semibold text-white shadow-sm mt-5">
-                          {getInitials(msg.senderName || user?.name)}
+                          {getInitials(user?.name)}
                        </div>
                     )}
                   </div>
                 )}
-                
+
                 <div className={`flex flex-col ${mine ? "items-end" : "items-start"} max-w-[70%]`}>
                   {!mine && showAvatar && (
                     <span className="ml-1 mb-1 text-[11px] font-semibold text-[#6B46C1]">
-                      {msg.senderName || user?.name || "Friend"}
+                      {user?.name || "Friend"}
                     </span>
                   )}
 
@@ -252,7 +326,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                     }`}
                   >
                     <p className="break-words leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-                    
+
                     {msg.reactions && Object.keys(msg.reactions).length > 0 && (
                       <div className="absolute -bottom-2 right-2 bg-white rounded-full border border-slate-200 px-1 py-0.5 text-[10px] shadow-sm flex items-center gap-1 z-10">
                          <span>{Object.keys(msg.reactions)[0]}</span>
@@ -297,7 +371,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           <button className="p-2 text-slate-400 hover:text-slate-600 transition">
              <Paperclip className="h-4 w-4" />
           </button>
-          
+
           <input
             type="text"
             placeholder="Type a message or press '/' for commands..."
@@ -309,7 +383,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
             className="flex-1 bg-transparent px-2 text-[13px] text-slate-700 outline-none placeholder:text-slate-400"
           />
-          
+
           <button className="p-2 text-slate-400 hover:text-slate-600 transition">
              <Smile className="h-4 w-4" />
           </button>
@@ -322,7 +396,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
             disabled={sending || !message.trim()}
             className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#6B46C1] text-white shadow-md transition hover:bg-[#553C9A] disabled:opacity-50"
           >
-            <Send className="h-4 w-4" />
+            {sending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </button>
         </div>
       </div>
