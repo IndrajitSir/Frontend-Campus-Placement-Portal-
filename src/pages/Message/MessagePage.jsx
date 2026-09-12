@@ -8,6 +8,7 @@ import { Card } from '../../Components/ui/card';
 // components
 import ChatBox from '../../Components/PersonalChat/ChatBox';
 import FriendRequestButton from '../../Components/PersonalChat/FriendRequestButton';
+import MessagesContainer from '../../Components/PersonalChat/MessagesContainer';
 import SearchDialog from '../../Dialog/Search_Dialog/SearchDialogUpdated.jsx';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
@@ -44,6 +45,10 @@ export default function NewMessagePage() {
     setSelectedUser(user);
     setActiveConversation(user);
     setShowChatPanel(true);
+  };
+
+  const handleSelectConversation = (user) => {
+    openChatWith(user);
   };
 
   // ---------- People (infinite scroll) ----------
@@ -146,9 +151,13 @@ export default function NewMessagePage() {
     const onNewMessage = (doc) => {
       const senderId = doc?.sender?._id;
       const senderName = doc?.sender?.name || "Someone";
-      // Only show toast if the chat with this sender is not currently open
-      if (senderId && senderId !== myId && (!showChatPanel || activeConversation?._id !== senderId)) {
-        toast.info(`💬 ${senderName} sent you a message.`);
+      // Always show a toast for incoming messages not sent by self,
+      // even if the chat panel is open (supplementary notification).
+      if (senderId && senderId !== myId) {
+        const isChatOpen = showChatPanel && activeConversation?._id === senderId;
+        if (!isChatOpen) {
+          toast.info(`💬 ${senderName} sent you a message.`);
+        }
       }
     };
 
@@ -235,6 +244,12 @@ export default function NewMessagePage() {
 
   return (
     <div className="flex h-[calc(100vh-7.5rem)] min-h-[560px] gap-6">
+      {/* ---------------- Messages sidebar ---------------- */}
+      <MessagesContainer
+        activeConversationId={showChatPanel ? activeConversation?._id : null}
+        onSelectConversation={handleSelectConversation}
+      />
+
       {/* ---------------- Friends sidebar ---------------- */}
       <aside className="flex w-72 shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">

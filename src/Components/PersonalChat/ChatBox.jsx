@@ -23,7 +23,7 @@ const flatten = (docs) =>
         senderId: doc?.sender?._id,
         senderName: doc?.sender?.name || "Unknown",
       }))
-    );
+    ).sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
 
 const formatTime = (value) => {
   if (!value) return "";
@@ -74,11 +74,24 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     if (!socket) return;
 
     const onNewMessage = (doc) => {
+      const incoming = flatten([doc]);
+
+      const conversationMessages = incoming.filter(
+        (msg) =>
+          String(msg.senderId) === String(user?._id) ||
+          String(msg.senderId) === String(myId)
+      );
+
+      if (!conversationMessages.length) return;
+
       setMessages((prev) => {
-        const incoming = flatten([doc]);
-        const existing = new Set((Array.isArray(prev) ? prev : []).map((m) => m._id));
-        const fresh = incoming.filter((m) => !existing.has(m._id));
-        return fresh.length ? [...(Array.isArray(prev) ? prev : []), ...fresh] : prev;
+        const existing = new Set(prev.map((m) => String(m._id)));
+
+        const fresh = conversationMessages.filter(
+          (m) => !existing.has(String(m._id))
+        );
+
+        return fresh.length ? [...prev, ...fresh] : prev;
       });
     };
 
@@ -145,11 +158,10 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           return (
             <div key={msg._id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm shadow-sm ${
-                  mine
+                className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm shadow-sm ${mine
                     ? "rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 text-white"
                     : "rounded-bl-md bg-slate-100 text-slate-800"
-                }`}
+                  }`}
               >
                 {!mine && (
                   <p className="mb-0.5 text-[10px] font-semibold text-indigo-500">{msg.senderName}</p>
