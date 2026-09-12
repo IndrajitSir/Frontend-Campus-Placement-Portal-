@@ -158,7 +158,7 @@ function AppliedApplications() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => { setDataForDisplay(application); setDisplayUserDetailsDialog(true) }}>
-                        <Eye className="h-3.5 w-3.5" /> View
+                        <Eye className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top"><p>View candidate details</p></TooltipContent>

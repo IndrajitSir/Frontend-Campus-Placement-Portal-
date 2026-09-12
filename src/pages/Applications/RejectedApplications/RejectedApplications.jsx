@@ -134,7 +134,7 @@ function RejectedApplications() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => { setDataForDisplay(application); setDisplayUserDetailsDialog(true) }}>
-                        <Eye className="h-3.5 w-3.5" /> View
+                        <Eye className="h-3.5 w-3.5" /> 
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top"><p>View candidate details</p></TooltipContent>
@@ -144,7 +144,7 @@ function RejectedApplications() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setRecordID(application?._id); setDeleteStudentApplicationDialog(true) }}>
-                        <Trash className="h-3.5 w-3.5" /> Remove
+                        <Trash className="h-3.5 w-3.5" /> 
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top"><p>Remove from rejected</p></TooltipContent>
