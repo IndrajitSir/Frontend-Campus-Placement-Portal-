@@ -17,9 +17,9 @@ const flatten = (docs) =>
         _id: m?._id || `${doc?._id}-${Math.random().toString(36).slice(2)}`,
         text: m?.text,
         sentAt: m?.sentAt,
-        senderId: String(doc?.sender?._id || doc?.sender || ""),
-        receiverId: String(doc?.receiver?._id || doc?.receiver || ""),
-        senderName: doc?.sender?.name || "Unknown",
+        senderId: String(m?.senderId || doc?.sender?._id || doc?.sender || ""),
+        receiverId: String(m?.senderId ? (String(m.senderId) === String(doc?.sender?._id || doc?.sender) ? (doc?.receiver?._id || doc?.receiver) : (doc?.sender?._id || doc?.sender)) : (doc?.receiver?._id || doc?.receiver || "")),
+        senderName: m?.senderId && String(m.senderId) === String(doc?.receiver?._id || doc?.receiver) ? (doc?.receiver?.name || "Unknown") : (doc?.sender?.name || "Unknown"),
         status: "delivered",
         reactions: m?.reactions || {},
       }))
