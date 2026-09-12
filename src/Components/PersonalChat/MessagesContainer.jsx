@@ -109,85 +109,74 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
   }, [activeConversationId]);
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-        <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900">
-          <MessageSquare className="h-4 w-4 text-indigo-600" /> Messages
-        </h2>
-        <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
-          {conversations.length}
-        </span>
-      </div>
+    <div className="flex-1 space-y-1.5 overflow-y-auto p-3">
+      {loading && (
+        <div className="flex items-center justify-center gap-2 py-6 text-sm text-slate-400">
+          <LoaderCircle className="h-4 w-4 animate-spin text-indigo-500" /> Loading…
+        </div>
+      )}
 
-      <div className="flex-1 space-y-1.5 overflow-y-auto p-3">
-        {loading && (
-          <div className="flex items-center justify-center gap-2 py-6 text-sm text-slate-400">
-            <LoaderCircle className="h-4 w-4 animate-spin text-indigo-500" /> Loading…
-          </div>
-        )}
+      {!loading && conversations.length === 0 && (
+        <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
+            <MessageSquare className="h-6 w-6" />
+          </span>
+          <p className="text-sm font-medium text-slate-400">No messages yet</p>
+          <p className="px-4 text-xs text-slate-300">
+            Start a conversation from the people list.
+          </p>
+        </div>
+      )}
 
-        {!loading && conversations.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-300">
-              <MessageSquare className="h-6 w-6" />
-            </span>
-            <p className="text-sm font-medium text-slate-400">No messages yet</p>
-            <p className="px-4 text-xs text-slate-300">
-              Start a conversation from the people list.
-            </p>
-          </div>
-        )}
-
-        {!loading &&
-          conversations.map((conv) => {
-            const isActive = activeConversationId === conv.user?._id;
-            return (
-              <motion.button
-                key={conv.user?._id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={() => onSelectConversation(conv.user)}
-                className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all ${
-                  isActive
-                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
-                    : "text-slate-700 hover:bg-indigo-50"
-                }`}
-              >
-                <div className="relative shrink-0">
-                  <img
-                    src={avatarOf(conv.user)}
-                    alt={nameOf(conv.user)}
-                    className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
-                  />
-                  {conv.unreadCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                      {conv.unreadCount > 99 ? "99+" : conv.unreadCount}
-                    </span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <p className="truncate text-sm font-semibold">{nameOf(conv.user)}</p>
-                    <span
-                      className={`ml-1 shrink-0 text-[10px] ${
-                        isActive ? "text-indigo-100" : "text-slate-400"
-                      }`}
-                    >
-                      {formatTimestamp(conv.lastMessageAt)}
-                    </span>
-                  </div>
-                  <p
-                    className={`truncate text-xs ${
+      {!loading &&
+        conversations.map((conv) => {
+          const isActive = activeConversationId === conv.user?._id;
+          return (
+            <motion.button
+              key={conv.user?._id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => onSelectConversation(conv.user)}
+              className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all ${
+                isActive
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
+                  : "text-slate-700 hover:bg-indigo-50"
+              }`}
+            >
+              <div className="relative shrink-0">
+                <img
+                  src={avatarOf(conv.user)}
+                  alt={nameOf(conv.user)}
+                  className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
+                />
+                {conv.unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {conv.unreadCount > 99 ? "99+" : conv.unreadCount}
+                  </span>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="truncate text-sm font-semibold">{nameOf(conv.user)}</p>
+                  <span
+                    className={`ml-1 shrink-0 text-[10px] ${
                       isActive ? "text-indigo-100" : "text-slate-400"
-                    } ${conv.unreadCount > 0 && !isActive ? "font-medium text-slate-600" : ""}`}
+                    }`}
                   >
-                    {conv.lastMessage || "Start chatting…"}
-                  </p>
+                    {formatTimestamp(conv.lastMessageAt)}
+                  </span>
                 </div>
-              </motion.button>
-            );
-          })}
-      </div>
-    </aside>
+                <p
+                  className={`truncate text-xs ${
+                    isActive ? "text-indigo-100" : "text-slate-400"
+                  } ${conv.unreadCount > 0 && !isActive ? "font-medium text-slate-600" : ""}`}
+                >
+                  {conv.lastMessage || "Start chatting…"}
+                </p>
+              </div>
+            </motion.button>
+          );
+        })}
+    </div>
   );
 }

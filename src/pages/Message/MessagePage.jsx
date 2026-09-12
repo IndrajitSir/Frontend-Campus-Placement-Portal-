@@ -211,55 +211,74 @@ export default function NewMessagePage() {
 
     let cancelled = false;
 
-    const fetchFriends = async () => {
+    const fetchFriendsAndRequests = async () => {
       try {
         setLoading(true);
 
-        const response = await fetch(
-          `${API_URL}/api/v2/friend-request/friends`,
-          {
+        const [resFriends, resIncoming] = await Promise.all([
+          fetch(`${API_URL}/api/v2/friend-request/friends`, {
             method: "GET",
             credentials: "include",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${accessToken}`,
             },
-          }
-        );
+          }),
+          fetch(`${API_URL}/api/v2/friend-request/incoming`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }),
+        ]);
 
-        const res = await response.json();
+        const dataFriends = await resFriends.json();
+        const dataIncoming = await resIncoming.json();
 
         if (cancelled) return;
 
-        if (!res?.success) {
-          toast.error(res?.message || "Failed to fetch friends.");
-          return;
+        if (dataFriends?.success) {
+          const normalized = (
+            Array.isArray(dataFriends?.data) ? dataFriends.data : []
+          )
+            .map((request) => {
+              const isSender =
+                String(request?.sender?._id) === String(myId);
+
+              const friendUser = isSender
+                ? request?.receiver
+                : request?.sender;
+
+              return friendUser
+                ? {
+                    ...friendUser,
+                    requestId: request?._id,
+                  }
+                : null;
+            })
+            .filter(Boolean);
+
+          setFriends(normalized);
         }
 
-        const normalized = (
-          Array.isArray(res?.data) ? res.data : []
-        )
-          .map((request) => {
-            const isSender =
-              String(request?.sender?._id) === String(myId);
+        if (dataIncoming?.success && Array.isArray(dataIncoming?.data)) {
+          const pendingRequests = dataIncoming.data
+            .map((req) => ({
+              ...(req?.sender || {}),
+              requestId: req?._id,
+            }))
+            .filter((u) => u?._id);
 
-            const friendUser = isSender
-              ? request?.receiver
-              : request?.sender;
-
-            return friendUser
-              ? {
-                ...friendUser,
-                requestId: request?._id,
-              }
-              : null;
-          })
-          .filter(Boolean);
-
-        setFriends(normalized);
+          setFriendRequest({
+            newFriend: pendingRequests.length > 0,
+            friends: pendingRequests,
+          });
+        }
       } catch (error) {
         if (!cancelled) {
-          console.error("Failed to fetch friends:", error);
+          console.error("Failed to fetch friends & requests:", error);
         }
       } finally {
         if (!cancelled) {
@@ -268,7 +287,7 @@ export default function NewMessagePage() {
       }
     };
 
-    fetchFriends();
+    fetchFriendsAndRequests();
 
     return () => {
       cancelled = true;
@@ -488,6 +507,12 @@ export default function NewMessagePage() {
           friends: remaining,
         };
       });
+
+      toast.success(
+        action === "accepted"
+          ? "Friend request accepted!"
+          : "Friend request declined."
+      );
     } catch (error) {
       console.error("Failed to respond to friend request:", error);
       toast.error("Something went wrong.");
@@ -718,7 +743,7 @@ export default function NewMessagePage() {
 
               {/* People grid */}
 
-              <div className="custom-scrollbar grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto bg-slate-50/50 px-5 py-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="custom-scrollbar grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto bg-slate-50/50 px-5 py-4 sm:grid-cols-2">
 
                 {result &&
                   renderPersonCard(
@@ -741,31 +766,55 @@ export default function NewMessagePage() {
                     </>
                   )}
 
-                {users.map((user) => {
-                  if (String(myId) === String(user?._id)) {
-                    return null;
-                  }
+                {(() => {
+                  const filtered = users.filter((u) => {
+                    if (!u || String(myId) === String(u._id)) return false;
+                    const role = (u.role || u.student_id?.role || "").toLowerCase();
+                    const dept = (u.department || u.student_id?.department || u.branch || u.student_id?.branch || "").toLowerCase();
+                    const email = (u.email || u.student_id?.email || "").toLowerCase();
 
-                  return renderPersonCard(
-                    user,
-                    <>
-                      <FriendRequestButton
-                        senderId={myId}
-                        receiverId={user?._id}
-                      />
+                    if (activeFilter === "All Students") {
+                      return role === "student" || role === "" || !u.role;
+                    }
+                    if (activeFilter === "Faculty") {
+                      return role === "placement_staff" || role === "admin" || role === "faculty" || role === "staff";
+                    }
+                    if (activeFilter === "Computer Science") {
+                      return dept.includes("computer") || dept.includes("cs") || dept.includes("it") || dept.includes("tech") || email.includes("cs");
+                    }
+                    if (activeFilter === "Design & Arts") {
+                      return dept.includes("design") || dept.includes("art") || dept.includes("ui") || dept.includes("ux");
+                    }
+                    if (activeFilter === "Business") {
+                      return dept.includes("business") || dept.includes("mba") || dept.includes("management") || dept.includes("finance");
+                    }
+                    return true;
+                  });
 
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="cursor-pointer"
-                        onClick={() => openChatWith(user)}
-                      >
-                        <MessageCircle className="h-3.5 w-3.5" />
-                        Message
-                      </Button>
-                    </>
+                  const listToDisplay = filtered.length > 0 ? filtered : users.filter(u => String(myId) !== String(u?._id));
+
+                  return listToDisplay.map((user) =>
+                    renderPersonCard(
+                      user,
+                      <>
+                        <FriendRequestButton
+                          senderId={myId}
+                          receiverId={user?._id}
+                        />
+
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="cursor-pointer"
+                          onClick={() => openChatWith(user)}
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" />
+                          Message
+                        </Button>
+                      </>
+                    )
                   );
-                })}
+                })()}
 
                 {loading && (
                   <div className="col-span-full flex items-center justify-center gap-2 py-4 text-sm text-slate-400">
@@ -895,7 +944,7 @@ export default function NewMessagePage() {
           </div>
 
           <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700 ring-1 ring-inset ring-indigo-500/10">
-            {friends.length}
+            {activeFriendsTab === "requests" ? friendRequest.friends.length : friends.length}
           </span>
         </div>
 
@@ -922,21 +971,21 @@ export default function NewMessagePage() {
                 : "hover:text-slate-700"
             }`}
           >
-            Online
+            Online ({friends.length})
           </button>
 
           <button
             type="button"
             onClick={() => setActiveFriendsTab("requests")}
-            className={`flex items-center gap-1 px-2.5 pb-2 ${
+            className={`flex items-center gap-1.5 px-2.5 pb-2 ${
               activeFriendsTab === "requests"
                 ? "border-b-2 border-violet-600 font-semibold text-violet-600"
                 : "hover:text-slate-700"
             }`}
           >
-            <span>Requests</span>
+            <span>Requests ({friendRequest.friends.length})</span>
             {friendRequest.friends.length > 0 && (
-              <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             )}
           </button>
         </div>
@@ -1003,14 +1052,61 @@ export default function NewMessagePage() {
             )}
 
             {activeFriendsTab === "online" && (
-              <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
-                <h3 className="mb-1 text-xs font-semibold text-slate-800">
-                  Online status coming soon
-                </h3>
-                <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
-                  We don't track live presence yet — check the "All" tab to reach any friend.
-                </p>
-              </div>
+              friends.length === 0 ? (
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/70 p-4 text-center">
+                  <h3 className="mb-1 text-xs font-semibold text-slate-800">
+                    No friends online right now
+                  </h3>
+                  <p className="max-w-[210px] text-[11px] leading-relaxed text-slate-400">
+                    Check back later or message your friends from the All tab.
+                  </p>
+                </div>
+              ) : (
+                friends.map((friend) => {
+                  const isActive =
+                    showChatPanel &&
+                    activeConversation?._id === friend?._id;
+
+                  return (
+                    <button
+                      key={friend?._id}
+                      type="button"
+                      onClick={() => openChatWith(friend)}
+                      className={`
+                        flex w-full cursor-pointer items-center gap-3
+                        rounded-xl p-2.5 text-left transition-all
+                        ${isActive
+                          ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/25"
+                          : "text-slate-700 hover:bg-violet-50"
+                        }
+                      `}
+                    >
+                      <div className="relative shrink-0">
+                        <img
+                          src={avatarOf(friend)}
+                          alt={nameOf(friend)}
+                          className="h-10 w-10 rounded-full object-cover ring-2 ring-white"
+                        />
+                        <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {nameOf(friend)}
+                        </p>
+
+                        <p
+                          className={`truncate text-xs ${
+                            isActive ? "text-indigo-100" : "text-emerald-600 font-medium"
+                          }`}
+                        >
+                          Online now
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })
+              )
             )}
 
             {activeFriendsTab === "requests" && (
