@@ -19,7 +19,7 @@ import DeletePlacementPostDialog from "../../Dialog/DeletePlacement_dialog/Delet
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 // icons
-import { ArrowLeftCircleIcon } from "lucide-react";
+import { ArrowLeftCircleIcon, LoaderCircle } from "lucide-react";
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -42,7 +42,9 @@ const InfinitePlacements = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { ref, inView } = useInView();
+  // `loading` drives the delete-dialog spinner; `fetching` drives the page loader.
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [removingPostID, setRemovingPostID] = useState(null);
 
 
@@ -50,10 +52,13 @@ const InfinitePlacements = () => {
     let cancelled = false;
     const fetchPlacements = async () => {
       try {
+        setFetching(true);
+        // v2 returns a paginated envelope: { data: { data: [...placements] } }
         const res = await axios.get(`${API_URL}/api/v2/placements?page=${page}&limit=10`, {
           withCredentials: true
         });
-        if (res?.data?.data?.data?.length === 0) {
+        const batch = Array.isArray(res?.data?.data?.data) ? res.data.data.data : [];
+        if (batch.length === 0) {
           setHasMore(false);
           return;
         }
@@ -61,11 +66,13 @@ const InfinitePlacements = () => {
         // append the same placement twice.
         setPlacements((prev) => {
           const existing = new Set((Array.isArray(prev) ? prev : []).map((p) => p?._id));
-          const fresh = placements.filter((p) => p?._id && !existing.has(p._id));
+          const fresh = batch.filter((p) => p?._id && !existing.has(p._id));
           return [...(Array.isArray(prev) ? prev : []), ...fresh];
         });
       } catch (err) {
         if (!cancelled) console.error("Failed to fetch placements", err);
+      } finally {
+        if (!cancelled) setFetching(false);
       }
     };
 
@@ -82,6 +89,9 @@ const InfinitePlacements = () => {
   }, [inView, hasMore]);
 
   if (!accessToken || !role) return <CircleLoader />;
+
+  // First load — no placements on screen yet: show the loader instead of an empty grid.
+  if (fetching && placements.length === 0 && hasMore) return <CircleLoader />;
 
   const cleanSearchedData = () => {
     setFilteredPlacement({});
@@ -227,8 +237,8 @@ const InfinitePlacements = () => {
           )}
           {hasMore && (
             <div ref={ref} className="col-span-full flex items-center justify-center gap-3 py-8 text-sm text-slate-500">
-              <CircleLoader />
-              Loading more placements…
+              {fetching && <LoaderCircle className="h-5 w-5 animate-spin text-indigo-500" />}
+              {fetching ? "Loading more placements…" : "Scroll for more"}
             </div>
           )}
         </div>

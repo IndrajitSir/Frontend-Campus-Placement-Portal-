@@ -64,14 +64,34 @@
   text-decoration: underline;
 }
 
-.footer-social i {
+.footer-social a {
+  display: inline-flex;
   color: #94a3b8;
   transition: color 0.2s, transform 0.2s;
 }
 
-.footer-social i:hover {
+.footer-social a:hover {
   color: #c7d2fe;
   transform: translateY(-2px);
+}
+
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: #c7d2fe;
+  text-decoration: underline;
+}
+
+.footer-link-icon {
+  flex-shrink: 0;
+  color: #6366f1;
 }
 
 @media (max-width: 640px) {

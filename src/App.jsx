@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+// CONTEXT api
+import { useUserData } from "./context/AuthContext/AuthContext.jsx";
 // Components
 import Navbar from "./Components/Navbar/Navbar.jsx";
 import PlacementStats from "./Components/PlacementStats/PlacementStats.jsx";
@@ -54,6 +56,9 @@ const SectionHeading = ({ eyebrow, title, subtitle, light = false }) => (
 
 /* ---------------- Hero ---------------- */
 const Hero = () => {
+  const { accessToken, role } = useUserData();
+  const dashboardPath = role === "student" ? "/home" : "/home/dashboard";
+
   return (
     <section className="relative overflow-hidden bg-[#0a0e1f] pb-24 pt-16 sm:pt-24">
       <div className="absolute inset-0 bg-spotlight" aria-hidden="true" />
@@ -85,15 +90,27 @@ const Hero = () => {
           </motion.p>
 
           <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-4">
+            {/* Logged-in visitors already have an account — sending them to
+                /register just bounces them to /login, so swap the CTA. */}
+            {accessToken ? (
+              <Link
+                to={dashboardPath}
+                className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
+              >
+                Go to dashboard
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            ) : (
+              <Link
+                to="/register"
+                className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
+              >
+                Get started free
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            )}
             <Link
-              to="/register"
-              className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
-            >
-              Get started free
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              to="/login"
+              to={accessToken ? "/home/placements" : "/login"}
               className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/10"
             >
               Explore placements

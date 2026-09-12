@@ -8,6 +8,8 @@ import { Card } from '../../../Components/ui/card.jsx';
 import { Button } from "../../../Components/ui/button";
 // Icons
 import { Trash, ShieldCheck, Mail, Phone } from "lucide-react";
+// Components
+import CircleLoader from "../../../Components/Loader/CircleLoader.jsx";
 // Dialog Boxes
 import DeleteUserDialog from '../../../Dialog/DeleteUser_dialog/DeleteUserDialog.jsx';
 // Environment variable
@@ -21,27 +23,44 @@ function Admin() {
   const [userID, setUserID] = useState("");
   const { accessToken } = useUserData();
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   async function getDataV2() {
-    const role = "admin";
-    const res = await fetch(`${API_URL}/api/v2/users/all-users/${role}?page=${page}&limit=9`, {
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-    });
+    try {
+      setLoading(true);
+      const role = "admin";
+      const res = await fetch(`${API_URL}/api/v2/users/all-users/${role}?page=${page}&limit=9`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
 
-    const response = await res.json();
-    if (!response?.success) {
-      toast.error(response?.message || "Something went wrong!");
+      const response = await res.json();
+      if (!response?.success) {
+        toast.error(response?.message || "Something went wrong!");
+      }
+      setAdmin(response?.data?.users);
+    } catch (err) {
+      console.error("Failed to fetch admins", err);
+      toast.error("Failed to fetch admins");
+    } finally {
+      setLoading(false);
     }
-    setAdmin(response?.data?.users);
   }
 
   useEffect(() => {
     getDataV2();
   }, [page])
+
+  if (loading) {
+    return (
+      <div className="w-full">
+        <CircleLoader fullScreen={false} label="Loading admins…" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-5 pt-6">

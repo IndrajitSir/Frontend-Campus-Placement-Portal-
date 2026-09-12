@@ -1,6 +1,9 @@
 import { useEffect, useState, useRef } from "react";
-import { useSocket } from "../../../../context/SocketContext/SocketContext.jsx";
+import { useUserData } from "../../../../context/AuthContext/AuthContext.jsx";
 import { Eraser, ArrowDownToLine } from "lucide-react";
+
+const API_URL = import.meta.env.VITE_API_URL;
+const MAX_LINES = 1000;
 
 const FILTERS = [
   { value: "all", label: "All" },
@@ -12,42 +15,42 @@ const LogViewer = () => {
     const [logs, setLogs] = useState([]);
     const [filter, setFilter] = useState("all");
     const [autoScroll, setAutoScroll] = useState(false);
+    const [connected, setConnected] = useState(false);
     const logEndRef = useRef(null);
-    const { socket, setIsSocketReady } = useSocket();
+    const { accessToken } = useUserData();
 
+    // Live logs arrive over Server-Sent Events (no socket.io involved).
+    // EventSource can't set an Authorization header, so the backend authenticates
+    // via the httpOnly accessToken cookie (same one /users/current-user uses) and
+    // enforces the admin role. The token is deliberately NOT put in the URL since
+    // request URLs end up in the access logs.
     useEffect(() => {
-        if (!socket) return;
-        socket.on("connect", () => {
-            setIsSocketReady(true);
-        });
-        socket.on("disconnect", () => {
-            setIsSocketReady(false);
-        });
+        if (!accessToken) return;
+        const url = `${API_URL}/api/v1/system/logs/stream`;
+        const source = new EventSource(url, { withCredentials: true });
+
+        const onLog = (event) => {
+            let line = event.data;
+            try {
+                line = JSON.parse(event.data);
+            } catch {
+                // Non-JSON line — render it as-is.
+            }
+            setLogs((prev) => {
+                const next = [...prev, line];
+                return next.length > MAX_LINES ? next.slice(next.length - MAX_LINES) : next;
+            });
+        };
+
+        source.onopen = () => setConnected(true);
+        source.onerror = () => setConnected(false);
+        source.addEventListener("log", onLog);
+
         return () => {
-            socket.off("connect");
-            socket.off("disconnect");
-        }
-    }, [socket]);
-
-    useEffect(() => {
-        if (!socket) return;
-        socket.emit("log:requestView");
-    }, [socket]);
-
-    useEffect(() => {
-        if (!socket) return;
-        socket.on("log:view", (newLogs) => {
-            setLogs((prev) => [...prev, ...newLogs]);
-        });
-        socket.on("log:update", (newLogs) => {
-            setLogs((prev) => [...prev, ...newLogs]);
-        });
-
-        return () => {
-            socket.off("log:view");
-            socket.off("log:update");
-        }
-    }, [socket]);
+            source.removeEventListener("log", onLog);
+            source.close();
+        };
+    }, [accessToken]);
 
     useEffect(() => {
         if (autoScroll && logEndRef.current) {
@@ -57,13 +60,14 @@ const LogViewer = () => {
 
     const filteredLogs = logs.filter((line) => {
         if (filter === "all") return true;
+        if (typeof line !== "string") return false;
         if (filter === "info") return line.toLowerCase().includes("info");
         if (filter === "error") return line.toLowerCase().includes("error");
         return true;
     });
 
     const levelFor = (text) => {
-        const t = text.toLowerCase();
+        const t = typeof text === "string" ? text.toLowerCase() : "";
         if (t.includes("error")) return "error";
         if (t.includes("warn")) return "warn";
         return "info";
@@ -80,6 +84,10 @@ const LogViewer = () => {
                         <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
                     </span>
                     <span className="ml-2 font-mono text-xs text-slate-400">live logs</span>
+                    <span className="flex items-center gap-1.5 font-mono text-[11px] text-slate-500">
+                        <span className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-emerald-400" : "bg-amber-400"}`} />
+                        {connected ? "streaming" : "connecting…"}
+                    </span>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
@@ -137,13 +145,13 @@ const LogViewer = () => {
                                 </span>
                             </div>
                         );
-                    } catch (err) {
+                    } catch {
                         return (
                             <div key={index} className="mb-1.5 flex items-start gap-2">
                                 <span className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
                                     level === "error" ? "bg-red-400" : "bg-slate-500"
                                 }`} />
-                                <span className="break-all text-slate-400">{line}</span>
+                                <span className="break-all text-slate-400">{String(line)}</span>
                             </div>
                         );
                     }

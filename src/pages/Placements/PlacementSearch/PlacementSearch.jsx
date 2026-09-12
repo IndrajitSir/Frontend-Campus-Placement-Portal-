@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 // Shadcn Components
 import { Button } from "../../../Components/ui/button";
 import { Input } from "../../../Components/ui/input";
+// Icons
+import { Search } from "lucide-react";
 // CONTEXT api
 import { usePlacementData } from "../../../context/PlacementContext/PlacementContext.jsx";
 
@@ -15,15 +17,15 @@ const PlacementSearch = ({ onQuery }) => {
 
     useEffect(() => {
         setSearchQuery("");
-        setFilteredResults({});
+        setFilteredResults([]);
     }, []);
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchQuery(value);
 
-        const results = placements.filter(p =>
-            p.company_name.toLowerCase().includes(value.toLowerCase()) ||
-            p.job_title.toLowerCase().includes(value.toLowerCase())
+        const results = (Array.isArray(placements) ? placements : []).filter(p =>
+            p?.company_name?.toLowerCase().includes(value.toLowerCase()) ||
+            p?.job_title?.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredResults(results);
     };
@@ -34,6 +36,11 @@ const PlacementSearch = ({ onQuery }) => {
         setShowOverlay(false);
         setSearchQuery("");
         setFilteredResults([]);
+    };
+
+    const handleSubmit = () => {
+        onQuery(searchQuery);
+        handleOverlayClose();
     };
 
     const handleSuggestionClick = (placement) => {
@@ -62,19 +69,38 @@ const PlacementSearch = ({ onQuery }) => {
 
     return (
         <>
-            <div className="relative z-10 p-4">
-                <Button onFocus={() => handleFocus(true)} className="cursor-pointer"> Search </Button>
+            <div className="relative z-10">
+                <Button
+                    type="button"
+                    size="icon"
+                    aria-label="Search placements"
+                    title="Search placements"
+                    onClick={() => handleFocus(true)}
+                    className="cursor-pointer rounded-xl"
+                >
+                    <Search className="h-4 w-4" />
+                </Button>
                 <AnimatePresence>
                     {showOverlay && (
                         <motion.div initial={{ y: "-100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "-100%", opacity: 0 }} transition={{ duration: 0.4, ease: "easeInOut" }} ref={searchRef}
                             className="fixed inset-0 bg-transparent bg-opacity-40 backdrop-blur-sm flex justify-center pt-20 z-20" >
                             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ delay: 0.1 }}
                                 className="w-[90%] max-w-2xl bg-white rounded-xl shadow-lg p-4" >
-                                <div className="flex justify-between">
+                                <div className="flex items-center gap-2">
                                     <Input type="text" value={searchQuery} onChange={handleSearchChange} placeholder="Search by company or job title"
-                                        className="w-140 px-4 py-2 border rounded-md shadow-sm"
+                                        className="flex-1 px-4 py-2 border rounded-md shadow-sm"
+                                        autoFocus
                                     />
-                                    <Button onFocus={() => handleFocus(false)} onClick={() => onQuery(searchQuery)} className="cursor-pointer"> Search </Button>
+                                    <Button
+                                        type="button"
+                                        size="icon"
+                                        aria-label="Search"
+                                        title="Search"
+                                        onClick={handleSubmit}
+                                        className="cursor-pointer shrink-0"
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
                                 </div>
                                 {Array.isArray(filteredResults) && filteredResults.length > 0 ? (
                                     filteredResults.map((placement, i) => (

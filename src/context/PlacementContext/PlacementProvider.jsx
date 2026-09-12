@@ -11,7 +11,7 @@ export const PlacementDataProvider = ({ children }) => {
     async function getData() {
       try {
         setLoadingPlacements(true);
-        const res = await fetch(`${API_URL}/api/v1/placements`, {
+        const res = await fetch(`${API_URL}/api/v2/placements?page=1&limit=100`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json'
@@ -19,7 +19,8 @@ export const PlacementDataProvider = ({ children }) => {
         });
         const response = await res.json();
         if (!cancelled) {
-          setPlacements(response?.data || []);
+          // v2 paginates: the placements live under response.data.data
+          setPlacements(Array.isArray(response?.data?.data) ? response.data.data : []);
         }
       } catch (err) {
         console.error("Failed to fetch placements", err);

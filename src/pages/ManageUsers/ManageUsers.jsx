@@ -14,6 +14,8 @@ import RegisterUserForm from "./RegisterUserForm";
 import SearchDialog from "../../Dialog/Search_Dialog/SearchDialog.jsx";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
+// Components
+import CircleLoader from "../../Components/Loader/CircleLoader.jsx";
 // Icons
 import { ArrowLeftCircleIcon, UserPlus, Users } from "lucide-react";
 // Environment variable
@@ -34,26 +36,36 @@ function ManageUsers() {
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [usersNameAndEmail, setUsersNameAndEmail] = useState([]);
   const [filterdUser, setFilteredUser] = useState({});
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
   const fetchUsers = async () => {
-    const res = await fetch(`${API_URL}/api/v1/users/all-users-nameAndEmail`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-    });
-    const response = await res.json();
-    if (!response?.success) {
-      toast.warning(response?.message)
+    if (!accessToken) return;
+    try {
+      setLoadingUsers(true);
+      const res = await fetch(`${API_URL}/api/v1/users/all-users-nameAndEmail`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
+      const response = await res.json();
+      if (!response?.success) {
+        toast.warning(response?.message)
+      }
+      setUsersNameAndEmail(response?.data);
+    } catch (err) {
+      console.error("Failed to fetch users", err);
+      toast.error("Failed to fetch users");
+    } finally {
+      setLoadingUsers(false);
     }
-    setUsersNameAndEmail(response?.data);
   };
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     if (role === "placement_staff") setFilterRole("student");
@@ -81,10 +93,10 @@ function ManageUsers() {
     setShowSearchResult(false);
   };
 
-  if (!accessToken || !role) {
+  if (!accessToken || !role || loadingUsers) {
     return (
-      <div className="flex items-center justify-center py-20 text-sm text-slate-400">
-        Loading users for managing purpose!
+      <div className="w-full">
+        <CircleLoader fullScreen={false} label="Loading users for managing purpose…" />
       </div>
     );
   }

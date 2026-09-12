@@ -9,6 +9,8 @@ import { Button } from "../../../Components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../../Components/ui/dialog.jsx';
 // Icons
 import { Trash, Eye, GraduationCap, BadgeCheck } from "lucide-react";
+// Components
+import CircleLoader from "../../../Components/Loader/CircleLoader.jsx";
 // Dialog Boxes
 import DeleteUserDialog from '../../../Dialog/DeleteUser_dialog/DeleteUserDialog.jsx';
 import Display_User_Details_Dialog from '../../../Dialog/Display_User_Details_Dialog/Display_User_Details_Dialog.jsx';
@@ -27,21 +29,30 @@ function Students() {
   const [isApproved, setIsApproved] = useState(false);
   const [specificUserDetails, setSpecificUserDetails] = useState({});
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   async function getDataV2() {
-    const res = await fetch(`${API_URL}/api/v2/student/all?page=${page}&limit=9`, {
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-    });
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/v2/student/all?page=${page}&limit=9`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
 
-    const response = await res.json();
-    if (!response.success) {
-      toast.error(response.message || "Something went wrong!");
+      const response = await res.json();
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong!");
+      }
+      setStudents(response?.data?.students);
+    } catch (err) {
+      console.error("Failed to fetch students", err);
+      toast.error("Failed to fetch students");
+    } finally {
+      setLoading(false);
     }
-    setStudents(response?.data?.students);
   }
 
   useEffect(() => {
@@ -74,6 +85,14 @@ function Students() {
   }
 
   const avatarOf = (u) => u?.student_id?.avatar || u?.avatar || DEFAULT_AVATAR;
+
+  if (loading) {
+    return (
+      <div className="w-full">
+        <CircleLoader fullScreen={false} label="Loading students…" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-5">
