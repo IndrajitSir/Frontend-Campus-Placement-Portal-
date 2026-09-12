@@ -1,19 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, SmilePlus, LoaderCircle, ClockFading, Check, CheckCheck, TriangleAlert } from "lucide-react";
+import { Send, Smile, LoaderCircle, ClockFading, Check, CheckCheck, TriangleAlert, Paperclip, Mic } from "lucide-react";
 import { toast } from "react-toastify";
 
 // CONTEXT
 import { useSocket } from "../../context/SocketContext/SocketContext";
 import { useUserData } from "../../context/AuthContext/AuthContext";
 
-// Shadcn Components
-import { Button } from "../../Components/ui/button";
-import { Input } from "../../Components/ui/input";
-
 const API_URL = import.meta.env.VITE_API_URL;
-const QUICK_REACTIONS = ["👍", "❤️", "😂", "🎉", "🔥", "👀", "✅", "💯"];
 
 const flatten = (docs) =>
   (Array.isArray(docs) ? docs : [])
@@ -38,6 +33,11 @@ const formatTime = (value) => {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
+const getInitials = (name) => {
+  if (!name) return "U";
+  return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+};
+
 export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   const { socket } = useSocket();
   const { accessToken } = useUserData();
@@ -54,8 +54,6 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [typingUser, setTypingUser] = useState("");
-  const [showReactionPicker, setShowReactionPicker] = useState(null);
 
   const endRef = useRef(null);
   const typingTimeout = useRef(null);
@@ -97,10 +95,8 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
 
     const onNewMessage = (doc) => {
       const incoming = flatten([doc]);
-
       const conversationMessages = incoming.filter(
-        (msg) =>
-          String(msg.senderId) === String(user._id) && (msg.receiverId ? String(msg.receiverId) === String(myId) : true)
+        (msg) => String(msg.senderId) === String(user._id) && (msg.receiverId ? String(msg.receiverId) === String(myId) : true)
       );
 
       if (!conversationMessages.length) return;
@@ -114,48 +110,27 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
       });
     };
 
-    const onTyping = ({ senderId, senderName }) => {
+    const onTyping = ({ senderId }) => {
       if (String(senderId) === String(user._id)) {
-        setTypingUser(senderName || user?.name || "Someone");
         setIsTyping(true);
         clearTimeout(typingTimeout.current);
         typingTimeout.current = setTimeout(() => {
           setIsTyping(false);
-          setTypingUser("");
         }, 2500);
       }
     };
 
-    const onReaction = ({ messageId, emoji, userId }) => {
-      setMessages((prev) =>
-        prev.map((m) => {
-          if (m._id !== messageId) return m;
-          const reactions = { ...m.reactions };
-          if (!reactions[emoji]) reactions[emoji] = [];
-          if (reactions[emoji].includes(userId)) {
-            reactions[emoji] = reactions[emoji].filter((id) => id !== userId);
-            if (reactions[emoji].length === 0) delete reactions[emoji];
-          } else {
-            reactions[emoji] = [...reactions[emoji], userId];
-          }
-          return { ...m, reactions };
-        })
-      );
-    };
-
     socket.on("personalChat:newMessage", onNewMessage);
     socket.on("personalChat:typing", onTyping);
-    socket.on("personalChat:reaction", onReaction);
 
     return () => {
       socket.off("personalChat:newMessage", onNewMessage);
       socket.off("personalChat:typing", onTyping);
-      socket.off("personalChat:reaction", onReaction);
     };
   }, [socket, user?._id, myId]);
 
-  const handleSend = async () => {
-    const text = message.trim();
+  const handleSend = async (textOverride) => {
+    const text = (textOverride || message).trim();
     if (!text || sending || !myId || !user?._id) return;
     setSending(true);
 
@@ -172,7 +147,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     };
 
     setMessages((prev) => [...(Array.isArray(prev) ? prev : []), optimistic]);
-    setMessage("");
+    if (!textOverride) setMessage("");
 
     try {
       const res = await axios.post(
@@ -210,218 +185,145 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     }
   };
 
-  const handleReact = (messageId, emoji) => {
-    setMessages((prev) =>
-      prev.map((m) => {
-        if (m._id !== messageId) return m;
-        const reactions = { ...(m.reactions || {}) };
-        if (!reactions[emoji]) reactions[emoji] = [];
-        if (reactions[emoji].includes(myId)) {
-          reactions[emoji] = reactions[emoji].filter((id) => id !== myId);
-          if (reactions[emoji].length === 0) delete reactions[emoji];
-        } else {
-          reactions[emoji] = [...reactions[emoji], myId];
-        }
-        return { ...m, reactions };
-      })
-    );
-    if (socket) {
-      socket.emit("personalChat:react", {
-        messageId,
-        emoji,
-        userId: myId,
-        receiverId: user._id,
-      });
-    }
-    setShowReactionPicker(null);
-  };
-
   const renderStatusIcon = (status) => {
     switch (status) {
-      case "sending":
-        return <ClockFading size={10} strokeWidth={3} />;
-      case "failed":
-        return <TriangleAlert size={10} strokeWidth={3} className="text-red-400" />;
-      case "sent":
-        return <Check size={10} strokeWidth={3} />;
-      case "delivered":
-        return <CheckCheck size={10} strokeWidth={3} />;
-      case "seen":
-        return <CheckCheck size={10} strokeWidth={3} className="text-blue-500" />;
-      default:
-        return null;
+      case "sending": return <ClockFading size={10} strokeWidth={3} />;
+      case "failed": return <TriangleAlert size={10} strokeWidth={3} className="text-red-400" />;
+      case "sent": return <Check size={10} strokeWidth={3} />;
+      case "delivered": return <CheckCheck size={10} strokeWidth={3} />;
+      case "seen": return <CheckCheck size={10} strokeWidth={3} className="text-blue-500" />;
+      default: return null;
     }
   };
 
+  const quickReplies = ["👍 Thanks!", "Can we hop on a quick call?", "Share system logs"];
+
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white">
+    <div className="flex h-full min-h-0 flex-col bg-[#F9FAFB]">
+      {/* Date Separator */}
+      <div className="flex items-center justify-center pt-4 pb-2 relative">
+         <div className="absolute w-full h-[1px] bg-slate-200"></div>
+         <span className="relative z-10 bg-white border border-slate-200 text-slate-400 text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Today</span>
+      </div>
+
       {/* Message List */}
-      <div className="flex-1 space-y-2 overflow-y-auto p-4">
+      <div className="flex-1 space-y-4 overflow-y-auto px-6 py-2">
         {loading && (
           <div className="flex items-center justify-center gap-2 py-6 text-sm text-slate-400">
             <LoaderCircle className="h-4 w-4 animate-spin text-indigo-500" /> Loading messages…
           </div>
         )}
 
-        {!loading && messages.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center text-center">
-            <p className="text-3xl">👋</p>
-            <p className="mt-2 text-sm font-medium text-slate-500">
-              Say hello to {String(myId) === String(user?._id) ? "yourself" : user?.name || "your friend"}!
-            </p>
-            <p className="mt-1 text-xs text-slate-400">Messages appear here in real time.</p>
-          </div>
-        )}
-
         <AnimatePresence>
-          {messages.map((msg) => {
+          {messages.map((msg, index) => {
             const mine = String(msg.senderId) === String(myId);
+            const showAvatar = !mine && (index === 0 || String(messages[index - 1].senderId) !== String(msg.senderId));
+            
             return (
               <motion.div
                 key={msg._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className={`group relative max-w-[80%] ${mine ? "ml-auto" : ""}`}
+                className={`flex w-full ${mine ? "justify-end" : "justify-start"}`}
               >
-                {/* Sender Name */}
                 {!mine && (
-                  <span className="mb-0.5 ml-1 block text-[10px] font-semibold text-indigo-500">
-                    {msg.senderName || user?.name || "Friend"}
-                  </span>
+                  <div className="w-8 shrink-0 mr-3">
+                    {showAvatar && (
+                       <div className="h-8 w-8 rounded-full bg-[#6B46C1] flex items-center justify-center text-xs font-semibold text-white shadow-sm mt-5">
+                          {getInitials(msg.senderName || user?.name)}
+                       </div>
+                    )}
+                  </div>
                 )}
+                
+                <div className={`flex flex-col ${mine ? "items-end" : "items-start"} max-w-[70%]`}>
+                  {!mine && showAvatar && (
+                    <span className="ml-1 mb-1 text-[11px] font-semibold text-[#6B46C1]">
+                      {msg.senderName || user?.name || "Friend"}
+                    </span>
+                  )}
 
-                {/* Message Bubble */}
-                <div
-                  className={`relative rounded-2xl px-3.5 py-2 text-sm shadow-sm ${
-                    mine
-                      ? "rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 text-white"
-                      : "rounded-bl-md bg-slate-100 text-slate-800"
-                  }`}
-                >
-                  <p className="break-words text-[13px] leading-relaxed">{msg.text}</p>
-
-                  {/* Timestamp & Status */}
                   <div
-                    className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
-                      mine ? "text-indigo-100" : "text-slate-400"
+                    className={`relative rounded-2xl px-4 py-2.5 text-[13px] shadow-sm ${
+                      mine
+                        ? "rounded-br-sm bg-[#6B46C1] text-white"
+                        : "rounded-bl-sm bg-white border border-slate-100 text-slate-700"
                     }`}
+                  >
+                    <p className="break-words leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                    
+                    {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+                      <div className="absolute -bottom-2 right-2 bg-white rounded-full border border-slate-200 px-1 py-0.5 text-[10px] shadow-sm flex items-center gap-1 z-10">
+                         <span>{Object.keys(msg.reactions)[0]}</span>
+                         <span className="text-slate-600 font-medium">1</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    className={`mt-1 flex items-center gap-1 text-[10px] ${mine ? "mr-1 text-slate-400" : "ml-1 text-slate-400"}`}
                   >
                     <span>{formatTime(msg.sentAt)}</span>
-                    {mine && renderStatusIcon(msg.status)}
+                    {mine && (
+                       <span className="ml-0.5 text-[#6B46C1]">{renderStatusIcon(msg.status)}</span>
+                    )}
                   </div>
-
-                  {/* Quick Reaction Button on Hover */}
-                  <button
-                    onClick={() =>
-                      setShowReactionPicker(showReactionPicker === msg._id ? null : msg._id)
-                    }
-                    className={`absolute -bottom-1 ${
-                      mine ? "-left-6" : "-right-6"
-                    } hidden group-hover:flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white shadow-md transition hover:scale-110`}
-                  >
-                    <SmilePlus className="h-3 w-3 text-slate-400" />
-                  </button>
                 </div>
-
-                {/* Display Reactions */}
-                {msg.reactions && Object.keys(msg.reactions).length > 0 && (
-                  <div
-                    className={`mt-1 flex flex-wrap gap-1 ${
-                      mine ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    {Object.entries(msg.reactions).map(([emoji, users]) => (
-                      <button
-                        key={emoji}
-                        onClick={() => handleReact(msg._id, emoji)}
-                        className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[11px] transition hover:scale-105 ${
-                          users.length > 0
-                            ? "border-indigo-200 bg-indigo-50"
-                            : "border-slate-200 bg-slate-50"
-                        }`}
-                      >
-                        <span>{emoji}</span>
-                        <span className="text-[9px] font-semibold text-slate-600">
-                          {users.length}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Reaction Picker Overlay */}
-                <AnimatePresence>
-                  {showReactionPicker === msg._id && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setShowReactionPicker(null)}
-                      />
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 4 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className={`absolute z-50 -bottom-10 ${
-                          mine ? "right-0" : "left-0"
-                        } flex items-center gap-0.5 rounded-full border border-slate-200 bg-white px-2 py-1.5 shadow-xl`}
-                      >
-                        {QUICK_REACTIONS.map((emoji) => (
-                          <button
-                            key={emoji}
-                            onClick={() => handleReact(msg._id, emoji)}
-                            className="cursor-pointer rounded-full p-1 text-sm transition hover:scale-125 hover:bg-slate-100"
-                          >
-                            {emoji}
-                          </button>
-                        ))}
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
               </motion.div>
             );
           })}
         </AnimatePresence>
+        {isTyping && (
+          <div className="flex items-center gap-2 text-[11px] text-slate-400 italic pl-11">
+             {user?.name || "Friend"} is typing...
+          </div>
+        )}
         <div ref={endRef} />
       </div>
 
-      {/* Typing Indicator */}
-      {isTyping && (
-        <div className="px-4 pb-1">
-          <span className="text-[11px] italic text-slate-400">
-            {typingUser || "Someone"} is typing
-            <span className="inline-flex w-6 overflow-hidden">
-              <span className="animate-[bounce_1.2s_infinite_0s]">.</span>
-              <span className="animate-[bounce_1.2s_infinite_0.2s]">.</span>
-              <span className="animate-[bounce_1.2s_infinite_0.4s]">.</span>
-            </span>
-          </span>
-        </div>
-      )}
+      {/* Quick Replies */}
+      <div className="px-6 py-2 flex flex-wrap gap-2">
+         {quickReplies.map((reply, i) => (
+            <button key={i} onClick={() => handleSend(reply)} className="bg-slate-100 hover:bg-slate-200 transition text-slate-600 text-[11px] font-medium px-3 py-1.5 rounded-full whitespace-nowrap cursor-pointer border border-slate-200">
+               {reply}
+            </button>
+         ))}
+      </div>
 
       {/* Input */}
-      <div className="border-t border-slate-100 p-3">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Type a message…"
+      <div className="px-6 pb-6 pt-1">
+        <div className="flex items-center bg-white rounded-full border border-slate-200 pr-1.5 pl-3 py-1.5 shadow-sm">
+          <button className="p-2 text-slate-400 hover:text-slate-600 transition">
+             <Paperclip className="h-4 w-4" />
+          </button>
+          
+          <input
+            type="text"
+            placeholder="Type a message or press '/' for commands..."
             value={message}
             onChange={(e) => {
               setMessage(e.target.value);
               handleTyping();
             }}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            className="text-sm"
+            className="flex-1 bg-transparent px-2 text-[13px] text-slate-700 outline-none placeholder:text-slate-400"
           />
-          <Button
-            size="icon"
-            onClick={handleSend}
+          
+          <button className="p-2 text-slate-400 hover:text-slate-600 transition">
+             <Smile className="h-4 w-4" />
+          </button>
+          <button className="p-2 text-slate-400 hover:text-slate-600 transition mr-1">
+             <Mic className="h-4 w-4" />
+          </button>
+
+          <button
+            onClick={() => handleSend()}
             disabled={sending || !message.trim()}
-            className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 disabled:opacity-40"
-            title="Send"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#6B46C1] text-white shadow-md transition hover:bg-[#553C9A] disabled:opacity-50"
           >
             <Send className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
       </div>
     </div>
