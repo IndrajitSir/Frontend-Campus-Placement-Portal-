@@ -276,13 +276,9 @@ export default function NewMessagePage() {
         // ---------------- Incoming requests ----------------
         if (
           dataIncoming?.success &&
-          Array.isArray(dataIncoming?.data?.requests)
+          Array.isArray(dataIncoming?.data)
         ) {
-          const pendingRequests = (
-            Array.isArray(dataIncoming?.data)
-              ? dataIncoming.data
-              : []
-          )
+          const pendingRequests = dataIncoming.data
             .map((request) => ({
               requestId: request?._id,
               sender: request?.sender,
@@ -507,19 +503,23 @@ export default function NewMessagePage() {
       }
 
       if (action === "accepted") {
-        const acceptedFriend = friendRequest.friends.find(
-          (friend) => friend?.requestId === requestId
+        const acceptedRequest = friendRequest.friends.find(
+          (req) => req?.requestId === requestId
         );
 
-        if (acceptedFriend) {
+        if (acceptedRequest?.sender) {
+          const newFriend = {
+            ...acceptedRequest.sender,
+            requestId: acceptedRequest.requestId,
+          };
           setFriends((prev) => {
             const alreadyExists = prev.some(
-              (friend) => friend?._id === acceptedFriend?._id
+              (friend) => friend?._id === newFriend?._id
             );
 
             return alreadyExists
               ? prev
-              : [...prev, acceptedFriend];
+              : [...prev, newFriend];
           });
         }
       }
@@ -1171,22 +1171,10 @@ export default function NewMessagePage() {
                       <div className="flex items-center gap-2">
                         <button
                           title="Accept"
-                          onClick={() => {
-                            const acceptedRequest = friendRequest.friends.find(
-                              (friend) => friend?.requestId === requestId
-                            );
-
-                            if (action === "accepted" && acceptedRequest?.sender) {
-                              setFriends((prev) => [
-                                ...prev,
-                                acceptedRequest.sender,
-                              ]);
-                            }
-                            return handleResponseToFriendRequest(
+                          onClick={() => handleResponseToFriendRequest(
                               "accepted",
                               friend?.requestId
                             )
-                          }
                           }
                           className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-600"
                         >

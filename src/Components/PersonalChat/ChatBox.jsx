@@ -176,7 +176,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
     setMessage("");
 
     try {
-      await axios.post(
+      const res = await axios.post(
         `${API_URL}/api/v2/messages/send`,
         { senderId: myId, receiverId: user._id, text },
         {
@@ -184,10 +184,12 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
         }
       );
+      
+      const realMessageId = res?.data?.data?._id || localId;
+
       setMessages((prev) =>
-        prev.map((m) => (m._id === localId ? { ...m, status: "sent" } : m))
+        prev.map((m) => (m._id === localId ? { ...m, _id: realMessageId, status: "sent" } : m))
       );
-      await loadConversation();
     } catch (err) {
       console.error("Failed to send message", err);
       toast.error("Failed to send message");
@@ -244,10 +246,11 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
       case "sent":
         return <Check size={10} strokeWidth={3} />;
       case "delivered":
+        return <CheckCheck size={10} strokeWidth={3} />;
       case "seen":
-        return <CheckCheck size={10} strokeWidth={3} className="text-indigo-200" />;
+        return <CheckCheck size={10} strokeWidth={3} className="text-blue-500" />;
       default:
-        return <Check size={10} strokeWidth={3} />;
+        return null;
     }
   };
 

@@ -1,16 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion';
-// Chart
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-// Shadcn Components
 import { Card, CardContent } from "../../../Components/ui/card";
-// Hooks
 import { useSelectedStudentsPerDepartment } from '../../../hooks/Analytics/useAnalytics.js';
-// Components
 import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
+import CardFilterHeader from '../CardFilterHeader.jsx';
+
 const COLORS = ["#6366f1", "#8b5cf6", "#d946ef", "#ef4444"];
+
 function SelectedStudentsCard() {
-    const { data, loading, error } = useSelectedStudentsPerDepartment();
+    const [year, setYear] = useState('all');
+    const [month, setMonth] = useState('all');
+    const { data, loading, error } = useSelectedStudentsPerDepartment({ year, month });
 
     if (loading) return <CircleLoader />;
     if (error) return <p className="text-sm text-red-500">Error fetching Selected Students Per Department analysis data!</p>;
@@ -19,7 +20,7 @@ function SelectedStudentsCard() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="w-full shadow-md">
                 <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Selected Students per Department</h2>
+                    <CardFilterHeader title="Selected Students per Department" year={year} setYear={setYear} month={month} setMonth={setMonth} />
                     <div className="h-[280px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data}>

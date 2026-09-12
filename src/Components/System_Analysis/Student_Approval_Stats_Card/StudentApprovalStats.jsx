@@ -1,17 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion';
-// Chart
 import { Tooltip, PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
-// Shadcn Components
 import { Card, CardContent } from "../../../Components/ui/card";
-// Hooks
 import { useStudentApprovalStats } from '../../../hooks/Analytics/useAnalytics.js';
-// Components
 import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
-// Constants
 import { COLORS } from '../../../constants/constants.js';
+import CardFilterHeader from '../CardFilterHeader.jsx';
+
 function StudentApprovalStats() {
-    const { data, loading, error } = useStudentApprovalStats();
+    const [year, setYear] = useState('all');
+    const [month, setMonth] = useState('all');
+    const { data, loading, error } = useStudentApprovalStats({ year, month });
 
     if (loading) return <CircleLoader />;
     if (error) return <p className="text-sm text-red-500">Error fetching Student Approval Stats data!</p>;
@@ -20,7 +19,7 @@ function StudentApprovalStats() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="w-full shadow-md">
                 <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Approval Stats</h2>
+                    <CardFilterHeader title="Approval Stats" year={year} setYear={setYear} month={month} setMonth={setMonth} />
                     <div className="h-[280px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>

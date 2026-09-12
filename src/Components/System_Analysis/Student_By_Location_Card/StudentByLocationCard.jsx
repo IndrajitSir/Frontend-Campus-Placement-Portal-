@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion';
-// Chart
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-// Shadcn Components
 import { Card, CardContent } from "../../../Components/ui/card";
-// Hooks
 import { useStudentsByLocation } from '../../../hooks/Analytics/useAnalytics.js';
-// Components
 import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
+import CardFilterHeader from '../CardFilterHeader.jsx';
+
 function StudentByLocationCard() {
-    const { data, loading, error } = useStudentsByLocation();
+    const [year, setYear] = useState('all');
+    const [month, setMonth] = useState('all');
+    const { data, loading, error } = useStudentsByLocation({ year, month });
 
     if (loading) return <CircleLoader />;
     if (error) return <p className="text-sm text-red-500">Error fetching Students By Location analysis data!</p>;
@@ -18,7 +18,7 @@ function StudentByLocationCard() {
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="w-full shadow-md">
                 <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">Students by Location</h2>
+                    <CardFilterHeader title="Students by Location" year={year} setYear={setYear} month={month} setMonth={setMonth} />
                     <div className="h-[280px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data}>
