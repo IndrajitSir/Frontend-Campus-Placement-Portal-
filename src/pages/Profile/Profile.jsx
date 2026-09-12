@@ -9,7 +9,7 @@ import { Card } from "../../Components/ui/card";
 import { Input } from "../../Components/ui/input";
 import { Label } from "../../Components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogFooter } from "../../Components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/ui/tooltip';
 // Icons
 import {
   PlusCircleIcon,
@@ -168,6 +168,7 @@ export default function ProfilePage() {
   const projects = Array.isArray(student.projects) ? student.projects : [];
 
   return (
+    <TooltipProvider>
     <div className="w-full space-y-6">
       {/* ---------------- Profile hero ---------------- */}
       <motion.div
@@ -444,5 +445,6 @@ export default function ProfilePage() {
         </DialogContent>
       </Dialog>
     </div>
+    </TooltipProvider>
   );
 }
