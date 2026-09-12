@@ -32,7 +32,7 @@ const Navbar = () => {
       ? [
           { label: "Jobs", icon: Briefcase, action: () => go("/home") },
           { label: "Applications", icon: FileText, action: () => go("/home/dashboard/applied-jobs") },
-          { label: "Profile", icon: User, action: () => go("/home/profile") },
+          // { label: "Profile", icon: User, action: () => go("/home/profile") },
         ]
       : []),
     ...(role && role !== "student"
@@ -87,11 +87,11 @@ const Navbar = () => {
           <div className="hidden items-center gap-2 md:flex">
             {accessToken ? (
               <Link
-                to={role === "student" ? "/home" : "/home/dashboard"}
+                to={role === "student" ? "/home/profile" : "/home/dashboard"}
                 className="group flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:brightness-110"
               >
                 <LayoutDashboard className="h-4 w-4" />
-                {role === "student" ? "My Jobs" : "Dashboard"}
+                {role === "student" ? "Profile" : "Dashboard"}
               </Link>
             ) : (
               <>
@@ -149,10 +149,10 @@ const Navbar = () => {
               <div className="mt-2 border-t border-white/10 pt-3">
                 {accessToken ? (
                   <button
-                    onClick={() => go(role === "student" ? "/home" : "/home/dashboard")}
+                    onClick={() => go(role === "student" ? "/home/profile" : "/home/dashboard")}
                     className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white cursor-pointer"
                   >
-                    Open dashboard
+                    {role === "student" ? "Profile" : "Dashboard"}
                   </button>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
