@@ -705,7 +705,7 @@ export default function NewMessagePage() {
                 </div>
 
                 {/* Search */}
-                <div className="flex flex-col gap-2 sm:flex-row">
+                {/* <div className="flex flex-col gap-2 sm:flex-row">
                   <div className="min-w-0 flex-1">
                     <SearchDialog
                       data={(Array.isArray(data) ? data : []).filter(
@@ -716,7 +716,7 @@ export default function NewMessagePage() {
                       placeholderValue="Search user by name or email"
                     />
                   </div>
-                </div>
+                </div> */}
 
                 {/* Quick filter chips — visual grouping only until the
                     backend exposes a category/major field to filter on */}
