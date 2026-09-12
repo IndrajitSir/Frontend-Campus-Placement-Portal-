@@ -6,6 +6,7 @@ import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 // Shadcn Components
 import { Card } from '../../../Components/ui/card.jsx';
 import { Button } from "../../../Components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip.jsx";
 // Icons
 import { Trash, ShieldCheck, Mail, Phone } from "lucide-react";
 // Components
@@ -99,9 +100,16 @@ function Admin() {
                 <p className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-violet-500" /> {user?.email}</p>
               </div>
               <div className="mt-4 flex justify-end border-t border-slate-100 pt-3">
-                <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setUserID(user?._id); setdeleteUserDialog(true); }}>
-                  <Trash className="h-3.5 w-3.5" />
-                </Button>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setUserID(user?._id); setdeleteUserDialog(true); }}>
+                        <Trash className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top"><p>Delete admin</p></TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </Card>
           </motion.div>

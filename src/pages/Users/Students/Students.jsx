@@ -9,7 +9,7 @@ import { Button } from "../../../Components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../../Components/ui/dialog.jsx';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip.jsx";
 // Icons
-import { Trash, Eye, GraduationCap, BadgeCheck, XCircle } from "lucide-react";
+import { Trash, Eye, GraduationCap, BadgeCheck, UserX } from "lucide-react";
 // Components
 import CircleLoader from "../../../Components/Loader/CircleLoader.jsx";
 // Dialog Boxes
@@ -152,32 +152,64 @@ function Students() {
               </div>
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}>
-                  <Eye className="h-3.5 w-3.5" />
-                </Button>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}>
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top"><p>View details</p></TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 {role !== "placement_staff" && (
                   <>
-                    <Button
-                      size="sm"
-                      className={`cursor-pointer ${user?.approved ? "bg-amber-500 hover:bg-amber-600" : "bg-emerald-500 hover:bg-emerald-600"}`}
-                      onClick={() => { setStudent_id(user?._id); setapprovalDialog(true); setIsApproved(user?.approved) }}
-                    >
-                      {
-                        user?.approved ? (
-                          <>
-                            <XCircle className="h-3.5 w-3.5" />
-                            <span>Remove approval</span>
-                          </>
-                        ) : (
-                          <>
-                            <BadgeCheck className="h-3.5 w-3.5" />
-                            <span>Approve</span>
-                          </>
-                        )}
-                    </Button>
-                    <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setStudent_id(user?._id); setdeleteUserDialog(true); }}>
-                      <Trash className="h-3.5 w-3.5" />
-                    </Button>
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <motion.button
+                            layout
+                            animate={{
+                              backgroundColor: user?.approved ? "#f59e0b" : "#10b981",
+                            }}
+                            whileHover={{
+                              backgroundColor: user?.approved ? "#d97706" : "#059669",
+                              scale: 1.03
+                            }}
+                            whileTap={{ scale: 0.97 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 text-xs font-medium text-white shadow-sm cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            onClick={() => { setStudent_id(user?._id); setapprovalDialog(true); setIsApproved(user?.approved) }}
+                          >
+                            <motion.div
+                              key={user?.approved ? "approved" : "unapproved"}
+                              initial={{ opacity: 0, scale: 0.8, rotate: -15 }}
+                              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                              exit={{ opacity: 0, scale: 0.8, rotate: 15 }}
+                              transition={{ duration: 0.15 }}
+                              className="flex items-center gap-1.5"
+                            >
+                              {user?.approved ? (
+                                <><UserX className="h-3.5 w-3.5" /><span>Remove</span></>
+                              ) : (
+                                <><BadgeCheck className="h-3.5 w-3.5" /><span>Approve</span></>
+                              )}
+                            </motion.div>
+                          </motion.button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top"><p>{user?.approved ? "Remove approval" : "Approve student"}</p></TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setStudent_id(user?._id); setdeleteUserDialog(true); }}>
+                            <Trash className="h-3.5 w-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top"><p>Delete student</p></TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </>
                 )}
               </div>

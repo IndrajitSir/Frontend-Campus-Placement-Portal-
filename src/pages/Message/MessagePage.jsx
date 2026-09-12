@@ -135,9 +135,34 @@ export default function NewMessagePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  // ---------- Global incoming message listener ----------
+  // When a message arrives and the chat drawer is NOT open for that sender,
+  // show a toast so the user knows someone messaged them.
+  useEffect(() => {
+    if (!socket) return;
+
+    const onNewMessage = (doc) => {
+      const senderId = doc?.sender?._id;
+      const senderName = doc?.sender?.name || "Someone";
+      // Only show toast if the chat with this sender is not currently open
+      if (senderId && senderId !== myId && (!openChat || selectedUser?._id !== senderId)) {
+        toast.info(`💬 ${senderName} sent you a message.`);
+      }
+    };
+
+    socket.on("personalChat:newMessage", onNewMessage);
+    return () => socket.off("personalChat:newMessage", onNewMessage);
+  }, [socket, openChat, selectedUser?._id, myId]);
+
   const searchQueryFromChild = async (query) => {
     try {
-      const res = await fetch(`${API_URL}/api/v1/users/one/${query?.name}`, {
+      // SearchDialog can pass either a user object (from suggestion click)
+      // or a raw string (from the Search button).
+      const searchTerm = typeof query === 'string' ? query : (query?.name || query?.email || '');
+      if (!searchTerm) {
+        return toast.warning("Please enter a name or email to search.");
+      }
+      const res = await fetch(`${API_URL}/api/v1/users/one/${encodeURIComponent(searchTerm)}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -148,6 +173,10 @@ export default function NewMessagePage() {
       const response = await res.json();
       if (!response?.success) {
         return toast.warning(response?.message);
+      }
+      // Don't let users chat with themselves
+      if (response?.data?._id === myId) {
+        return toast.warning("You can't start a chat with yourself.");
       }
       setResult(response?.data);
     } catch (error) {
@@ -293,7 +322,7 @@ export default function NewMessagePage() {
               </h2>
               <p className="mt-0.5 text-xs text-slate-400">Search for someone or pick from everyone on the platform.</p>
             </div>
-            <SearchDialog data={data} searchCriteria={["name", "email"]} onQuery={searchQueryFromChild} placeholderValue="Search user by name or email" />
+            <SearchDialog data={(Array.isArray(data) ? data : []).filter(u => u?._id !== myId)} searchCriteria={["name", "email"]} onQuery={searchQueryFromChild} placeholderValue="Search user by name or email" />
           </div>
 
           <div className="mt-4 grid flex-1 auto-rows-min grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 xl:grid-cols-3">
