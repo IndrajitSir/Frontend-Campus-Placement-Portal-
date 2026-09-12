@@ -7,8 +7,9 @@ import { useUserData } from '../../../context/AuthContext/AuthContext.jsx';
 import { Card } from '../../../Components/ui/card.jsx';
 import { Button } from "../../../Components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../../Components/ui/dialog.jsx';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip.jsx";
 // Icons
-import { Trash, Eye, GraduationCap, BadgeCheck } from "lucide-react";
+import { Trash, Eye, GraduationCap, BadgeCheck, XCircle } from "lucide-react";
 // Components
 import CircleLoader from "../../../Components/Loader/CircleLoader.jsx";
 // Dialog Boxes
@@ -127,9 +128,8 @@ function Students() {
                     <p className="truncate text-xs text-slate-400">{user?.student_id?.email}</p>
                   </div>
                 </div>
-                <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  user?.approved ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
-                }`}>
+                <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${user?.approved ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+                  }`}>
                   <BadgeCheck className="h-3 w-3" />
                   {user?.approved ? "Approved" : "Pending"}
                 </span>
@@ -153,7 +153,7 @@ function Students() {
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => { setSpecificUserDetails(user); setUserDetailsDialog(true) }}>
-                  <Eye className="h-3.5 w-3.5" /> Details
+                  <Eye className="h-3.5 w-3.5" />
                 </Button>
                 {role !== "placement_staff" && (
                   <>
@@ -162,10 +162,21 @@ function Students() {
                       className={`cursor-pointer ${user?.approved ? "bg-amber-500 hover:bg-amber-600" : "bg-emerald-500 hover:bg-emerald-600"}`}
                       onClick={() => { setStudent_id(user?._id); setapprovalDialog(true); setIsApproved(user?.approved) }}
                     >
-                      {user?.approved ? "Remove approval" : "Approve"}
+                      {
+                        user?.approved ? (
+                          <>
+                            <XCircle className="h-3.5 w-3.5" />
+                            <span>Remove approval</span>
+                          </>
+                        ) : (
+                          <>
+                            <BadgeCheck className="h-3.5 w-3.5" />
+                            <span>Approve</span>
+                          </>
+                        )}
                     </Button>
                     <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setStudent_id(user?._id); setdeleteUserDialog(true); }}>
-                      <Trash className="h-3.5 w-3.5" /> Delete
+                      <Trash className="h-3.5 w-3.5" />
                     </Button>
                   </>
                 )}

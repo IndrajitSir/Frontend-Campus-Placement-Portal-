@@ -100,7 +100,7 @@ function Admin() {
               </div>
               <div className="mt-4 flex justify-end border-t border-slate-100 pt-3">
                 <Button size="sm" variant="destructive" className="cursor-pointer" onClick={() => { setUserID(user?._id); setdeleteUserDialog(true); }}>
-                  <Trash className="h-3.5 w-3.5" /> Delete
+                  <Trash className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </Card>

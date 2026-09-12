@@ -11,40 +11,52 @@ function Admin_Dashboard() {
     console.log("Rendering Admin_Dashboard component");
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
-                <Card className="w-90">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>User Management</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Button className="mt-2 cursor-pointer" onClick={() => { navigate("/home/dashboard/manage-users") }}>Manage Users</Button>
+                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/manage-users")}>
+                            Manage Users
+                        </Button>
                     </CardContent>
                 </Card>
-                <Card>
+
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>System Monitoring</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Button className="mt-2 cursor-pointer" onClick={() => { navigate("/home/dashboard/monitor-system") }}>View Logs</Button>
+                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/monitor-system")}>
+                            View Logs
+                        </Button>
                     </CardContent>
                 </Card>
-                <Card>
+
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>Placement Records</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Button className="mt-2 cursor-pointer" onClick={() => { navigate("/home/placements") }}>Check Records</Button>
+                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/placements")}>
+                            Check Records
+                        </Button>
                     </CardContent>
                 </Card>
-                <Card>
+
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>Applications Management</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Button className="mt-2 cursor-pointer" onClick={() => { navigate("/home/dashboard/manage-applications") }}>Manage Applications</Button>
+                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/manage-applications")}>
+                            Manage Applications
+                        </Button>
                     </CardContent>
                 </Card>
             </div>
+
             <div>
                 <SystemStatus />
             </div>
