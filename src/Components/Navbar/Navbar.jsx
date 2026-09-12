@@ -32,11 +32,10 @@ const Navbar = () => {
       ? [
           { label: "Jobs", icon: Briefcase, action: () => go("/home") },
           { label: "Applications", icon: FileText, action: () => go("/home/dashboard/applied-jobs") },
-          // { label: "Profile", icon: User, action: () => go("/home/profile") },
         ]
       : []),
     ...(role && role !== "student"
-      ? [{ label: "Dashboard", icon: LayoutDashboard, action: () => go("/home/dashboard") }]
+      ? [{ label: "Profile", icon: User, action: () => go("/home/profile") }]
       : []),
     { label: "Chat", icon: MessageCircle, action: () => go("/home/message") },
   ];
