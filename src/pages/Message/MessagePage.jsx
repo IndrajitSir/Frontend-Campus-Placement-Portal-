@@ -72,7 +72,8 @@ export default function NewMessagePage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-
+  const [friendsLoading, setFriendsLoading] = useState(false);
+  const [peopleLoading, setPeopleLoading] = useState(false);
   // ---------- Friend requests ----------
   const [friendRequest, setFriendRequest] = useState({
     newFriend: false,
@@ -213,76 +214,102 @@ export default function NewMessagePage() {
 
     const fetchFriendsAndRequests = async () => {
       try {
-        setLoading(true);
+        setFriendsLoading(true);
+        setpeopleLoading(true);
 
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        };
         const [resFriends, resIncoming] = await Promise.all([
           fetch(`${API_URL}/api/v2/friend-request/friends`, {
             method: "GET",
             credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers,
           }),
+
           fetch(`${API_URL}/api/v2/friend-request/incoming`, {
             method: "GET",
             credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers,
           }),
         ]);
 
-        const dataFriends = await resFriends.json();
-        const dataIncoming = await resIncoming.json();
+        const [dataFriends, dataIncoming] = await Promise.all([
+          resFriends.json(),
+          resIncoming.json(),
+        ]);
 
         if (cancelled) return;
 
-        if (dataFriends?.success) {
-          const normalized = (
-            Array.isArray(dataFriends?.data) ? dataFriends.data : []
-          )
-            .map((request) => {
-              const isSender =
-                String(request?.sender?._id) === String(myId);
-
-              const friendUser = isSender
-                ? request?.receiver
-                : request?.sender;
-
-              return friendUser
-                ? {
-                  ...friendUser,
-                  requestId: request?._id,
-                }
-                : null;
-            })
-            .filter(Boolean);
-
-          setFriends(normalized);
+        // ---------------- Friends ----------------
+        if (!resFriends.ok || !dataFriends?.success) {
+          throw new Error(
+            dataFriends?.message || "Failed to fetch friends"
+          );
         }
 
-        if (dataIncoming?.success && Array.isArray(dataIncoming?.data)) {
-          const pendingRequests = dataIncoming.data
-            .map((req) => ({
-              ...(req?.sender || {}),
-              requestId: req?._id,
-            }))
-            .filter((u) => u?._id);
+        const normalizedFriends = (
+          Array.isArray(dataFriends?.data)
+            ? dataFriends.data
+            : []
+        )
+          .map((request) => {
+            const isSender =
+              String(request?.sender?._id) === String(myId);
 
-          setFriendRequest({
-            newFriend: pendingRequests.length > 0,
-            friends: pendingRequests,
-          });
+            const friendUser = isSender
+              ? request?.receiver
+              : request?.sender;
+
+            return friendUser
+              ? {
+                ...friendUser,
+                requestId: request?._id,
+              }
+              : null;
+          })
+          .filter(Boolean);
+
+        setFriends(normalizedFriends);
+
+        // ---------------- Incoming requests ----------------
+        if (!resIncoming.ok || !dataIncoming?.success) {
+          throw new Error(
+            dataIncoming?.message || "Failed to fetch incoming requests"
+          );
         }
+
+        const pendingRequests = (
+          Array.isArray(dataIncoming?.data)
+            ? dataIncoming.data
+            : []
+        )
+          .map((request) => ({
+            ...(request?.sender || {}),
+            requestId: request?._id,
+          }))
+          .filter((user) => user?._id);
+
+        setFriendRequest({
+          newFriend: pendingRequests.length > 0,
+          friends: pendingRequests,
+        });
       } catch (error) {
         if (!cancelled) {
-          console.error("Failed to fetch friends & requests:", error);
+          console.error(
+            "Failed to fetch friends & requests:",
+            error
+          );
+
+          toast.error(
+            error?.message || "Failed to load friends and requests."
+          );
         }
       } finally {
         if (!cancelled) {
-          setLoading(false);
+          setpeopleLoading(false);
+          setFriendsLoading(false);
         }
       }
     };
