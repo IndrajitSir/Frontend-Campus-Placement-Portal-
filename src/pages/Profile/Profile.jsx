@@ -9,6 +9,7 @@ import { Card } from "../../Components/ui/card";
 import { Input } from "../../Components/ui/input";
 import { Label } from "../../Components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogFooter } from "../../Components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from '../../components/ui/tooltip';
 // Icons
 import {
   PlusCircleIcon,
