@@ -27,9 +27,9 @@ const YEARS = [
 
 export default function CardFilterHeader({ title, year, setYear, month, setMonth }) {
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-3">
-            <h2 className="text-lg font-semibold text-slate-800 tracking-tight">{title}</h2>
-            <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4 border-b border-slate-100 pb-3">
+            <h2 className="text-lg font-semibold text-slate-800 tracking-tight leading-tight">{title}</h2>
+            <div className="flex flex-nowrap items-center gap-2 shrink-0">
                 <div className="relative flex items-center">
                     <Calendar className="absolute left-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
                     <select

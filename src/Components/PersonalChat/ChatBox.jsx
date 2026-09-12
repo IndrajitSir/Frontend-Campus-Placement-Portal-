@@ -100,8 +100,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
 
       const conversationMessages = incoming.filter(
         (msg) =>
-          (String(msg.senderId) === String(user._id) && (msg.receiverId ? String(msg.receiverId) === String(myId) : true)) ||
-          (String(msg.senderId) === String(myId) && (msg.receiverId ? String(msg.receiverId) === String(user._id) : true))
+          String(msg.senderId) === String(user._id) && (msg.receiverId ? String(msg.receiverId) === String(myId) : true)
       );
 
       if (!conversationMessages.length) return;
