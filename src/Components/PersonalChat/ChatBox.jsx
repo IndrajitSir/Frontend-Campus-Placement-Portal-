@@ -12,7 +12,7 @@ import { Send, LoaderCircle } from "lucide-react";
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Flattens the backend's ChatMessage documents (each holds a message array)
-// into a simple list of { _id, text, sentAt, senderId, senderName }.
+// into a simple list of { _id, text, sentAt, senderId, receiverId, senderName }.
 const flatten = (docs) =>
   (Array.isArray(docs) ? docs : [])
     .flatMap((doc) =>
@@ -20,7 +20,8 @@ const flatten = (docs) =>
         _id: m?._id || `${doc?._id}-${Math.random().toString(36).slice(2)}`,
         text: m?.text,
         sentAt: m?.sentAt,
-        senderId: doc?.sender?._id,
+        senderId: String(doc?.sender?._id || doc?.sender || ""),
+        receiverId: String(doc?.receiver?._id || doc?.receiver || ""),
         senderName: doc?.sender?.name || "Unknown",
       }))
     ).sort((a, b) => new Date(a.sentAt) - new Date(b.sentAt));
@@ -35,7 +36,13 @@ const formatTime = (value) => {
 export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   const { socket } = useSocket();
   const { accessToken } = useUserData();
-  const myId = currentUser?.user?._id;
+  const myId = typeof currentUser === "object"
+    ? (currentUser?.user?._id || currentUser?._id)
+    : currentUser;
+  const myName = typeof currentUser === "object"
+    ? (currentUser?.user?.name || currentUser?.name || "You")
+    : "You";
+
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,15 +78,15 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   }, [messages]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !myId || !user?._id) return;
 
     const onNewMessage = (doc) => {
       const incoming = flatten([doc]);
 
       const conversationMessages = incoming.filter(
         (msg) =>
-          String(msg.senderId) === String(user?._id) ||
-          String(msg.senderId) === String(myId)
+          (String(msg.senderId) === String(user._id) && (msg.receiverId ? String(msg.receiverId) === String(myId) : true)) ||
+          (String(msg.senderId) === String(myId) && (msg.receiverId ? String(msg.receiverId) === String(user._id) : true))
       );
 
       if (!conversationMessages.length) return;
@@ -97,7 +104,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
 
     socket.on("personalChat:newMessage", onNewMessage);
     return () => socket.off("personalChat:newMessage", onNewMessage);
-  }, [socket]);
+  }, [socket, user?._id, myId]);
 
   const handleSend = async () => {
     const text = message.trim();
@@ -107,8 +114,9 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
       _id: `local-${Date.now()}`,
       text,
       sentAt: new Date().toISOString(),
-      senderId: myId,
-      senderName: currentUser?.user?.name || "You",
+      senderId: String(myId),
+      receiverId: String(user._id),
+      senderName: myName,
       pending: true,
     };
     setMessages((prev) => [...(Array.isArray(prev) ? prev : []), optimistic]);
@@ -149,12 +157,12 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
         {!loading && messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <p className="text-3xl">👋</p>
-            <p className="mt-2 text-sm font-medium text-slate-500">Say hello to {currentUser?.user?._id === user?._id ? "yourself" : user?.name || "your new friend"}!</p>
+            <p className="mt-2 text-sm font-medium text-slate-500">Say hello to {String(myId) === String(user?._id) ? "yourself" : user?.name || "your new friend"}!</p>
             <p className="mt-1 text-xs text-slate-400">Messages appear here in real time.</p>
           </div>
         )}
         {messages.map((msg) => {
-          const mine = msg.senderId === myId;
+          const mine = String(msg.senderId) === String(myId);
           return (
             <div key={msg._id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
               <div

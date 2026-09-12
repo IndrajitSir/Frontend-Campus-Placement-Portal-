@@ -35,10 +35,11 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                     return [...prev, {
                         ...newMessage,
                         status: newMessage.senderName === userName ? "sent" : "delivered",
-                        reactions: {},
+                        reactions: newMessage.reactions || {},
                     }];
+                } else {
+                    return prev.map(m => m.id === newMessage.id ? { ...m, ...newMessage, status: m.senderName === userName ? "sent" : "delivered" } : m);
                 }
-                return prev;
             });
             if (newMessage.senderName !== userName) {
                 socket.emit("chat:delivered", { messageId: newMessage.id, roomId });
@@ -90,31 +91,23 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
         };
     }, [socket, userName, roomId]);
 
-    useEffect(() => {
-        if (!socket || !roomId) return;
-        socket.emit("interview:joined", { roomId, userId: "chat-user", name: userName, role: "chat" });
-    }, [socket, roomId]);
-
     const handleSend = () => {
-        if (!message.trim()) return;
-        const msgObj = { text: message, senderName: userName, id: uuidv4(), status: "sending", reactions: {} };
+        const text = message.trim();
+        if (!text || !socket) return;
+        const msgId = uuidv4();
+        const msgObj = { text, senderName: userName, id: msgId, status: "sending", reactions: {}, timestamp: Date.now() };
         setMessages((prev) => [...prev, msgObj]);
         setMessage("");
         socket.emit("chat:sendMessage", { roomId, message: msgObj }, (res) => {
             if (!res?.success) {
-                toast.error(res?.message);
+                toast.error(res?.message || "Failed to send message");
+                setMessages(prev => prev.map(m => m.id === msgId ? { ...m, status: "failed" } : m));
             } else {
                 setMessages(prev => prev.map(m =>
-                    m.id === msgObj.id && m.status === "sending" ? { ...m, status: "sent" } : m
+                    m.id === msgId && m.status === "sending" ? { ...m, status: "sent" } : m
                 ));
             }
         });
-
-        setTimeout(() => {
-            setMessages(prev => prev.map(m =>
-                m.id === msgObj.id && m.status === "sending" ? { ...m, status: "failed" } : m
-            ));
-        }, 5000);
     };
 
     const handleTyping = () => {

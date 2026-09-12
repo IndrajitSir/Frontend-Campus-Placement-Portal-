@@ -33,7 +33,9 @@ const formatTimestamp = (value) => {
 export default function MessagesContainer({ activeConversationId, onSelectConversation }) {
   const { userInfo: currentUser, accessToken } = useUserData();
   const { socket } = useSocket();
-  const myId = currentUser?.user?._id;
+  const myId = typeof currentUser === "object"
+    ? (currentUser?.user?._id || currentUser?._id)
+    : currentUser;
 
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,31 +64,32 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
     if (!socket || !myId) return;
 
     const onNewMessage = (doc) => {
-      const senderId = doc?.sender?._id;
-      const receiverId = doc?.receiver?._id;
+      const senderId = doc?.sender?._id || doc?.sender;
+      const receiverId = doc?.receiver?._id || doc?.receiver;
       if (!senderId || !receiverId) return;
 
-      const otherUserId = senderId === myId ? receiverId : senderId;
-      const otherUser = senderId === myId ? doc?.receiver : doc?.sender;
+      const isSender = String(senderId) === String(myId);
+      const otherUserId = isSender ? String(receiverId) : String(senderId);
+      const otherUser = isSender ? doc?.receiver : doc?.sender;
       const lastMsg = doc?.message?.[doc.message.length - 1];
 
       setConversations((prev) => {
-        const existing = prev.find((c) => c.user?._id === otherUserId);
+        const existing = prev.find((c) => String(c.user?._id) === otherUserId);
         const updatedEntry = {
           user: {
             _id: otherUserId,
-            name: otherUser?.name || "Unknown",
-            email: otherUser?.email || "",
+            name: typeof otherUser === "object" ? (otherUser?.name || "Unknown") : "Unknown",
+            email: typeof otherUser === "object" ? (otherUser?.email || "") : "",
           },
           lastMessage: lastMsg?.text || "",
           lastMessageAt: lastMsg?.sentAt || new Date().toISOString(),
-          unreadCount: senderId !== myId
+          unreadCount: !isSender
             ? (existing?.unreadCount || 0) + 1
             : existing?.unreadCount || 0,
         };
 
         // Remove the existing entry if present, and prepend the updated one
-        const filtered = prev.filter((c) => c.user?._id !== otherUserId);
+        const filtered = prev.filter((c) => String(c.user?._id) !== otherUserId);
         return [updatedEntry, ...filtered];
       });
     };

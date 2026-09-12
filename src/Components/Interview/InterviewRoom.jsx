@@ -273,7 +273,10 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
               const Icon = tab.icon;
               const active = sidebarTab === tab.id;
               return (
-                <button key={tab.id} onClick={() => setSidebarTab(tab.id)}
+                <button key={tab.id} onClick={() => {
+                  setSidebarTab(tab.id);
+                  if (tab.id === "chat") setChatUnread(0);
+                }}
                   className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 py-2.5 text-xs font-semibold transition-all ${active ? "border-b-2 border-indigo-500 text-indigo-600" : "text-slate-400 hover:text-slate-600"}`}>
                   <Icon className="h-3.5 w-3.5" /> {tab.label}
                   {tab.id === "chat" && chatUnread > 0 && (
@@ -293,7 +296,7 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
               ) : (
                 <motion.div key="c" initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.15 }} className="flex h-full flex-col">
                   <div className="min-h-0 flex-1 p-2">
-                    <ChatBox roomId={roomId} userName={user.name} onNewMessage={() => { if (sidebarTab !== "chat") setChatUnread(c => c + 1); }} />
+                    <ChatBox roomId={roomId} userName={user?.name || "User"} onNewMessage={() => { if (sidebarTab !== "chat") setChatUnread(c => c + 1); }} />
                   </div>
                 </motion.div>
               )}
