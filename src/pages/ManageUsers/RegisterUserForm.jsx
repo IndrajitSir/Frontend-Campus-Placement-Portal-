@@ -109,7 +109,7 @@ function RegisterUserForm({ onCancel }) {
           onClick={handleRegister}
           disabled={submitting}
         >
-          {submitting ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Creating…</> : "Create User"}
+          {submitting ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Creating…</> : "Create"}
         </Button>
       </div>
     </div>

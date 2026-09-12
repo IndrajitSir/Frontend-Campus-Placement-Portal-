@@ -187,7 +187,7 @@ function ManageUsers() {
       <Dialog open={registerFormDialog} onOpenChange={setRegisterFormDialog}>
         <DialogContent>
           <DialogTitle>Create User</DialogTitle>
-          <DialogHeader>Create a new user 👍</DialogHeader>
+          {/* <DialogHeader>Create a new user 👍</DialogHeader> */}
           <DialogDescription>
             <RegisterUserForm onCancel={setRegisterFormDialog} />
           </DialogDescription>
