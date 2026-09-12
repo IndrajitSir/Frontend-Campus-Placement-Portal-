@@ -278,12 +278,16 @@ export default function NewMessagePage() {
           dataIncoming?.success &&
           Array.isArray(dataIncoming?.data?.requests)
         ) {
-          const pendingRequests = dataIncoming.data.requests
-            .map((req) => ({
-              ...(req?.sender || {}),
-              requestId: req?._id,
+          const pendingRequests = (
+            Array.isArray(dataIncoming?.data)
+              ? dataIncoming.data
+              : []
+          )
+            .map((request) => ({
+              requestId: request?._id,
+              sender: request?.sender,
             }))
-            .filter((u) => u?._id);
+            .filter((request) => request?.sender?._id);
 
           setFriendRequest({
             newFriend: pendingRequests.length > 0,
@@ -1140,55 +1144,71 @@ export default function NewMessagePage() {
                   </p>
                 </div>
               ) : (
-                friendRequest.friends.map((friend) => (
-                  <Card
-                    key={friend?.requestId || friend?._id}
-                    className="flex items-center gap-3 rounded-xl border border-slate-200/80 p-3 shadow-sm"
-                  >
-                    <img
-                      src={avatarOf(friend)}
-                      alt={nameOf(friend)}
-                      className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
-                    />
+                friendRequest.friends.map((friend) => {
+                  const sender = friend?.sender;
 
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-900">
-                        {nameOf(friend)}
-                      </p>
-                      <p className="truncate text-xs text-slate-400">
-                        {emailOf(friend)}
-                      </p>
-                    </div>
+                  return (
+                    <Card
+                      key={friend?.requestId}
+                      className="flex items-center gap-3 rounded-xl border border-slate-200/80 p-3 shadow-sm"
+                    >
+                      <img
+                        src={avatarOf(sender)}
+                        alt={nameOf(sender)}
+                        className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-100"
+                      />
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        title="Accept"
-                        onClick={() =>
-                          handleResponseToFriendRequest(
-                            "accepted",
-                            friend?.requestId
-                          )
-                        }
-                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-600"
-                      >
-                        <Check className="h-4 w-4" />
-                      </button>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-slate-900">
+                          {nameOf(sender)}
+                        </p>
 
-                      <button
-                        title="Decline"
-                        onClick={() =>
-                          handleResponseToFriendRequest(
-                            "rejected",
-                            friend?.requestId
-                          )
-                        }
-                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white transition hover:bg-red-600"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </Card>
-                ))
+                        <p className="truncate text-xs text-slate-400">
+                          {emailOf(sender)}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          title="Accept"
+                          onClick={() => {
+                            const acceptedRequest = friendRequest.friends.find(
+                              (friend) => friend?.requestId === requestId
+                            );
+
+                            if (action === "accepted" && acceptedRequest?.sender) {
+                              setFriends((prev) => [
+                                ...prev,
+                                acceptedRequest.sender,
+                              ]);
+                            }
+                            return handleResponseToFriendRequest(
+                              "accepted",
+                              friend?.requestId
+                            )
+                          }
+                          }
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-600"
+                        >
+                          <Check className="h-4 w-4" />
+                        </button>
+
+                        <button
+                          title="Decline"
+                          onClick={() =>
+                            handleResponseToFriendRequest(
+                              "rejected",
+                              friend?.requestId
+                            )
+                          }
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white transition hover:bg-red-600"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </Card>
+                  );
+                })
               )
             )}
           </div>
