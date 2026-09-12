@@ -11,7 +11,7 @@ import { Card } from "../../Components/ui/card";
 import ChatBox from "../../Components/PersonalChat/ChatBox";
 import FriendRequestButton from "../../Components/PersonalChat/FriendRequestButton";
 import MessagesContainer from "../../Components/PersonalChat/MessagesContainer";
-import SearchDialog from "../../Dialog/Search_Dialog/SearchDialogUpdated.jsx";
+import SearchDialog from "../../Dialog/Search_Dialog/SearchDialog.jsx";
 
 // Context
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
@@ -253,9 +253,9 @@ export default function NewMessagePage() {
 
               return friendUser
                 ? {
-                    ...friendUser,
-                    requestId: request?._id,
-                  }
+                  ...friendUser,
+                  requestId: request?._id,
+                }
                 : null;
             })
             .filter(Boolean);
@@ -729,15 +729,19 @@ export default function NewMessagePage() {
                       key={filter}
                       type="button"
                       onClick={() => setActiveFilter(filter)}
-                      className={`whitespace-nowrap rounded-full px-2.5 py-1 transition-colors ${
-                        activeFilter === filter
-                          ? "border border-violet-200/60 bg-violet-50 font-semibold text-violet-700 hover:bg-violet-100"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
+                      className={`whitespace-nowrap rounded-full px-2.5 py-1 transition-colors ${activeFilter === filter
+                        ? "border border-violet-200/60 bg-violet-50 font-semibold text-violet-700 hover:bg-violet-100"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
                     >
                       {filter}
                     </button>
                   ))}
+                  <span className="ml-auto whitespace-nowrap text-[11px] font-medium text-slate-400">
+                    <SearchDialog data={(Array.isArray(data) ? data : []).filter(
+                      (user) => user?._id !== myId
+                    )} onQuery={searchQueryFromChild} placeholderValue="Search user by name and email" />
+                  </span>
                 </div>
               </div>
 
@@ -953,11 +957,10 @@ export default function NewMessagePage() {
           <button
             type="button"
             onClick={() => setActiveFriendsTab("all")}
-            className={`px-2.5 pb-2 ${
-              activeFriendsTab === "all"
-                ? "border-b-2 border-violet-600 font-semibold text-violet-600"
-                : "hover:text-slate-700"
-            }`}
+            className={`px-2.5 pb-2 ${activeFriendsTab === "all"
+              ? "border-b-2 border-violet-600 font-semibold text-violet-600"
+              : "hover:text-slate-700"
+              }`}
           >
             All ({friends.length})
           </button>
@@ -965,11 +968,10 @@ export default function NewMessagePage() {
           <button
             type="button"
             onClick={() => setActiveFriendsTab("online")}
-            className={`px-2.5 pb-2 ${
-              activeFriendsTab === "online"
-                ? "border-b-2 border-violet-600 font-semibold text-violet-600"
-                : "hover:text-slate-700"
-            }`}
+            className={`px-2.5 pb-2 ${activeFriendsTab === "online"
+              ? "border-b-2 border-violet-600 font-semibold text-violet-600"
+              : "hover:text-slate-700"
+              }`}
           >
             Online ({friends.length})
           </button>
@@ -977,11 +979,10 @@ export default function NewMessagePage() {
           <button
             type="button"
             onClick={() => setActiveFriendsTab("requests")}
-            className={`flex items-center gap-1.5 px-2.5 pb-2 ${
-              activeFriendsTab === "requests"
-                ? "border-b-2 border-violet-600 font-semibold text-violet-600"
-                : "hover:text-slate-700"
-            }`}
+            className={`flex items-center gap-1.5 px-2.5 pb-2 ${activeFriendsTab === "requests"
+              ? "border-b-2 border-violet-600 font-semibold text-violet-600"
+              : "hover:text-slate-700"
+              }`}
           >
             <span>Requests ({friendRequest.friends.length})</span>
             {friendRequest.friends.length > 0 && (
@@ -1038,9 +1039,8 @@ export default function NewMessagePage() {
                         </p>
 
                         <p
-                          className={`truncate text-xs ${
-                            isActive ? "text-indigo-100" : "text-slate-400"
-                          }`}
+                          className={`truncate text-xs ${isActive ? "text-indigo-100" : "text-slate-400"
+                            }`}
                         >
                           Tap to chat
                         </p>
@@ -1096,9 +1096,8 @@ export default function NewMessagePage() {
                         </p>
 
                         <p
-                          className={`truncate text-xs ${
-                            isActive ? "text-indigo-100" : "text-emerald-600 font-medium"
-                          }`}
+                          className={`truncate text-xs ${isActive ? "text-indigo-100" : "text-emerald-600 font-medium"
+                            }`}
                         >
                           Online now
                         </p>
