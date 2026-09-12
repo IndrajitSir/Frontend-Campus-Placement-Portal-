@@ -16,7 +16,7 @@ import { useApi } from '../../context/ApiContext/ApiContext';
 // Hooks
 import useAllUsersNameAndEmail from '../../hooks/Users_Name_and_Email/useAllUsersNameAndEmail.js';
 // Icons
-import { Check, X, MessageCircle, LoaderCircle, UserPlus, Users } from 'lucide-react';
+import { Check, X, MessageCircle, LoaderCircle, UserPlus, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 const DEFAULT_AVATAR = '/defaultUserAvatar.jpeg';
@@ -25,7 +25,8 @@ export default function NewMessagePage() {
   const [users, setUsers] = useState([]);
   const [result, setResult] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [openChat, setOpenChat] = useState(false);
+  const [activeConversation, setActiveConversation] = useState(null);
+  const [showChatPanel, setShowChatPanel] = useState(false);
   const [friends, setFriends] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -41,7 +42,8 @@ export default function NewMessagePage() {
 
   const openChatWith = (user) => {
     setSelectedUser(user);
-    setOpenChat(true);
+    setActiveConversation(user);
+    setShowChatPanel(true);
   };
 
   // ---------- People (infinite scroll) ----------
@@ -136,7 +138,7 @@ export default function NewMessagePage() {
   }, [socket]);
 
   // ---------- Global incoming message listener ----------
-  // When a message arrives and the chat drawer is NOT open for that sender,
+  // When a message arrives and the chat panel is NOT showing for that sender,
   // show a toast so the user knows someone messaged them.
   useEffect(() => {
     if (!socket) return;
@@ -145,14 +147,14 @@ export default function NewMessagePage() {
       const senderId = doc?.sender?._id;
       const senderName = doc?.sender?.name || "Someone";
       // Only show toast if the chat with this sender is not currently open
-      if (senderId && senderId !== myId && (!openChat || selectedUser?._id !== senderId)) {
+      if (senderId && senderId !== myId && (!showChatPanel || activeConversation?._id !== senderId)) {
         toast.info(`💬 ${senderName} sent you a message.`);
       }
     };
 
     socket.on("personalChat:newMessage", onNewMessage);
     return () => socket.off("personalChat:newMessage", onNewMessage);
-  }, [socket, openChat, selectedUser?._id, myId]);
+  }, [socket, showChatPanel, activeConversation?._id, myId]);
 
   const searchQueryFromChild = async (query) => {
     try {
@@ -255,13 +257,13 @@ export default function NewMessagePage() {
             </div>
           )}
           {Array.isArray(friends) && friends.map((friend) => {
-            const active = selectedUser?._id === friend?._id && openChat;
+            const isActive = activeConversation?._id === friend?._id && showChatPanel;
             return (
               <button
                 key={friend?._id}
                 onClick={() => openChatWith(friend)}
                 className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all ${
-                  active
+                  isActive
                     ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
                     : "text-slate-700 hover:bg-indigo-50"
                 }`}
@@ -269,7 +271,7 @@ export default function NewMessagePage() {
                 <img src={avatarOf(friend)} alt={nameOf(friend)} className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-indigo-100" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{nameOf(friend)}</p>
-                  <p className={`truncate text-xs ${active ? "text-indigo-100" : "text-slate-400"}`}>Tap to chat</p>
+                  <p className={`truncate text-xs ${isActive ? "text-indigo-100" : "text-slate-400"}`}>Tap to chat</p>
                 </div>
               </button>
             );
@@ -356,38 +358,66 @@ export default function NewMessagePage() {
         </Card>
       </section>
 
-      {/* ---------------- Chat drawer ---------------- */}
+      {/* ---------------- Conversation panel (right side) ---------------- */}
       <AnimatePresence>
-        {openChat && selectedUser && (
+        {showChatPanel && activeConversation && (
           <motion.div
-            initial={{ x: "100%" }}
+            initial={{ x: showChatPanel ? 0 : "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-white shadow-2xl sm:w-[420px]"
+            className="flex h-[calc(100vh-7.5rem)] min-h-[560px] flex-col bg-white shadow-xl sm:shadow-2xl"
           >
-            <div className="flex items-center justify-between bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-5 py-4 text-white">
-              <div className="flex min-w-0 items-center gap-3">
-                <img src={avatarOf(selectedUser)} alt={nameOf(selectedUser)} className="h-10 w-10 shrink-0 rounded-full border-2 border-white/40 object-cover" />
+            {/* Conversation header */}
+            <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-5 py-4 text-white">
+              <div className="flex items-center gap-3">
+                {/* Back button for mobile */}
+                <button
+                  onClick={() => setShowChatPanel(false)}
+                  className="cursor-pointer rounded-lg p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white sm:hidden"
+                  title="Back to conversations"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <img src={avatarOf(activeConversation)} alt={nameOf(activeConversation)} className="h-10 w-10 shrink-0 rounded-full border-2 border-white/40 object-cover" />
                 <div className="min-w-0">
-                  <p className="truncate font-display text-sm font-bold">{nameOf(selectedUser)}</p>
-                  <p className="truncate text-xs text-indigo-100">{emailOf(selectedUser) || "Student"}</p>
+                  <p className="truncate font-display text-sm font-bold">{nameOf(activeConversation)}</p>
+                  <p className="truncate text-xs text-indigo-100">{emailOf(activeConversation) || "Student"}</p>
                 </div>
               </div>
               <button
-                onClick={() => setOpenChat(false)}
-                title="Close chat"
+                onClick={() => setShowChatPanel(false)}
+                title="Close conversation"
                 className="cursor-pointer rounded-lg p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="min-h-0 flex-1">
-              <ChatBox isOpen={openChat} onClose={() => setOpenChat(false)} user={selectedUser} currentUser={currentUser} />
+
+            {/* Messages area */}
+            <div className="flex-1 min-h-0">
+              <ChatBox
+                isOpen={showChatPanel}
+                onClose={() => setShowChatPanel(false)}
+                user={activeConversation}
+                currentUser={currentUser}
+              />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile toggle for chat panel */}
+      {showChatPanel && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="fixed bottom-4 left-4 z-40 sm:hidden rounded-xl border-slate-200 bg-white shadow-lg"
+          onClick={() => setShowChatPanel(false)}
+        >
+          <ChevronRight className="h-4 w-4 mr-1" /> Back to people
+        </Button>
+      )}
     </div>
   );
 }
