@@ -62,9 +62,12 @@ function RegisterUserForm({ onCancel }) {
     setSignupInfo({ ...signupInfo, [e.target.name]: e.target.value });
   };
 
+  // A placement_staff can only create students, not other staff or admins.
   const visibleRoles = role === "super_admin"
     ? ["student", "placement_staff", "admin"]
-    : ["student", "placement_staff"];
+    : role === "placement_staff"
+      ? ["student"]
+      : ["student", "placement_staff"];
 
   return (
     <div className="w-full space-y-4">

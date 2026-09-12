@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 // Shadcn Components
 import { Button } from "../../Components/ui/button";
 import { Card } from "../../Components/ui/card";
@@ -42,7 +42,6 @@ export default function ProfilePage() {
   const user = userInfo?.user || {};
   const student = userInfo?.student || {};
   const [editedUser, setEditedUser] = useState(userInfo || { user: {}, student: {} });
-  const [showBadgeContent, setShowBadgeContent] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
   const [logoutDialog, setLogoutDialog] = useState(false);
@@ -191,30 +190,34 @@ export default function ProfilePage() {
                 className="h-28 w-28 rounded-full border-4 border-[#0a0e1f] object-cover"
               />
             </div>
-            <button
-              onClick={() => setAvatarUploadDialog(true)}
-              title="Upload profile image"
-              className="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/40 ring-4 ring-[#0a0e1f] transition hover:scale-110"
-            >
-              <PlusCircleIcon className="h-5 w-5" />
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setAvatarUploadDialog(true)}
+                  className="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/40 ring-4 ring-[#0a0e1f] transition hover:scale-110"
+                >
+                  <PlusCircleIcon className="h-5 w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>Upload profile image</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Name + approval badge */}
           <div className="mt-5 flex items-center justify-center gap-2">
             <h1 className="font-display text-2xl font-bold text-white sm:text-3xl">{user.name || "—"}</h1>
-            <span
-              onMouseEnter={() => setShowBadgeContent(true)}
-              onMouseLeave={() => setShowBadgeContent(false)}
-              className={`relative inline-flex cursor-pointer ${student.approved ? "text-indigo-400" : "text-slate-500"}`}
-            >
-              <BsPatchCheckFill className="h-5 w-5" />
-              {showBadgeContent && (
-                <span className="absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 shadow-lg">
-                  {student.approved ? "Verified & approved" : "Pending approval"}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={`relative inline-flex cursor-pointer ${student.approved ? "text-indigo-400" : "text-slate-500"}`}>
+                  <BsPatchCheckFill className="h-5 w-5" />
                 </span>
-              )}
-            </span>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>{student.approved ? "Verified & approved" : "Pending approval"}</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <p className="mt-1.5 flex items-center gap-1.5 text-sm text-slate-400">
             <Mail className="h-4 w-4" />
@@ -231,34 +234,53 @@ export default function ProfilePage() {
           {/* Resume actions */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             {student.resume ? (
-              <NavLink
-                to={student.resume}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110"
-              >
-                <FileText className="h-4 w-4" /> View resume
-              </NavLink>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <NavLink
+                    to={student.resume}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110"
+                  >
+                    <FileText className="h-4 w-4" /> View resume
+                  </NavLink>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Opens in new tab</p>
+                </TooltipContent>
+              </Tooltip>
             ) : (
               <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-slate-300">
                 No resume uploaded
               </span>
             )}
-            <button
-              onClick={() => setResumeUploadDialog(true)}
-              title="Upload resume"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
-            >
-              <UploadCloudIcon className="h-4 w-4" /> Upload
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setResumeUploadDialog(true)}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+                >
+                  <UploadCloudIcon className="h-4 w-4" /> Upload
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>Upload a new resume</p>
+              </TooltipContent>
+            </Tooltip>
             {student.resume && (
-              <button
-                onClick={() => setDeleteResumeDialog(true)}
-                title="Delete resume"
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-red-400/25 bg-red-500/10 px-3.5 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
-              >
-                <Trash2Icon className="h-4 w-4" /> Delete
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setDeleteResumeDialog(true)}
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-red-400/25 bg-red-500/10 px-3.5 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
+                  >
+                    <Trash2Icon className="h-4 w-4" /> Delete
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Remove your resume</p>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         </div>
@@ -276,15 +298,27 @@ export default function ProfilePage() {
       </motion.div>
 
       {/* ---------------- About + details ---------------- */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="grid gap-6 lg:grid-cols-3"
+      >
         {/* About */}
         <Card className="card-elevate border-slate-200/80 p-6 lg:col-span-2">
           <div className="flex items-center justify-between">
             <h3 className="font-display text-lg font-bold text-slate-900">About</h3>
             {!editMode && role === "student" && (
-              <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => setEditMode(true)}>
-                <Pencil className="h-3.5 w-3.5" /> Edit
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" variant="outline" className="cursor-pointer" onClick={() => setEditMode(true)}>
+                    <Pencil className="h-3.5 w-3.5" /> Edit
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Edit your profile</p>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
 
@@ -332,39 +366,29 @@ export default function ProfilePage() {
         <Card className="card-elevate border-slate-200/80 p-6">
           <h3 className="font-display text-lg font-bold text-slate-900">Details</h3>
           <ul className="mt-4 space-y-3">
-            <li className="flex items-center gap-3 text-sm text-slate-600">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                <Phone className="h-4 w-4" />
-              </span>
-              {user.phoneNumber || "Not added"}
-            </li>
-            <li className="flex items-center gap-3 text-sm text-slate-600">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
-                <MapPin className="h-4 w-4" />
-              </span>
-              {student.location || "Not added"}
-            </li>
-            <li className="flex items-center gap-3 text-sm text-slate-600">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-fuchsia-50 text-fuchsia-600">
-                <Building2 className="h-4 w-4" />
-              </span>
-              {student.department || "Not added"}
-            </li>
-            <li className="flex items-center gap-3 text-sm text-slate-600">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-sky-600">
-                <GraduationCap className="h-4 w-4" />
-              </span>
-              {student.professional_skill || "Not added"}
-            </li>
-            <li className="flex items-center gap-3 text-sm text-slate-600">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-                <UserRound className="h-4 w-4" />
-              </span>
-              {student.approved ? "Approved" : "Pending approval"}
-            </li>
+            {[
+              { icon: Phone, color: "bg-indigo-50 text-indigo-600", text: user.phoneNumber || "Not added" },
+              { icon: MapPin, color: "bg-violet-50 text-violet-600", text: student.location || "Not added" },
+              { icon: Building2, color: "bg-fuchsia-50 text-fuchsia-600", text: student.department || "Not added" },
+              { icon: GraduationCap, color: "bg-sky-50 text-sky-600", text: student.professional_skill || "Not added" },
+              { icon: UserRound, color: "bg-emerald-50 text-emerald-600", text: student.approved ? "Approved" : "Pending approval" },
+            ].map(({ icon: Icon, color, text }, i) => (
+              <motion.li
+                key={i}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05, duration: 0.25 }}
+                className="flex items-center gap-3 text-sm text-slate-600"
+              >
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${color}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                {text}
+              </motion.li>
+            ))}
           </ul>
         </Card>
-      </div>
+      </motion.div>
 
       {/* ---------------- Projects ---------------- */}
       <Card className="card-elevate border-slate-200/80 p-6">
