@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, Menu, X, LogIn, ArrowRight, LayoutDashboard, Briefcase, FileText, User, MessageCircle } from "lucide-react";
+import { GraduationCap, Menu, X, LogIn, ArrowRight, LayoutDashboard, Briefcase, FileText, User, MessageCircle, Settings } from "lucide-react";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 import NotificationBell from "../Notifications/NotificationBell.jsx";
@@ -40,6 +40,7 @@ const Navbar = () => {
       ? [{ label: "Profile", icon: User, action: () => go("/home/profile") }]
       : []),
     { label: "Chat", icon: MessageCircle, action: () => go("/home/message") },
+    { label: "Settings", icon: Settings, action: () => go("/home/settings") },
   ];
 
   const landingLinks = [

@@ -6,11 +6,13 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "
 import { Button } from '../../Components/ui/button';
 // CONTEXT api
 import { useUserData } from '../../context/AuthContext/AuthContext.jsx';
+// E2EE keys (user-scoped)
+import { clearUserKeys, getKeepKeyOnLogout } from '../../lib/crypto.js';
 // Environment variables
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Logout_Dialog({ logoutDialog, setLogoutDialog }) {
-  const { setRole, setAccessToken, setRefreshToken, setUserInfo, accessToken } = useUserData();
+  const { setRole, setAccessToken, setRefreshToken, setUserInfo, accessToken, userInfo } = useUserData();
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -28,6 +30,15 @@ function Logout_Dialog({ logoutDialog, setLogoutDialog }) {
         setAccessToken("");
         setRefreshToken("");
         setUserInfo({});
+
+        // Privacy toggle (Settings → End-to-end encryption): when the user
+        // chose "OFF", scrub this browser's E2EE key so no history can be
+        // read after re-login. Local-only — other devices keep their keys.
+        const userId = userInfo?.user?._id;
+        if (userId && !getKeepKeyOnLogout(userId)) {
+          clearUserKeys(userId);
+        }
+
         toast.success("Logout successfully!");
         navigate("/", { replace: true });
       }

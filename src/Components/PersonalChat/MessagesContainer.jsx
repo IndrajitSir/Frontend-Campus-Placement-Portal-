@@ -47,7 +47,7 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
   const decryptPreview = useCallback(
     async (conv) => {
       if (!conv?.lastMessageCipher || !accessToken) return null;
-      const pair = await getOrCreateKeyPair();
+      const pair = await getOrCreateKeyPair(myId);
       if (!pair) return null;
       try {
         // My own last message → sender copy, decrypt with MY public key.
@@ -62,7 +62,7 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
         return null;
       }
     },
-    [accessToken]
+    [myId, accessToken]
   );
 
   const fetchConversations = useCallback(async () => {

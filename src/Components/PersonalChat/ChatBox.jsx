@@ -98,17 +98,18 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
   // Track IDs of messages we optimistically added so socket echoes are ignored
   const pendingLocalIds = useRef(new Set());
 
-  // Load my E2EE keypair once (generates it on first use).
+  // Load my E2EE keypair once (generates it on first use) — scoped by my id.
   useEffect(() => {
+    if (!myId) return;
     let cancelled = false;
     (async () => {
-      const pair = await getOrCreateKeyPair();
+      const pair = await getOrCreateKeyPair(myId);
       if (!cancelled) setMyKeyPair(pair);
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [myId]);
 
   // Load the partner's public key when the conversation opens.
   useEffect(() => {
@@ -137,7 +138,11 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           keyPair: myKeyPair,
           partnerPublicJwk: partnerPublicKey,
         });
-        return { ...m, displayText: plain ?? null };
+        return {
+          ...m,
+          displayText: plain.status === "ok" ? plain.text : null,
+          decryptStatus: plain.status,
+        };
       })
     );
   };
@@ -198,7 +203,11 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
         keyPair: pair,
         partnerPublicJwk: partnerPublicKeyRef.current,
       });
-      return { ...m, displayText: plain ?? null };
+      return {
+        ...m,
+        displayText: plain.status === "ok" ? plain.text : null,
+        decryptStatus: plain.status,
+      };
     };
 
     const onNewMessage = (doc) => {
@@ -402,6 +411,20 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
 
   const quickReplies = ["👍 Thanks!", "Can we hop on a quick call?", "Share system logs"];
 
+  // Distinct explanations for why an encrypted message can't be decrypted.
+  const lockedText = (msg) => {
+    switch (msg.decryptStatus) {
+      case "no_partner_key":
+        return `🔒 ${user?.name || "This user"} hasn't enabled encrypted chat — this message can't be viewed`;
+      case "old_key":
+        return "🔒 Can't decrypt (sent from another device / old key)";
+      case "corrupt":
+        return "🔒 This message appears to be corrupted or tampered with";
+      default:
+        return "🔒 Can't decrypt (sent from another device)";
+    }
+  };
+
   // Composer is blocked while the partner has no encryption key yet.
   const composerBlocked =
     e2eeAvailable() && Boolean(myKeyPair) && !partnerPublicKey && !partnerKeyLoading;
@@ -463,7 +486,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                       {msg.displayText !== undefined && msg.displayText !== null
                         ? msg.displayText
                         : msg.encrypted
-                          ? "🔒 Can't decrypt (sent from another device)"
+                          ? lockedText(msg)
                           : (msg.text ?? "")}
                     </p>
 

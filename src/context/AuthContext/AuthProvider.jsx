@@ -34,10 +34,10 @@ export const AuthCrediantialsProvider = ({ children }) => {
         student: response?.data?.student
       }))
 
-      // E2EE: generate (if needed) and upload the public key — non-blocking.
-      // Errors are logged; chat remains usable but partner may lack a key.
-      if (response?.data?.accessToken) {
-        ensureEncryptionKey(response.data.accessToken).then((ok) => {
+      // E2EE: generate (if needed), verify against the server key, and upload
+      // the public key — non-blocking, scoped to THIS user's id.
+      if (response?.data?.accessToken && response?.data?.user?._id) {
+        ensureEncryptionKey(response.data.accessToken, response.data.user._id).then((ok) => {
           if (!ok && typeof window !== "undefined" && window.isSecureContext === true) {
             console.warn("E2EE key could not be uploaded — chat may be unavailable for contacts without keys.");
           }

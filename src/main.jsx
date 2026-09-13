@@ -11,6 +11,7 @@ import ProtectedRoute from './functionality/ProtectedRoutes.jsx'
 import Dashboard from './pages/Dashboard/Dashboard.jsx'
 import DashBoardContent from './pages/Dashboard/DashBoardContent.jsx'
 import ProfilePage from './pages/Profile/Profile.jsx'
+import SettingsPage from './pages/Settings/SettingsPage.jsx'
 import Students from './pages/Users/Students/Students.jsx'
 import ShortlistedApplications from './pages/Applications/ShortlistedApplications/ShortlistedApplications.jsx'
 import AppliedApplications from './pages/Applications/AppliedApplications/AppliedApplications.jsx';
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
           <Route path="" element={<Navigate to="/home/dashboard/placements" replace />} />
           <Route path="placements" element={<Navigate to="/home/dashboard/placements" replace />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="message" element={<NewMessagePage />} />
           <Route path="dashboard" element={<Dashboard />} >
             <Route path="" element={<DashBoardContent />} />
