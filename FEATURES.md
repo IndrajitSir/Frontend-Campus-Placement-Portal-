@@ -173,4 +173,4 @@ server by JWT verification middleware (`verifyUser`, `verifyUserWithRole`).
   Axios, Recharts, Monaco Editor, react-toastify, react-intersection-observer.
 - **Backend:** Node.js, Express 4, MongoDB + Mongoose, socket.io, Winston, Passport.js, Redis, Cloudinary.
 - **Auth:** JWT (access + refresh), httpOnly cookies, Google & GitHub OAuth.
-- **Deployment:** Frontend on Vercel/Netlify, backend on Render/Railway, Docker + nginx configs included.
+- **Deployment:** Frontend on Vercel, backend on Render, Docker + nginx configs included.
