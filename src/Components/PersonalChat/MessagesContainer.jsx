@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { MessageSquare, LoaderCircle } from "lucide-react";
+import { MessageSquare, LoaderCircle, Lock } from "lucide-react";
 import { useUserData } from "../../context/AuthContext/AuthContext";
 import { useSocket } from "../../context/SocketContext/SocketContext";
+import { getOrCreateKeyPair, fetchPublicKey, decryptFrom } from "../../lib/crypto.js";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -39,6 +40,30 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
 
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Decrypted previews keyed by conversation user id (null = could not decrypt).
+  const [previews, setPreviews] = useState({});
+
+  // Best-effort decrypt of a conversation's E2EE preview ciphertext.
+  const decryptPreview = useCallback(
+    async (conv) => {
+      if (!conv?.lastMessageCipher || !accessToken) return null;
+      const pair = await getOrCreateKeyPair();
+      if (!pair) return null;
+      try {
+        // My own last message → sender copy, decrypt with MY public key.
+        // Incoming message → receiver copy, decrypt with the partner's key.
+        const senderPublicJwk = conv.lastMessageMine ? pair.publicJwk : null;
+        const publicJwk =
+          senderPublicJwk || (await fetchPublicKey(conv.user?._id, accessToken));
+        if (!publicJwk) return null;
+        return await decryptFrom(publicJwk, pair.privateJwk, conv.lastMessageCipher);
+      } catch (err) {
+        console.error("Preview decrypt failed:", err?.message);
+        return null;
+      }
+    },
+    [accessToken]
+  );
 
   const fetchConversations = useCallback(async () => {
     if (!myId || !accessToken) return;
@@ -47,13 +72,23 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
         withCredentials: true,
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      setConversations(res?.data?.data || []);
+      const list = res?.data?.data || [];
+      setConversations(list);
+
+      // Decrypt previews for E2EE entries (non-blocking).
+      const encryptedOnes = list.filter((c) => c.lastMessageEncrypted && c.lastMessageCipher);
+      if (encryptedOnes.length) {
+        const results = await Promise.all(
+          encryptedOnes.map(async (c) => [c.user?._id, await decryptPreview(c)])
+        );
+        setPreviews((prev) => ({ ...prev, ...Object.fromEntries(results) }));
+      }
     } catch (err) {
       console.error("Failed to fetch conversations", err);
     } finally {
       setLoading(false);
     }
-  }, [myId, accessToken]);
+  }, [myId, accessToken, decryptPreview]);
 
   useEffect(() => {
     fetchConversations();
@@ -73,30 +108,43 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
       const otherUser = isSender ? doc?.receiver : doc?.sender;
       const lastMsg = doc?.message?.[doc.message.length - 1];
 
+      const updatedEntry = {
+        user: {
+          _id: otherUserId,
+          name: typeof otherUser === "object" ? (otherUser?.name || "Unknown") : "Unknown",
+          email: typeof otherUser === "object" ? (otherUser?.email || "") : "",
+        },
+        lastMessage: lastMsg?.text || "",
+        lastMessageEncrypted: Boolean(lastMsg?.encrypted),
+        lastMessageMine: isSender,
+        // Viewer-aware copy: my own message → toSender, incoming → toReceiver.
+        lastMessageCipher: lastMsg?.encrypted
+          ? (isSender ? lastMsg?.ciphertexts?.toSender : lastMsg?.ciphertexts?.toReceiver) || null
+          : null,
+        lastMessageAt: lastMsg?.sentAt || new Date().toISOString(),
+      };
+
+      // Remove the existing entry if present, and prepend the updated one.
       setConversations((prev) => {
         const existing = prev.find((c) => String(c.user?._id) === otherUserId);
-        const updatedEntry = {
-          user: {
-            _id: otherUserId,
-            name: typeof otherUser === "object" ? (otherUser?.name || "Unknown") : "Unknown",
-            email: typeof otherUser === "object" ? (otherUser?.email || "") : "",
-          },
-          lastMessage: lastMsg?.text || "",
-          lastMessageAt: lastMsg?.sentAt || new Date().toISOString(),
-          unreadCount: !isSender
-            ? (existing?.unreadCount || 0) + 1
-            : existing?.unreadCount || 0,
-        };
-
-        // Remove the existing entry if present, and prepend the updated one
+        const unreadCount = !isSender
+          ? (existing?.unreadCount || 0) + 1
+          : existing?.unreadCount || 0;
         const filtered = prev.filter((c) => String(c.user?._id) !== otherUserId);
-        return [updatedEntry, ...filtered];
+        return [{ ...updatedEntry, unreadCount }, ...filtered];
       });
+
+      // Decrypt the preview of the moved conversation (best-effort).
+      if (updatedEntry.lastMessageCipher) {
+        decryptPreview(updatedEntry).then((plain) => {
+          setPreviews((prev) => ({ ...prev, [otherUserId]: plain }));
+        });
+      }
     };
 
     socket.on("personalChat:newMessage", onNewMessage);
     return () => socket.off("personalChat:newMessage", onNewMessage);
-  }, [socket, myId]);
+  }, [socket, myId, decryptPreview]);
 
   // When a conversation is opened, reset its unread count
   useEffect(() => {
@@ -171,7 +219,15 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
                     isActive ? "text-indigo-100" : "text-slate-400 dark:text-slate-500"
                   } ${conv.unreadCount > 0 && !isActive ? "font-semibold text-slate-700 dark:text-slate-200" : ""}`}
                 >
-                  {conv.lastMessage || "Start chatting…"}
+                  {conv.lastMessageEncrypted ? (
+                    previews[conv.user?._id] ?? (
+                      <span className="inline-flex items-center gap-1">
+                        <Lock className="h-3 w-3" /> New message
+                      </span>
+                    )
+                  ) : (
+                    conv.lastMessage || "Start chatting…"
+                  )}
                 </p>
               </div>
             </motion.button>

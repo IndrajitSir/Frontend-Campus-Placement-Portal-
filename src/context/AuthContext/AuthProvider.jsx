@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
+import { ensureEncryptionKey } from "../../lib/crypto.js";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const AuthCrediantialsProvider = ({ children }) => {
@@ -32,6 +33,16 @@ export const AuthCrediantialsProvider = ({ children }) => {
         user: response.data.user,
         student: response?.data?.student
       }))
+
+      // E2EE: generate (if needed) and upload the public key — non-blocking.
+      // Errors are logged; chat remains usable but partner may lack a key.
+      if (response?.data?.accessToken) {
+        ensureEncryptionKey(response.data.accessToken).then((ok) => {
+          if (!ok && typeof window !== "undefined" && window.isSecureContext === true) {
+            console.warn("E2EE key could not be uploaded — chat may be unavailable for contacts without keys.");
+          }
+        });
+      }
     } catch (error) {
       console.error("Session fetch error", error);
     } finally {
