@@ -94,6 +94,13 @@ cd Backend-Campus-Placement-Portal
 cp env.production.example .env.production   # set VITE_API_URL to the public backend URL
 docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
 ```
+```bash
+sudo docker compose -f docker-compose.prod.yml ps # Check the Status of the Services
+sudo docker compose -f docker-compose.prod.yml logs -f # Stream the Logs
+sudo docker compose -f docker-compose.prod.yml stats # To view live resource usage (CPU/Memory)
+sudo docker compose -f docker-compose.prod.yml exec <service_name> sh # To open a terminal inside one of the running containers
+sudo docker compose -f docker-compose.prod.yml down # To stop and remove the containers later
+```
 
 Frontend is served on `http://localhost:80` (override with `FRONTEND_PORT=8080`).
 
