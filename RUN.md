@@ -77,7 +77,7 @@ The frontend container builds the app with Vite and serves the static bundle wit
 ```bash
 cd Frontend-Campus-Placement-Portal-
 docker build \
-  --build-arg VITE_API_URL=https://api.your-domain.com \
+  --build-arg VITE_API_URL=http://localhost:6005 \
   --build-arg VITE_API_VERSION=2 \
   -t campusplace-frontend .
 docker run -d -p 8080:80 --name campusplace-frontend campusplace-frontend
