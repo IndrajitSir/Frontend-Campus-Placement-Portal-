@@ -1,8 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { Bell, BellOff, Clock, X } from "lucide-react";
+import { Phone as PhoneIcon, MapPin as MapPinIcon, Building2 as Building2Icon, GraduationCap as GraduationCapIcon, UserRound as UserRoundIcon } from "lucide-react";
 // Shadcn Components
 import { Button } from "../../Components/ui/button";
 import { Card } from "../../Components/ui/card";
@@ -21,6 +23,25 @@ import {
   Mail,
   Phone,
   MapPin,
+  Phone as phoneIcon,
+  MapPin as mapPinIcon,
+  Building2 as building2Icon,
+  GraduationCap as graduationCapIcon,
+  UserRound as userRoundIcon,
+  CheckCircle2 as checkCircle2Icon,
+  LoaderCircle as loaderCircleIcon,
+  FileText as fileTextIcon,
+  Briefcase as briefcaseIcon,
+  Sparkles as sparklesIcon,
+  PlusCircleIcon as plusCircleIcon,
+  UploadCloudIcon as uploadCloudIcon,
+  Trash2Icon as trash2Icon,
+  Pencil as pencilIcon,
+  LogOut as logOutIcon,
+  Bell as bellIcon,
+  BellOff as bellOffIcon,
+  Clock as clockIcon,
+  X as xIcon,
   Building2,
   GraduationCap,
   FileText,
@@ -29,8 +50,9 @@ import {
   Sparkles,
   UserRound,
   CheckCircle2,
+  LoaderCircle,
 } from "lucide-react";
-import { BsPatchCheckFill } from "react-icons/bs";
+
 // Dialog Boxes
 import ImageUploadDialog from "../../Dialog/Image_Upload_Dialog/ImageUploadDialog.jsx";
 import ResumeUpload from "../../Dialog/ResumeUpload/ResumeUpload";
@@ -40,6 +62,7 @@ import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 // Environment variable
 const API_URL = import.meta.env.VITE_API_URL;
 const DEFAULT_AVATAR = "/defaultUserAvatar.jpeg";
+const PAGE_SIZE = 20;
 
 // Circular profile-completeness ring (indigo -> fuchsia gradient stroke).
 function CompletenessRing({ percent, complete, total }) {
@@ -101,6 +124,67 @@ export default function ProfilePage() {
   const [avatarUploadDialog, setAvatarUploadDialog] = useState(false);
   const [resumeUploadDialog, setResumeUploadDialog] = useState(false);
   const [deleteResumeDialog, setDeleteResumeDialog] = useState(false);
+  // -------- Notifications --------
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  const fetchNotifications = async () => {
+    if (!accessToken) return;
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_URL}/api/v2/notifications?page=1&limit=${PAGE_SIZE}`, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (res?.data?.success && Array.isArray(res?.data?.data?.notifications)) {
+        setNotifications(res.data.data.notifications);
+      }
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!accessToken) {
+      setChecking(false);
+      return;
+    }
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, [accessToken, fetchNotifications]);
+
+  const markAllRead = async () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    try {
+      await axios.put(`${API_URL}/api/v2/notifications/mark-read`, { all: true }, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+    } catch (err) {
+      console.error("Mark-all-read failed:", err?.message);
+    }
+  };
+
+  const openNotification = async (n) => {
+    setNotifications((prev) => prev.map((x) => (x._id === n._id ? { ...x, read: true } : x)));
+    if (!n.read) {
+      try {
+        await axios.put(`${API_URL}/api/v2/notifications/mark-read`, { ids: [n._id] }, {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+      } catch (err) {
+        console.error("Mark-read failed:", err?.message);
+      }
+    }
+    if (n.link) {
+      window.open(n.link, "_blank");
+    }
+  };
 
   const authHeaders = { Authorization: `Bearer ${accessToken}` };
 
@@ -283,7 +367,7 @@ export default function ProfilePage() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className={`relative inline-flex cursor-pointer ${student.approved ? "text-indigo-400" : "text-slate-500"}`}>
-                  <BsPatchCheckFill className="h-5 w-5" />
+                  <CheckCircle2 className="h-5 w-5" />
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top">
@@ -478,18 +562,17 @@ export default function ProfilePage() {
           className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
         >
           {[
-            { icon: Phone, color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300", text: user.phoneNumber || "Not added" },
-            { icon: MapPin, color: "bg-violet-50 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300", text: student.location || "Not added" },
-            { icon: Building2, color: "bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-500/15 dark:text-fuchsia-300", text: student.department || "Not added" },
-            { icon: GraduationCap, color: "bg-sky-50 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300", text: student.professional_skill || "Not added" },
-            { icon: UserRound, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300", text: student.approved ? "Approved" : "Pending approval" },
+            { icon: phoneIcon, color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300", text: user.phoneNumber || "Not added" },
+            { icon: mapPinIcon, color: "bg-violet-50 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300", text: student.location || "Not added" },
+            { icon: building2Icon, color: "bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-500/15 dark:text-fuchsia-300", text: student.department || "Not added" },
+            { icon: graduationCapIcon, color: "bg-sky-50 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300", text: student.professional_skill || "Not added" },
+            { icon: userRoundIcon, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300", text: student.approved ? "Approved" : "Pending approval" },
           ].map(({ icon: Icon, color, text }, i) => (
             <motion.li
               key={i}
               variants={item}
               className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-sm text-slate-600 transition-colors hover:border-slate-200 dark:border-white/5 dark:bg-white/[0.03] dark:text-slate-300 dark:hover:border-white/10"
-            >
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${color}`}>
+            >                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${color}`}>
                 <Icon className="h-4 w-4" />
               </span>
               <span className="min-w-0 break-words">{text}</span>
@@ -546,6 +629,70 @@ export default function ProfilePage() {
           </div>
         )}
       </Card>
+
+      {/* ---------------- Notifications ---------------- */}
+      <div className="card-elevate border border-slate-200/80 bg-white p-6 dark:border-white/10 dark:bg-white/[0.04]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="rounded-xl bg-indigo-50 p-2 dark:bg-indigo-500/15">
+              <Bell className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <div>
+              <h3 className="font-display text-base font-bold text-slate-900 dark:text-slate-100">Notifications</h3>
+              <p className="text-xs text-slate-400">{notifications.length} recent notifications</p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={markAllRead}
+            className="text-xs text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+          >
+            <BellOff className="h-3.5 w-3.5" /> Mark all read
+          </Button>
+        </div>
+
+        {checking || loading ? (
+          <div className="mt-4 flex items-center justify-center gap-2 text-sm text-slate-400">
+            <LoaderCircle className="h-4 w-4 animate-spin text-indigo-500" /> Loading notifications…
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className="mt-4 rounded-xl border border-dashed border-slate-200 p-6 text-center">
+            <BellOff className="h-6 w-6 mx-auto text-slate-300 dark:text-slate-600" />
+            <p className="mt-2 text-sm text-slate-400">No notifications yet</p>
+            <p className="text-xs text-slate-300 dark:text-slate-500">When you receive updates, they'll show up here.</p>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-1 max-h-56 overflow-y-auto">
+            {notifications.slice(0, 15).map((n) => (
+              <button
+                key={n._id}
+                onClick={() => openNotification(n)}
+                className={`flex w-full items-start gap-2.5 rounded-xl border p-2.5 text-left transition-colors ${n.read
+                  ? "border-slate-100 bg-slate-50/50 dark:border-white/5 dark:bg-white/[0.02]"
+                  : "border-violet-100 bg-violet-50/50 dark:border-violet-500/10 dark:bg-violet-500/5"
+                  }`}
+              >
+                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.read ? "bg-slate-300 dark:bg-slate-600" : "bg-gradient-to-r from-indigo-500 to-violet-500"}`} />
+                <div className="min-w-0 flex-1">
+                  <p className={`text-xs font-semibold truncate ${n.read ? "text-slate-600 dark:text-slate-300" : "text-slate-800 dark:text-slate-100"}`}>
+                    {n.title}
+                  </p>
+                  {n.body && (
+                    <p className={`mt-0.5 text-[11px] truncate ${n.read ? "text-slate-400 dark:text-slate-500" : "text-slate-500 dark:text-slate-400"}`}>
+                      {n.body}
+                    </p>
+                  )}
+                  <span className={`mt-0.5 text-[10px] ${n.read ? "text-slate-300 dark:text-slate-600" : "text-slate-400 dark:text-slate-500"}`}>
+                    {new Date(n.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                {!n.read && <X className="h-3.5 w-3.5 shrink-0 text-slate-300 dark:text-slate-600" />}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* ---------------- Dialogs ---------------- */}
       <Logout_Dialog logoutDialog={logoutDialog} setLogoutDialog={setLogoutDialog} />
