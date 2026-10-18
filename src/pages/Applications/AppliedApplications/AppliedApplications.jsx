@@ -9,6 +9,8 @@ import { Card } from '../../../Components/ui/card.jsx';
 import { Button } from '../../../Components/ui/button.jsx';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../Components/ui/dialog.jsx';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip.jsx';
+import BulkActionBar from '../../../Components/Applications/BulkActionBar.jsx';
+import { useBulkSelection } from '../../../hooks/useBulkSelection.js';
 // icons
 import { Eye, Check, X, FileText, Briefcase, Building2, CalendarDays, Download, LoaderCircle } from 'lucide-react';
 // Dialog Boxes
@@ -30,7 +32,12 @@ function AppliedApplications() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [confirming, setConfirming] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const { selectedIds, count: selectedCount, toggle, clear, selectAll, isSelected } = useBulkSelection();
   const canExport = EXPORT_ROLES.includes(role);
+  const allIds = applications.map((a) => a?._id).filter(Boolean);
+  const allSelected = allIds.length > 0 && allIds.every((id) => isSelected(id));
 
   useEffect(() => {
     const fetch = async () => {
@@ -48,9 +55,7 @@ function AppliedApplications() {
         if (!response?.success) {
           throw new Error(response?.message);
         }
-        if (response?.data?.candidates?.length > 0) {
-          setApplications(response?.data?.candidates);
-        }
+        setApplications(response?.data?.candidates || []);
       } catch (err) {
         console.error("Failed to fetch applied applications", err);
       } finally {
@@ -58,7 +63,39 @@ function AppliedApplications() {
       }
     };
     fetch();
-  }, [page, accessToken]);
+  }, [page, accessToken, refreshKey]);
+
+  const applyBulkStatus = async (newStatus, note) => {
+    if (!selectedIds.length) return;
+    setBulkBusy(true);
+    try {
+      const res = await fetch(`${API_URL}/api/v1/applications/bulk-status`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ recordIDs: selectedIds, newStatus, note })
+      });
+      const response = await res.json();
+      if (!res.ok || !response?.success) {
+        throw new Error(response?.message || "Bulk update failed");
+      }
+      const { updated = 0, failed = [] } = response.data || {};
+      toast.success(`${updated} application${updated === 1 ? "" : "s"} updated`);
+      if (failed.length) {
+        toast.warning(`${failed.length} skipped — ${failed[0]?.message || "not eligible"}`);
+      }
+      clear();
+      setRefreshKey((k) => k + 1);
+    } catch (err) {
+      console.error("Bulk status update failed", err);
+      toast.error(err?.message || "Bulk update failed");
+    } finally {
+      setBulkBusy(false);
+    }
+  };
 
 
   const updateStatus = async ({ newStatus, recordID }) => {
@@ -77,7 +114,8 @@ function AppliedApplications() {
       toast.error(response?.message || "Something went wrong!");
       return false;
     }
-    setApplications(response?.data);
+    // Re-read the page instead of replacing the array with a single document.
+    setRefreshKey((k) => k + 1);
     toast.success(`Candidate ${newStatus === "selected" ? "shortlisted" : "rejected"} successfully!`);
     return true;
   }
@@ -113,6 +151,15 @@ function AppliedApplications() {
 
   return (
     <div className="w-full space-y-6 p-6">
+      <BulkActionBar
+        count={selectedCount}
+        allSelected={allSelected}
+        onToggleAll={() => (allSelected ? clear() : selectAll(allIds))}
+        onApply={applyBulkStatus}
+        onClear={clear}
+        busy={bulkBusy}
+      />
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -167,6 +214,13 @@ function AppliedApplications() {
               <Card className="card-elevate h-full rounded-2xl border-slate-200/80 p-5 transition-all duration-200 dark:border-white/10 dark:bg-white/[0.04]">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={isSelected(application?._id)}
+                      onChange={() => toggle(application?._id)}
+                      aria-label={`Select ${application?.userInfo?.name || "candidate"}`}
+                      className="h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-teal-600 focus:ring-teal-500/40 dark:border-white/20 dark:bg-white/10"
+                    />
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-600 ring-2 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20">
                       {application?.userInfo?.name?.charAt(0) || "?"}
                     </div>

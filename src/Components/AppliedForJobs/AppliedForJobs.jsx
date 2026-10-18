@@ -13,7 +13,9 @@ import { useSocket } from '../../context/SocketContext/SocketContext.jsx';
 import { motion } from 'framer-motion';
 import { staggerContainer, item, popSpring } from '../../lib/motion.js';
 // Icons
-import { Briefcase, Building2, FileText, Video, History, ChevronDown, Loader2, CircleAlert } from 'lucide-react';
+import { Briefcase, Building2, FileText, Video, History, ChevronDown, Loader2, CircleAlert, Star, RotateCcw } from 'lucide-react';
+import PlacementFeedbackDialog from '../Feedback/PlacementFeedbackDialog.jsx';
+import ReconsiderationDialog from '../Applications/ReconsiderationDialog.jsx';
 // Environment Variables
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,6 +26,9 @@ function AppliedForJobs() {
   const [interviewID, setInterviewID] = useState('');
   const [loading, setLoading] = useState(true);
   const [timelines, setTimelines] = useState({});
+  const [feedbackSummaries, setFeedbackSummaries] = useState({});
+  const [feedbackTarget, setFeedbackTarget] = useState(null);
+  const [reconsiderTarget, setReconsiderTarget] = useState(null);
   const navigate = useNavigate();
   const { socket } = useSocket();
 
@@ -54,6 +59,30 @@ function AppliedForJobs() {
   useEffect(() => {
     applications();
   }, [applications]);
+
+  const loadFeedbackSummaries = useCallback(async (items) => {
+    const ids = [...new Set((items || [])
+      .map((item) => item?.placement_id?._id)
+      .filter(Boolean)
+      .map(String))];
+    if (!ids.length || !accessToken) return;
+    try {
+      const res = await fetch(
+        `${API_URL}/api/v1/feedback/summary?placementIds=${ids.slice(0, 50).join(",")}`,
+        { credentials: "include", headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const response = await res.json();
+      if (res.ok && response?.success) {
+        setFeedbackSummaries(response.data?.summaries || {});
+      }
+    } catch (err) {
+      console.error("Failed to load feedback summaries", err);
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    loadFeedbackSummaries(appliedJobs);
+  }, [appliedJobs, loadFeedbackSummaries]);
 
   const loadTimeline = async (applicationId) => {
     // Collapse an open timeline instead of refetching it.
@@ -166,6 +195,41 @@ function AppliedForJobs() {
                     </Button>
                   )}
 
+                  {/* Community rating + the student's own rating entry point. */}
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-slate-100 px-3 py-2 dark:border-white/10">
+                    <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                      <Star className="h-3.5 w-3.5 text-amber-400" />
+                      {feedbackSummaries[candidate?.placement_id?._id]?.count
+                        ? <span><span className="font-semibold text-slate-700 dark:text-slate-200">{feedbackSummaries[candidate.placement_id._id].average}</span> average · {feedbackSummaries[candidate.placement_id._id].count} rating{feedbackSummaries[candidate.placement_id._id].count === 1 ? "" : "s"}</span>
+                        : <span>No ratings yet</span>}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFeedbackTarget(candidate)}
+                      className="cursor-pointer rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-600 transition-colors hover:border-amber-300 hover:text-amber-700 dark:border-white/10 dark:text-slate-300 dark:hover:border-amber-500/40 dark:hover:text-amber-300"
+                    >
+                      Rate drive
+                    </button>
+                  </div>
+
+                  {/* A rejected student may ask for one re-review. */}
+                  {candidate?.status === "rejected" && (
+                    candidate?.reconsiderationRequestedAt ? (
+                      <p className="mt-2 flex items-center gap-1.5 rounded-xl bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Reconsideration requested {new Date(candidate.reconsiderationRequestedAt).toLocaleDateString()}
+                      </p>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        onClick={() => setReconsiderTarget(candidate)}
+                        className="mt-2 w-full cursor-pointer dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:bg-white/10"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" /> Request reconsideration
+                      </Button>
+                    )
+                  )}
+
                   {/* Lifecycle audit trail — every status move with actor and note. */}
                   <button
                     type="button"
@@ -218,6 +282,34 @@ function AppliedForJobs() {
           </motion.div>
         )}
       </div>
+
+      <PlacementFeedbackDialog
+        open={Boolean(feedbackTarget)}
+        onOpenChange={(next) => { if (!next) setFeedbackTarget(null); }}
+        placement={feedbackTarget?.placement_id}
+        accessToken={accessToken}
+        onSubmitted={() => loadFeedbackSummaries(appliedJobs)}
+      />
+
+      <ReconsiderationDialog
+        open={Boolean(reconsiderTarget)}
+        onOpenChange={(next) => { if (!next) setReconsiderTarget(null); }}
+        application={reconsiderTarget}
+        accessToken={accessToken}
+        onSubmitted={(id, updated) => {
+          // Merge only the request fields: the API returns the raw application,
+          // while the list item keeps its populated placement document.
+          setAppliedJobs((prev) => prev.map((item) => (
+            item._id === id
+              ? {
+                  ...item,
+                  reconsiderationRequestedAt: updated?.reconsiderationRequestedAt,
+                  reconsiderationNote: updated?.reconsiderationNote,
+                }
+              : item
+          )));
+        }}
+      />
 
       {/* Join Interview Dialog */}
       <Dialog open={joinInterviewDialog} onOpenChange={setJoinInterviewDialog}>

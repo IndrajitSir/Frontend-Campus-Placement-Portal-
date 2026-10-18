@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Building2, MapPin, CalendarDays, IndianRupee, GraduationCap, ArrowRight, Pencil, Trash2, Bookmark } from "lucide-react";
+import { Building2, MapPin, CalendarDays, IndianRupee, GraduationCap, ArrowRight, Pencil, Trash2, Bookmark, Star } from "lucide-react";
 import { Button } from "../ui/button";
 
 const formatDate = (date) => {
@@ -63,6 +63,8 @@ const PlacementCard = ({
   removing = false,
   bookmarked = false,
   onToggleBookmark,
+  feedback,
+  onViewReviews,
 }) => {
   const deadline = getDeadlineState(placement?.last_date);
 
@@ -149,6 +151,21 @@ const PlacementCard = ({
             </p>
           ) : null}
         </div>
+
+        {feedback?.count ? (
+          <button
+            type="button"
+            onClick={onViewReviews}
+            className="mt-3 inline-flex w-fit cursor-pointer items-center gap-1.5 rounded-full border border-amber-200/70 bg-amber-50/70 px-2.5 py-1 text-xs font-medium text-amber-700 transition hover:border-amber-300 hover:bg-amber-100/70 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20"
+            aria-label={`View ${feedback.count} review${feedback.count === 1 ? "" : "s"} for ${placement?.job_title || "this drive"}`}
+          >
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            <span className="font-semibold">{feedback.average}</span>
+            <span className="text-amber-600/80 dark:text-amber-300/80">
+              · {feedback.count} review{feedback.count === 1 ? "" : "s"}
+            </span>
+          </button>
+        ) : null}
 
         {placement?.description ? (
           <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">

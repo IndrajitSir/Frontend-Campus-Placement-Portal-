@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import CircleLoader from '../../Components/Loader/CircleLoader';
 import PlacementCard from '../../Components/Placements/PlacementCard.jsx';
+import PlacementFeedbackDialog from '../../Components/Feedback/PlacementFeedbackDialog.jsx';
 // Shadcn Components
 import { Label } from '../../Components/ui/label';
 import { Input } from '../../Components/ui/input';
@@ -95,6 +96,12 @@ const InfinitePlacements = () => {
   const [savedIds, setSavedIds] = useState(() => new Set());
   const [savedPlacements, setSavedPlacements] = useState([]);
   const [savedLoading, setSavedLoading] = useState(false);
+
+  // Review summaries for the visible cards, plus the drive whose review panel
+  // is open. One batched request serves up to 50 cards.
+  const [feedbackSummaries, setFeedbackSummaries] = useState({});
+  const [reviewTarget, setReviewTarget] = useState(null);
+  const [feedbackVersion, setFeedbackVersion] = useState(0);
   const savedFetchedRef = useRef(false);
 
   const fetchBookmarks = async () => {
@@ -337,6 +344,36 @@ const InfinitePlacements = () => {
     });
   }, [placements, savedPlacements, savedIds, savedOnly, filterText, filterLocation, closingSoonOnly]);
 
+  const feedbackIdsKey = useMemo(() => {
+    const ids = [...new Set(visiblePlacements.map((p) => p?._id).filter(Boolean))];
+    return ids.slice(0, 50).join(",");
+  }, [visiblePlacements]);
+
+  useEffect(() => {
+    if (!accessToken || !feedbackIdsKey) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch(
+          `${API_URL}/api/v1/feedback/summary?placementIds=${feedbackIdsKey}`,
+          { credentials: "include", headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        const response = await res.json();
+        if (!res.ok || !response?.success) return;
+        if (!cancelled) {
+          setFeedbackSummaries((prev) => ({ ...prev, ...(response?.data?.summaries || {}) }));
+        }
+      } catch (err) {
+        console.error("Failed to load placement reviews", err);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [accessToken, feedbackIdsKey, feedbackVersion]);
+
   const activeFilterCount =
     (filterText.trim() ? 1 : 0) +
     (filterLocation !== "all" ? 1 : 0) +
@@ -361,6 +398,8 @@ const InfinitePlacements = () => {
         removing={removingPostID === placement?._id}
         bookmarked={savedIds.has(String(placement?._id))}
         onToggleBookmark={handleToggleBookmark}
+        feedback={feedbackSummaries[placement?._id]}
+        onViewReviews={() => setReviewTarget(placement)}
         onApply={() => { setApplyPlacementDialog(true); setPostID(placement?._id); }}
         onUpdate={() => { setPlacementInfo(placement); setEditedInfo(placement); setPlacementInfoDialog(true); }}
         onDelete={() => { setPostDeleteDialog(true); setPostID(placement?._id); }}
@@ -377,6 +416,8 @@ const InfinitePlacements = () => {
           role={role}
           bookmarked={savedIds.has(String(filteredPlacement?._id))}
           onToggleBookmark={handleToggleBookmark}
+          feedback={feedbackSummaries[filteredPlacement?._id]}
+          onViewReviews={() => setReviewTarget(filteredPlacement)}
           onApply={() => { setApplyPlacementDialog(true); setPostID(filteredPlacement?._id); }}
           onUpdate={() => { setPlacementInfo(filteredPlacement); setEditedInfo(filteredPlacement); setPlacementInfoDialog(true); }}
           onDelete={() => { setPostDeleteDialog(true); setPostID(filteredPlacement?._id); }}
@@ -395,6 +436,8 @@ const InfinitePlacements = () => {
                 role={role}
                 bookmarked={savedIds.has(String(placement?._id))}
                 onToggleBookmark={handleToggleBookmark}
+                feedback={feedbackSummaries[placement?._id]}
+                onViewReviews={() => setReviewTarget(placement)}
                 onApply={() => { setApplyPlacementDialog(true); setPostID(placement?._id); }}
                 onUpdate={() => { setPlacementInfo(placement); setEditedInfo(placement); setPlacementInfoDialog(true); }}
                 onDelete={() => { setPostDeleteDialog(true); setPostID(placement?._id); }}
@@ -625,6 +668,13 @@ const InfinitePlacements = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        <PlacementFeedbackDialog
+          open={Boolean(reviewTarget)}
+          onOpenChange={(next) => { if (!next) setReviewTarget(null); }}
+          placement={reviewTarget}
+          accessToken={accessToken}
+          onSubmitted={() => setFeedbackVersion((v) => v + 1)}
+        />
         {/* Create Job Post Dialog */}
         <Dialog open={createPostDialog} onOpenChange={setCreatePostDialog}>
           <DialogContent>
