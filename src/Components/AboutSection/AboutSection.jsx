@@ -62,7 +62,7 @@ const AboutSection = () => {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="card-elevate rounded-2xl border border-slate-200/80 bg-white p-7"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/25">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500 text-white shadow-lg shadow-indigo-500/25">
                   <h.icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 font-display text-lg font-semibold text-slate-900">{h.title}</h3>

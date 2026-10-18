@@ -52,7 +52,7 @@ const Testimonials = () => {
               </div>
               <blockquote className="mt-4 text-sm leading-relaxed text-slate-600">“{t.text}”</blockquote>
               <figcaption className="mt-6 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-sm font-bold text-white">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-teal-500 text-sm font-bold text-white">
                   {t.name.charAt(0)}
                 </span>
                 <div>

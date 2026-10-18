@@ -72,7 +72,7 @@ const persistKeyPair = (userId, pair) => {
     localStorage.setItem(privateKey(userId), JSON.stringify(pair.privateJwk));
     localStorage.setItem(publicKey(userId), JSON.stringify(pair.publicJwk));
     localStorage.setItem(versionKey(userId), String(pair.keyVersion));
-  } catch (e) {
+  } catch {
     /* private mode — keys won't persist across reloads */
   }
 };
@@ -88,7 +88,7 @@ const readKeyPair = (userId) => {
       publicJwk: JSON.parse(pub),
       keyVersion: Number.isInteger(v) && v >= 1 ? v : 1,
     };
-  } catch (e) {
+  } catch {
     return null; // corrupted storage — regenerate below
   }
 };
@@ -111,7 +111,7 @@ export const getOrCreateKeyPair = async (userId) => {
 const uploadedJwkFor = (userId) => {
   try {
     return localStorage.getItem(uploadedKey(userId));
-  } catch (e) {
+  } catch {
     return null;
   }
 };
@@ -119,7 +119,7 @@ const uploadedJwkFor = (userId) => {
 const markUploaded = (userId, pair) => {
   try {
     localStorage.setItem(uploadedKey(userId), JSON.stringify(pair.publicJwk));
-  } catch (e) {
+  } catch {
     /* ignore */
   }
 };
@@ -160,7 +160,7 @@ const migrateLegacyKey = (userId, serverJwk) => {
     localStorage.removeItem(LEGACY_KEY_VERSION);
     localStorage.removeItem(LEGACY_UPLOADED_FLAG);
     return pair;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
@@ -258,7 +258,7 @@ export const clearUserKeys = (userId) => {
     localStorage.removeItem(publicKey(userId));
     localStorage.removeItem(versionKey(userId));
     localStorage.removeItem(uploadedKey(userId));
-  } catch (e) {
+  } catch {
     /* ignore */
   }
 };
@@ -272,7 +272,7 @@ export const getKeepKeyOnLogout = (userId) => {
   if (!userId) return true;
   try {
     return localStorage.getItem(keepOnLogoutKey(userId)) !== "0";
-  } catch (e) {
+  } catch {
     return true;
   }
 };
@@ -281,7 +281,7 @@ export const setKeepKeyOnLogout = (userId, keep) => {
   if (!userId) return;
   try {
     localStorage.setItem(keepOnLogoutKey(userId), keep ? "1" : "0");
-  } catch (e) {
+  } catch {
     /* ignore */
   }
 };

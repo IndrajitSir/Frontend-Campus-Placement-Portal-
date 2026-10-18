@@ -74,7 +74,7 @@ const ImageUploadDialog = ({ isOpen, onClose, onUpload }) => {
                 id="upload-image-input"
               />
               <label htmlFor="upload-image-input" className="cursor-pointer text-sm text-slate-500 dark:text-slate-400">
-                <span className="mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-500 dark:text-indigo-300">
+                <span className="mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-500 dark:text-indigo-300">
                   <ImageIcon className="h-5 w-5" />
                 </span>
                 Drag & drop or click to select an image
@@ -110,7 +110,7 @@ const ImageUploadDialog = ({ isOpen, onClose, onUpload }) => {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 disabled={!selectedImage || uploading}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 disabled:pointer-events-none disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 disabled:pointer-events-none disabled:opacity-50"
                 onClick={handleDone}
               >
                 {uploading && <Loader2 className="h-4 w-4 animate-spin" />}

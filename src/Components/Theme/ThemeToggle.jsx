@@ -13,7 +13,7 @@ const ThemeToggle = ({ className = "" }) => {
     document.documentElement.classList.toggle("dark", dark);
     try {
       localStorage.setItem(STORAGE_KEY, dark ? "dark" : "light");
-    } catch (e) {
+    } catch {
       /* private mode — ignore */
     }
   }, [dark]);

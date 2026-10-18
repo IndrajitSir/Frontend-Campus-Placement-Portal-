@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import { fadeUp, popSpring } from '../../lib/motion.js';
+import { popSpring } from '../../lib/motion.js';
 // Shadcn Components
 import { Card } from "../../Components/ui/card";
 import { Button } from "../../Components/ui/button";

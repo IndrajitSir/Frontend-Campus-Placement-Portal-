@@ -222,8 +222,6 @@ const InfinitePlacements = () => {
     }
   }, [inView, hasMore]);
 
-  if (!accessToken || !role) return <CircleLoader />;
-
   const cleanSearchedData = () => {
     setFilteredPlacement({});
     setSearchQuery("");
@@ -351,6 +349,9 @@ const InfinitePlacements = () => {
     setClosingSoonOnly(false);
     setSavedOnly(false);
   };
+
+  // Declared after every hook so the hook order stays stable across renders.
+  if (!accessToken || !role) return <CircleLoader />;
 
   const renderCard = (placement, extraProps = {}) => (
     <motion.div key={placement._id} variants={item} layout>
@@ -562,7 +563,7 @@ const InfinitePlacements = () => {
                 variants={item}
                 className="col-span-full flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white/60 py-16 text-center dark:border-white/15 dark:bg-white/[0.02]"
               >
-                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-500 ring-1 ring-indigo-100 dark:text-indigo-300 dark:ring-indigo-500/20">
+                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-500 ring-1 ring-indigo-100 dark:text-indigo-300 dark:ring-indigo-500/20">
                   <Inbox className="h-6 w-6" />
                 </span>
                 <p className="font-display text-base font-semibold text-slate-700 dark:text-slate-200">

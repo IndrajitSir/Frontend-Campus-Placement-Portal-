@@ -79,7 +79,7 @@ const FriendRequestButton = ({ receiverId }) => {
       whileTap={{ scale: 0.97 }}
       onClick={sendRequest}
       disabled={sending}
-      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:brightness-110 hover:shadow-md hover:shadow-indigo-500/30 disabled:opacity-50"
+      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-teal-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:brightness-110 hover:shadow-md hover:shadow-indigo-500/30 disabled:opacity-50"
     >
       {sending ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />} {sending ? "Sending…" : "Add Friend"}
     </motion.button>

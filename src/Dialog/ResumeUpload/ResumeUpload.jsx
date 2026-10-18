@@ -98,7 +98,7 @@ export default function ResumeUpload({ isOpen, onClose, onUpload }) {
                 id="upload-resume-input"
               />
               <label htmlFor="upload-resume-input" className="cursor-pointer text-sm text-slate-500 dark:text-slate-400">
-                <span className="mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-500 dark:text-indigo-300">
+                <span className="mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-500 dark:text-indigo-300">
                   <UploadCloudIcon className="h-5 w-5" />
                 </span>
                 Drag & drop or click to select the resume
@@ -179,7 +179,7 @@ export default function ResumeUpload({ isOpen, onClose, onUpload }) {
               {selectedFile && (
                 <motion.button
                   whileTap={{ scale: 0.97 }}
-                  className="mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110"
+                  className="mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-6 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110"
                   onClick={() => {onUpload(selectedFile); onClose(); setSelectedFile(null)}}
                 >
                   Submit Resume
@@ -199,7 +199,7 @@ function Button_Shim({ onClick }) {
     <motion.button
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className="mt-4 cursor-pointer rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110"
+      className="mt-4 cursor-pointer rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110"
     >
       Upload Resume
     </motion.button>

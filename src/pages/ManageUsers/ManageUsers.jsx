@@ -124,7 +124,7 @@ function ManageUsers() {
                   onClick={() => setFilterRole(tab.value)}
                   className={`cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-all duration-200 ${
                     filterRole === tab.value
-                      ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
+                      ? "bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-md shadow-indigo-500/25"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
                   }`}
                 >

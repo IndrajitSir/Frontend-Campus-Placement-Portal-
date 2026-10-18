@@ -72,7 +72,7 @@ const getInitials = (name) => {
   return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
 };
 
-export default function ChatBox({ isOpen, onClose, user, currentUser }) {
+export default function ChatBox({ isOpen, user, currentUser }) {
   const { socket } = useSocket();
   const { accessToken } = useUserData();
 
@@ -222,6 +222,9 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
       if (!isThisConversation) return;
 
       const incoming = flatten([doc]);
+      // Captured before the state updater runs: React may defer the updater, so
+      // the decryption pass below cannot rely on variables scoped inside it.
+      const incomingFromThem = incoming.filter((m) => String(m.senderId) !== myId);
 
       setMessages((prev) => {
         const existingIds = new Set(prev.map((m) => String(m._id)));
@@ -271,7 +274,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
       });
 
       // Decrypt incoming messages (best-effort, async, after state append).
-      Promise.all(theirNewMsgs.map(decryptOne)).then((decrypted) => {
+      Promise.all(incomingFromThem.map(decryptOne)).then((decrypted) => {
         if (!decrypted.length) return;
         setMessages((prev) =>
           prev.map(
@@ -461,7 +464,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                 {!mine && (
                   <div className="w-8 shrink-0 mr-3">
                     {showAvatar && (
-                       <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 mt-5">
+                       <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-600 to-teal-500 flex items-center justify-center text-xs font-semibold text-white shadow-sm shadow-indigo-500/25 mt-5">
                           {getInitials(user?.name)}
                        </div>
                     )}
@@ -478,7 +481,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
                   <div
                     className={`relative rounded-2xl px-4 py-2.5 text-[13px] shadow-sm ${
                       mine
-                        ? "rounded-br-sm bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-indigo-500/25"
+                        ? "rounded-br-sm bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-indigo-500/25"
                         : "rounded-bl-sm bg-white dark:bg-white/[0.06] border border-slate-100 dark:border-white/10 text-slate-700 dark:text-slate-200"
                     }`}
                   >
@@ -520,8 +523,8 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
           >
             <span className="flex items-center gap-1 rounded-full bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2.5 py-1.5 shadow-sm">
               <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0s] rounded-full bg-indigo-500" />
-              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0.2s] rounded-full bg-violet-500" />
-              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0.4s] rounded-full bg-fuchsia-500" />
+              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0.2s] rounded-full bg-teal-500" />
+              <span className="h-1.5 w-1.5 animate-[bounce_1.2s_infinite_0.4s] rounded-full bg-teal-500" />
             </span>
             {user?.name || "Friend"} is typing…
           </motion.div>
@@ -592,7 +595,7 @@ export default function ChatBox({ isOpen, onClose, user, currentUser }) {
             whileTap={{ scale: 0.9 }}
             onClick={() => handleSend()}
             disabled={sending || !message.trim() || composerBlocked}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {sending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </motion.button>

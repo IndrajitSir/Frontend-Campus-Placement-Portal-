@@ -39,12 +39,12 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
   const inviteBtnRef = useRef(null);
   const [inviteBtnPos, setInviteBtnPos] = useState(null);
   const [sidebarTab, setSidebarTab] = useState("questions");
-  const [questionCount, setQuestionCount] = useState(0);
+  const [, setQuestionCount] = useState(0);
   const [chatUnread, setChatUnread] = useState(0);
 
   const handleFinalSubmission = async ({ fullCode, explanation, snapshot, language, userId, interviewId }) => {
     try {
-      const response = await axios.post(`${API_URL}/api/v1/interview`, {
+      await axios.post(`${API_URL}/api/v1/interview`, {
         fullCode, language, snapshot, explanation, userId, interviewId,
         questionForSnapshot: "Explain the highlighted section of code.",
       });
@@ -137,10 +137,10 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
 
       {/* ── Header ── */}
       <div className="relative shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-[#0a0e1f] px-5 py-3 shadow-lg shadow-black/30">
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500" />
+        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-teal-500" />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-md shadow-indigo-500/25">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500 text-white shadow-md shadow-indigo-500/25">
               <Video className="h-4 w-4" />
             </span>
             <div>
@@ -212,7 +212,7 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
                         {inviteResults.map((u) => (
                           <button key={u._id} onClick={() => handleInviteUser(u)}
                             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-white/[0.06]">
-                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-[10px] font-bold text-white">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-teal-500 text-[10px] font-bold text-white">
                               {(u.name || "?")[0].toUpperCase()}
                             </div>
                             <div className="min-w-0">
@@ -260,7 +260,7 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
               </span>
             ) : isInterviewer && (
               <button onClick={handleStartTimer}
-                className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-1 text-[11px] font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:brightness-110">
+                className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-gradient-to-r from-indigo-600 to-teal-500 px-3 py-1 text-[11px] font-semibold text-white shadow-sm shadow-indigo-500/25 transition hover:brightness-110">
                 <Timer className="h-3 w-3" /> Start
               </button>
             )}
@@ -286,7 +286,7 @@ function InterviewRoom({ user, isInterviewer, roomId, language, setLanguage }) {
                   className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 py-2.5 text-xs font-semibold transition-all ${active ? "border-b-2 border-indigo-400 text-indigo-300" : "text-slate-500 hover:text-slate-300"}`}>
                   <Icon className="h-3.5 w-3.5" /> {tab.label}
                   {tab.id === "chat" && chatUnread > 0 && (
-                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-fuchsia-500 px-1 text-[8px] font-bold text-white">{chatUnread}</span>
+                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-teal-500 px-1 text-[8px] font-bold text-white">{chatUnread}</span>
                   )}
                 </button>
               );

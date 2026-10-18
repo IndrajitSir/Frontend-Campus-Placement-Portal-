@@ -21,7 +21,7 @@ const timeAgo = (iso) => {
 
 const typeAccent = {
   application_status: "bg-indigo-500",
-  friend_request: "bg-fuchsia-500",
+  friend_request: "bg-teal-500",
   announcement: "bg-amber-500",
 };
 
@@ -34,7 +34,7 @@ const NotificationBell = () => {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const panelRef = useRef(null);
 
   const authHeaders = useCallback(

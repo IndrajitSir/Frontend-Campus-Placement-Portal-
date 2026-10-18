@@ -118,7 +118,7 @@ const Sidebar = () => {
   return (
     <nav className="flex h-full flex-col overflow-y-auto px-3 py-5" aria-label="Dashboard navigation">
       <NavLink to="/home/dashboard" className="mb-6 flex items-center gap-2.5 px-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-md shadow-indigo-500/30">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500 shadow-md shadow-indigo-500/30">
           <GraduationCap className="h-5 w-5 text-white" />
         </span>
         <span className="font-display text-base font-bold tracking-tight text-slate-900">

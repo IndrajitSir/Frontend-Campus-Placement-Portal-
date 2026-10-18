@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { usePublicStats } from "./hooks/Analytics/usePublicStats.js";
 // CONTEXT api
 import { useUserData } from "./context/AuthContext/AuthContext.jsx";
 // Components
@@ -55,16 +56,23 @@ const SectionHeading = ({ eyebrow, title, subtitle, light = false }) => (
 );
 
 /* ---------------- Hero ---------------- */
-const Hero = () => {
+const Hero = ({ stats }) => {
   const { accessToken, role } = useUserData();
   const dashboardPath = role === "student" ? "/home" : "/home/dashboard";
+  const heroStats = [
+    { k: stats?.totalPlacements, v: "Placement drives" },
+    { k: stats?.totalCompanies, v: "Companies onboard" },
+    { k: stats?.offersMade, v: "Offers made" },
+  ];
+  const format = (value) =>
+    value === null || value === undefined ? "—" : Number(value).toLocaleString("en-IN");
 
   return (
     <section className="relative overflow-hidden bg-[#0a0e1f] pb-24 pt-16 sm:pt-24">
       <div className="absolute inset-0 bg-spotlight" aria-hidden="true" />
       <div className="absolute inset-0 bg-grid-dark opacity-50" aria-hidden="true" />
       <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-10 h-[28rem] w-[28rem] rounded-full bg-indigo-600/25 blur-[120px] animate-float-slow" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-32 top-1/3 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-[110px] animate-float-slower" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-32 top-1/3 h-96 w-96 rounded-full bg-teal-600/20 blur-[110px] animate-float-slower" />
 
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[1.1fr_1fr]">
         {/* Copy */}
@@ -95,7 +103,7 @@ const Hero = () => {
             {accessToken ? (
               <Link
                 to={dashboardPath}
-                className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
+                className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
               >
                 Go to dashboard
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -103,7 +111,7 @@ const Hero = () => {
             ) : (
               <Link
                 to="/register"
-                className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
+                className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:shadow-2xl hover:shadow-indigo-500/40 hover:brightness-110"
               >
                 Get started free
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -118,13 +126,9 @@ const Hero = () => {
           </motion.div>
 
           <motion.dl custom={4} initial="hidden" animate="visible" variants={fadeUp} className="mt-12 grid max-w-md grid-cols-3 gap-6">
-            {[
-              { k: "100%", v: "Placement tracking" },
-              { k: "300+", v: "Companies onboard" },
-              { k: "10k+", v: "Students placed" },
-            ].map((s) => (
+            {heroStats.map((s) => (
               <div key={s.v} className="border-l border-white/10 pl-4">
-                <dt className="font-display text-2xl font-bold text-white">{s.k}</dt>
+                <dt className="font-display text-2xl font-bold tabular-nums text-white">{format(s.k)}</dt>
                 <dd className="mt-1 text-xs leading-snug text-slate-400">{s.v}</dd>
               </div>
             ))}
@@ -148,11 +152,11 @@ const Hero = () => {
             <div className="absolute bottom-5 left-5 right-5 grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-white/10 bg-[#0a0e1f]/70 p-4 backdrop-blur">
                 <p className="text-xs text-slate-400">Active drives</p>
-                <p className="mt-1 font-display text-xl font-bold text-white">120+</p>
+                <p className="mt-1 font-display text-xl font-bold tabular-nums text-white">{format(stats?.activeDrives)}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-[#0a0e1f]/70 p-4 backdrop-blur">
                 <p className="text-xs text-slate-400">Offers made</p>
-                <p className="mt-1 font-display text-xl font-bold text-white">2,400+</p>
+                <p className="mt-1 font-display text-xl font-bold tabular-nums text-white">{format(stats?.offersMade)}</p>
               </div>
             </div>
           </div>
@@ -192,7 +196,7 @@ const PlatformOverview = () => (
             transition={{ duration: 0.5, delay: (i % 4) * 0.08 }}
             className="card-elevate group rounded-2xl border border-slate-200/80 bg-white p-6"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-600 ring-1 ring-indigo-100 transition-all duration-300 group-hover:from-indigo-500 group-hover:to-violet-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/30">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-600 ring-1 ring-indigo-100 transition-all duration-300 group-hover:from-indigo-500 group-hover:to-teal-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/30">
               <f.icon className="h-5 w-5" />
             </span>
             <h3 className="mt-5 font-display text-base font-semibold text-slate-900">{f.title}</h3>
@@ -226,7 +230,7 @@ const FlowSection = () => (
       />
       <div className="relative grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
         {/* connector line (desktop) */}
-        <div className="absolute left-[10%] right-[10%] top-7 hidden h-px bg-gradient-to-r from-indigo-500/0 via-indigo-400/40 to-fuchsia-500/0 lg:block" aria-hidden="true" />
+        <div className="absolute left-[10%] right-[10%] top-7 hidden h-px bg-gradient-to-r from-indigo-500/0 via-indigo-400/40 to-teal-500/0 lg:block" aria-hidden="true" />
         {flowSteps.map((s, i) => (
           <motion.div
             key={s.title}
@@ -240,7 +244,7 @@ const FlowSection = () => (
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/5 text-indigo-300 backdrop-blur transition-all duration-300 hover:bg-indigo-500/20">
                 <s.icon className="h-6 w-6" />
               </span>
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-[9px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-teal-500 text-[9px] font-bold text-white">
                 {i + 1}
               </span>
               <span className="absolute -right-2 -top-2 h-6 w-6 animate-ping rounded-full bg-indigo-500/30" aria-hidden="true" />
@@ -256,13 +260,14 @@ const FlowSection = () => (
 
 /* ---------------- Landing page ---------------- */
 function App() {
+  const { stats } = usePublicStats();
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <Hero />
+      <Hero stats={stats} />
       <PlatformOverview />
       <FlowSection />
-      <PlacementStats />
+      <PlacementStats stats={stats} />
       <CompaniesSection />
       <AboutSection />
       <Testimonials />

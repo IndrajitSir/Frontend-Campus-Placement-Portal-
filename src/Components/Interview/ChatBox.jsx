@@ -66,7 +66,7 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
             setMessages(prev => prev.map(m => m.id === messageId ? { ...m, status: "seen" } : m));
         });
 
-        socket.on("chat:reaction", ({ messageId, emoji, userId, userName: reactorName }) => {
+        socket.on("chat:reaction", ({ messageId, emoji, userId }) => {
             setMessages(prev => prev.map(m => {
                 if (m.id !== messageId) return m;
                 const reactions = { ...m.reactions };
@@ -161,7 +161,7 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                                 {/* Message bubble */}
                                 <div className={`relative rounded-2xl px-3 py-2 text-sm shadow-sm
                                     ${isMine
-                                        ? 'rounded-br-md bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-indigo-500/20'
+                                        ? 'rounded-br-md bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-indigo-500/20'
                                         : 'rounded-bl-md bg-white/[0.06] border border-white/10 text-slate-200'
                                     }`}>
                                     <p className="text-[13px] break-words leading-relaxed">{msg.text}</p>
@@ -225,8 +225,8 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                         {typingUser || "Someone"} is typing
                         <span className="inline-flex items-center gap-0.5">
                             <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0s] rounded-full bg-indigo-400" />
-                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0.2s] rounded-full bg-violet-400" />
-                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0.4s] rounded-full bg-fuchsia-400" />
+                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0.2s] rounded-full bg-teal-400" />
+                            <span className="h-1 w-1 animate-[bounce_1.2s_infinite_0.4s] rounded-full bg-teal-400" />
                         </span>
                     </span>
                 </motion.div>
@@ -242,7 +242,7 @@ export default function ChatBox({ roomId, userName, onNewMessage }) {
                     className="text-sm border-white/10 bg-white/[0.04] text-slate-200 placeholder:text-slate-500 focus-visible:ring-indigo-500/30 focus-visible:border-indigo-400/50"
                 />
                 <Button size="icon" onClick={handleSend} disabled={!message.trim()}
-                    className="cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 shadow-md shadow-indigo-500/25 disabled:opacity-40">
+                    className="cursor-pointer bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-600 hover:to-teal-600 shadow-md shadow-indigo-500/25 disabled:opacity-40">
                     <Send size={16} />
                 </Button>
             </div>

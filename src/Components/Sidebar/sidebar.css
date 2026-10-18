@@ -45,7 +45,7 @@
   height: 60%;
   width: 3px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #6366f1, #a855f7);
+  background: linear-gradient(180deg, #6366f1, #0d9488);
   animation: sidebar-indicator-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 

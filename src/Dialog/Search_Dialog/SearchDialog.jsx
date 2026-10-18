@@ -128,13 +128,13 @@ function SearchDialog({
             <button
               type="button"
               onClick={() => setShowOverlay(true)}
-              className={`group flex h-9 w-full min-w-[200px] cursor-pointer items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 text-xs text-slate-400 shadow-sm transition hover:border-violet-300 hover:bg-white hover:shadow-md ${className}`}
+              className={`group flex h-9 w-full min-w-[200px] cursor-pointer items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 text-xs text-slate-400 shadow-sm transition hover:border-teal-300 hover:bg-white hover:shadow-md ${className}`}
             >
               <span className="flex items-center gap-2">
-                <Search className="h-3.5 w-3.5 text-slate-400 group-hover:text-violet-600 transition-colors" />
+                <Search className="h-3.5 w-3.5 text-slate-400 group-hover:text-teal-600 transition-colors" />
                 <span className="truncate">{placeholderValue || "Search user..."}</span>
               </span>
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 group-hover:border-violet-200 group-hover:text-violet-600">
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 group-hover:border-teal-200 group-hover:text-teal-600">
                 <Command className="h-2.5 w-2.5" />K
               </kbd>
             </button>
@@ -142,7 +142,7 @@ function SearchDialog({
             <Button
               type="button"
               onClick={() => setShowOverlay(true)}
-              className={`cursor-pointer gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25 transition hover:brightness-110 ${className}`}
+              className={`cursor-pointer gap-2 bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-md shadow-indigo-500/25 transition hover:brightness-110 ${className}`}
             >
               <Search className="h-3.5 w-3.5" />
               <span>Search</span>
@@ -151,7 +151,7 @@ function SearchDialog({
             <button
               type="button"
               onClick={() => setShowOverlay(true)}
-              className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-500 shadow-sm transition-all hover:border-violet-300 hover:bg-violet-50/50 hover:text-violet-600 hover:shadow-md ${className}`}
+              className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200/90 bg-white text-slate-500 shadow-sm transition-all hover:border-teal-300 hover:bg-teal-50/50 hover:text-teal-600 hover:shadow-md ${className}`}
               title="Search (⌘K)"
             >
               <Search className="h-4 w-4" />
@@ -181,7 +181,7 @@ function SearchDialog({
                 >
                   {/* Header bar input */}
                   <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5 bg-slate-50/50">
-                    <Search className="h-4 w-4 shrink-0 text-violet-600" />
+                    <Search className="h-4 w-4 shrink-0 text-teal-600" />
                     <input
                       ref={inputRef}
                       type="text"
@@ -215,7 +215,7 @@ function SearchDialog({
                   <div className="max-h-[340px] overflow-y-auto p-2">
                     {searchQuery.trim() === "" ? (
                       <div className="flex flex-col items-center justify-center py-10 text-center">
-                        <span className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-500">
+                        <span className="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-500">
                           <Search className="h-5 w-5 opacity-75" />
                         </span>
                         <p className="text-xs font-semibold text-slate-700">Quick Search</p>
@@ -228,9 +228,9 @@ function SearchDialog({
                         <button
                           key={item._id || i}
                           onClick={() => handleSuggestionClick(item)}
-                          className="flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all hover:bg-violet-50/70"
+                          className="flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all hover:bg-teal-50/70"
                         >
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 text-xs font-bold text-white shadow-sm">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-indigo-500 text-xs font-bold text-white shadow-sm">
                             {(getItemTitle(item) || "?")[0].toUpperCase()}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -241,7 +241,7 @@ function SearchDialog({
                               {getItemSub(item)}
                             </p>
                           </div>
-                          <span className="shrink-0 text-[10px] font-semibold text-violet-600">
+                          <span className="shrink-0 text-[10px] font-semibold text-teal-600">
                             Select →
                           </span>
                         </button>

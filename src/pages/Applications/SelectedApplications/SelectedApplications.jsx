@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import { fadeUp, staggerContainer, item, EASE, popSpring } from '../../../lib/motion.js';
+import { staggerContainer, item, EASE } from '../../../lib/motion.js';
 // Shadcn Components
 import { Card } from '../../../Components/ui/card.jsx';
 import { Button } from '../../../Components/ui/button.jsx';

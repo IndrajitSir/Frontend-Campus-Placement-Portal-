@@ -64,7 +64,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer, onNewQues
                                 ))}
                             </select>
                             <Button disabled={selectedQuestionIndex === ""} onClick={handleSendPredefinedQuestion}
-                                className="mt-2 w-full cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 disabled:opacity-40"
+                                className="mt-2 w-full cursor-pointer bg-gradient-to-r from-indigo-600 to-teal-500 disabled:opacity-40"
                             >
                                 Send Selected Question
                             </Button>
@@ -79,7 +79,7 @@ export function InterviewQuestionsBox({ roomId, socket, isInterviewer, onNewQues
                                 className="w-full rounded-lg border border-white/10 bg-white/[0.05] p-2 text-sm text-slate-200 placeholder:text-slate-500 outline-none transition focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-500/20"
                             />
                             <Button onClick={handleSendManualQuestion}
-                                className="mt-2 w-full cursor-pointer bg-gradient-to-r from-fuchsia-500 to-violet-500"
+                                className="mt-2 w-full cursor-pointer bg-gradient-to-r from-teal-500 to-teal-500"
                             >
                                 Send Manual Question
                             </Button>

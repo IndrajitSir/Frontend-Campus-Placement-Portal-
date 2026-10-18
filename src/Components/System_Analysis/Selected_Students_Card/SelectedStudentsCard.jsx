@@ -6,7 +6,7 @@ import { useSelectedStudentsPerDepartment } from '../../../hooks/Analytics/useAn
 import CircleLoader from '../../../Components/Loader/CircleLoader.jsx';
 import CardFilterHeader from '../CardFilterHeader.jsx';
 
-const COLORS = ["#6366f1", "#8b5cf6", "#d946ef", "#ef4444"];
+const COLORS = ["#6366f1", "#2563eb", "#0d9488", "#ef4444"];
 
 function SelectedStudentsCard() {
     const [year, setYear] = useState('all');

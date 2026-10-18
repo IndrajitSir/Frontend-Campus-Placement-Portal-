@@ -160,7 +160,7 @@ function Missing_Details_Form_Dialog({ onCancel }) {
                     })
                 ]).then((responses) => Promise.all(responses.map(res => res.json())))
                     .then((dataArray) => {
-                        dataArray.forEach((data, i) => {
+                        dataArray.forEach((data) => {
                             if (data.success) toast.success(data.message);
                         });
                     })
@@ -219,7 +219,7 @@ function Missing_Details_Form_Dialog({ onCancel }) {
                                     step > n
                                         ? "bg-emerald-500 text-white dark:bg-emerald-500/90"
                                         : step === n
-                                            ? "bg-gradient-to-br from-indigo-500 to-violet-500 text-white"
+                                            ? "bg-gradient-to-br from-indigo-600 to-teal-500 text-white"
                                             : "bg-slate-100 text-slate-400 dark:bg-white/10 dark:text-slate-500"
                                 }`}
                             >

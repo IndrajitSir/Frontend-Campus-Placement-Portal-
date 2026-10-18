@@ -76,7 +76,7 @@ const PlacementCard = ({
       className={`card-elevate group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-colors duration-200 hover:border-indigo-200/80 hover:shadow-xl hover:shadow-indigo-500/10 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-200 dark:hover:border-indigo-400/30 dark:hover:shadow-indigo-500/10 ${removing ? "pointer-events-none" : ""}`}
     >
       {/* Accent bar */}
-      <div className="h-1 w-full bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500" />
+      <div className="h-1 w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-teal-500" />
 
       {/* Deadline + bookmark badges (top-right) */}
       <div className="absolute right-4 top-5 z-10 flex items-center gap-2">
@@ -109,7 +109,7 @@ const PlacementCard = ({
       <div className="flex flex-1 flex-col p-6">
         {/* Company + title */}
         <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-600 ring-1 ring-indigo-100 dark:text-indigo-300 dark:ring-indigo-500/20">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-600 ring-1 ring-indigo-100 dark:text-indigo-300 dark:ring-indigo-500/20">
             <Building2 className="h-6 w-6" />
           </span>
           <div className="min-w-0">

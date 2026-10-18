@@ -68,7 +68,7 @@ const NetworkVisualization = ({ className = "", density = 1 }) => {
           if (dist < 120) {
             const alpha = (1 - dist / 120) * 0.32;
             ctx.strokeStyle = a.student
-              ? `rgba(139, 92, 246, ${alpha})`
+              ? `rgba(13, 148, 136, ${alpha})`
               : `rgba(56, 189, 248, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);

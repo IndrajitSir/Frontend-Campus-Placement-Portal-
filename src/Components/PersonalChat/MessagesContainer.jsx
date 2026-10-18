@@ -187,7 +187,7 @@ export default function MessagesContainer({ activeConversationId, onSelectConver
               onClick={() => onSelectConversation(conv.user)}
               className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-2.5 text-left transition-all ${
                 isActive
-                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
+                  ? "bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-md shadow-indigo-500/25"
                   : "text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-white/[0.06]"
               }`}
             >

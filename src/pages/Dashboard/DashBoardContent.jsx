@@ -7,6 +7,8 @@ import { Users, MonitorCog, Briefcase, ClipboardList, UserCog, Settings2, LogOut
 import Student_Dashboard from "../../Components/Dashboards/Student_dashboard/Student_Dashboard.jsx";
 import Admin_Dashboard from "../../Components/Dashboards/Admin_dashboard/Admin_Dashboard.jsx";
 import PlacementStaff_Dashboard from "../../Components/Dashboards/PlacementStaff_dashboard/PlacementStaff_Dashboard.jsx";
+import { DashboardSkeleton, DashboardError } from "../../Components/Dashboards/DashboardWidgets.jsx";
+import { useDashboardSummary } from "../../hooks/Dashboard/useDashboardSummary.js";
 // Dialog
 import Logout_Dialog from "../../Dialog/Logout_dialog/Logout_Dialog.jsx";
 // CONTEXT api
@@ -25,6 +27,7 @@ function DashBoardContent() {
   const { loading, role, userInfo } = useUserData();
   const [logoutDialog, setLogoutDialog] = useState(false);
   const navigate = useNavigate();
+  const { data: summary, loading: summaryLoading, error: summaryError, refresh } = useDashboardSummary();
 
   if (loading || !role) {
     return (
@@ -59,7 +62,7 @@ function DashBoardContent() {
   return (
     <div>
       {/* Page header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-6 sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-teal-600 p-6 sm:p-8">
         <div className="absolute inset-0 bg-grid-dark opacity-30" aria-hidden="true" />
         <div aria-hidden="true" className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
         <div className="relative flex flex-wrap items-center justify-between gap-4">
@@ -94,7 +97,7 @@ function DashBoardContent() {
             onClick={() => navigate(a.to)}
             className="card-elevate group flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 text-left cursor-pointer"
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-600 ring-1 ring-indigo-100 transition-all duration-300 group-hover:from-indigo-500 group-hover:to-violet-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/30">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-600 ring-1 ring-indigo-100 transition-all duration-300 group-hover:from-indigo-500 group-hover:to-teal-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/30">
               <a.icon className="h-5 w-5" />
             </span>
             <span>
@@ -105,21 +108,17 @@ function DashBoardContent() {
         ))}
       </div>
 
-      {/* Role-specific dashboards */}
+      {/* Role-specific dashboards, fed by GET /api/v1/dashboard/me */}
       <div className="mt-8">
-        {role === "placement_staff" && (
+        {summaryLoading ? (
+          <DashboardSkeleton />
+        ) : summaryError ? (
+          <DashboardError message={summaryError} onRetry={refresh} />
+        ) : (
           <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <PlacementStaff_Dashboard />
-          </ErrorBoundary>
-        )}
-        {(role === "admin" || role === "super_admin") && (
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Admin_Dashboard />
-          </ErrorBoundary>
-        )}
-        {role === "student" && (
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Student_Dashboard />
+            {role === "placement_staff" && <PlacementStaff_Dashboard summary={summary} />}
+            {(role === "admin" || role === "super_admin") && <Admin_Dashboard summary={summary} />}
+            {role === "student" && <Student_Dashboard summary={summary} />}
           </ErrorBoundary>
         )}
       </div>

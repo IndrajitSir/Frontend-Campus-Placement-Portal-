@@ -96,7 +96,7 @@ function RegisterUserForm({ onCancel }) {
               onClick={() => setSignupInfo({ ...signupInfo, role: r })}
               className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95 ${
                 signupInfo.role === r
-                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25"
+                  ? "bg-gradient-to-r from-indigo-600 to-teal-500 text-white shadow-md shadow-indigo-500/25"
                   : "border border-slate-200 bg-white text-slate-600 hover:border-indigo-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300 dark:hover:border-indigo-400/50"
               }`}
             >

@@ -41,7 +41,7 @@ const DEFAULT_AVATAR = "/defaultUserAvatar.jpeg";
 // ============================================================
 // Design tokens (kept local so no tailwind.config changes are
 // required — "brand" from the Stitch export maps 1:1 onto the
-// default Tailwind "violet" scale).
+// default Tailwind "teal" scale).
 // ============================================================
 const PANEL_SHADOW =
   "shadow-[0_4px_20px_-2px_rgba(124,58,237,0.06),0_2px_6px_-1px_rgba(0,0,0,0.03)]";
@@ -72,8 +72,8 @@ export default function NewMessagePage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [friendsLoading, setFriendsLoading] = useState(false);
-  const [peopleLoading, setPeopleLoading] = useState(false);
+  const [, setFriendsLoading] = useState(false);
+  const [, setPeopleLoading] = useState(false);
   // ---------- Friend requests ----------
   const [friendRequest, setFriendRequest] = useState({
     newFriend: false,
@@ -569,7 +569,7 @@ export default function NewMessagePage() {
       key={person?._id}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`group flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white/[0.04] p-3 ${CARD_SHADOW} transition-all duration-200 hover:shadow-md hover:border-violet-200 dark:hover:border-violet-500/30`}
+      className={`group flex flex-col justify-between rounded-xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white/[0.04] p-3 ${CARD_SHADOW} transition-all duration-200 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-500/30`}
     >
       <div>
         <div className="mb-2.5 flex items-center space-x-2.5">
@@ -580,7 +580,7 @@ export default function NewMessagePage() {
           />
 
           <div className="min-w-0 flex-1 overflow-hidden">
-            <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-100 transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400">
+            <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-100 transition-colors group-hover:text-teal-600 dark:group-hover:text-teal-400">
               {nameOf(person)}
             </p>
 
@@ -628,7 +628,7 @@ export default function NewMessagePage() {
         {/* Panel header */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.03] p-3.5">
           <div className="flex items-center space-x-2.5">
-            <div className="rounded-lg bg-violet-50 dark:bg-violet-500/15 p-1.5 text-violet-600 dark:text-violet-400">
+            <div className="rounded-lg bg-teal-50 dark:bg-teal-500/15 p-1.5 text-teal-600 dark:text-teal-400">
               <MessageCircle className="h-4 w-4" />
             </div>
             <h2 className="font-display text-sm font-bold text-slate-800 dark:text-slate-100">
@@ -636,7 +636,7 @@ export default function NewMessagePage() {
             </h2>
           </div>
 
-          <span className="rounded-full bg-violet-100/80 dark:bg-violet-500/15 px-2 py-0.5 text-xs font-bold text-violet-700 dark:text-violet-300 ring-1 ring-inset ring-violet-600/10 dark:ring-violet-400/20">
+          <span className="rounded-full bg-teal-100/80 dark:bg-teal-500/15 px-2 py-0.5 text-xs font-bold text-teal-700 dark:text-teal-300 ring-1 ring-inset ring-teal-600/10 dark:ring-teal-400/20">
             {friends.length}
           </span>
         </div>
@@ -658,9 +658,9 @@ export default function NewMessagePage() {
                   <img
                     src={avatarOf(friend)}
                     alt={nameOf(friend)}
-                    className="h-8 w-8 rounded-full object-cover ring-2 ring-white dark:ring-white/15 transition group-hover:ring-violet-300 dark:group-hover:ring-violet-500/40"
+                    className="h-8 w-8 rounded-full object-cover ring-2 ring-white dark:ring-white/15 transition group-hover:ring-teal-300 dark:group-hover:ring-teal-500/40"
                   />
-                  <span className="mt-0.5 max-w-[40px] truncate text-[9px] text-slate-500 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400">
+                  <span className="mt-0.5 max-w-[40px] truncate text-[9px] text-slate-500 dark:text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400">
                     {nameOf(friend).split(" ")[0]}
                   </span>
                 </button>
@@ -712,7 +712,7 @@ export default function NewMessagePage() {
                 <div className="mb-3.5 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <div className="mb-1 flex items-center gap-2">
-                      <span className="rounded-lg bg-violet-50 dark:bg-violet-500/15 p-1.5 text-violet-600 dark:text-violet-400">
+                      <span className="rounded-lg bg-teal-50 dark:bg-teal-500/15 p-1.5 text-teal-600 dark:text-teal-400">
                         <MessageCircle className="h-4 w-4" />
                       </span>
                       <h1 className="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white">
@@ -757,7 +757,7 @@ export default function NewMessagePage() {
                       type="button"
                       onClick={() => setActiveFilter(filter)}
                       className={`whitespace-nowrap rounded-full px-2.5 py-1 transition-colors ${activeFilter === filter
-                        ? "border border-violet-200/60 dark:border-violet-500/30 bg-violet-50 dark:bg-violet-500/15 font-semibold text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-500/25"
+                        ? "border border-teal-200/60 dark:border-teal-500/30 bg-teal-50 dark:bg-teal-500/15 font-semibold text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-500/25"
                         : "bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10"
                         }`}
                     >
@@ -847,7 +847,7 @@ export default function NewMessagePage() {
 
                 {loading && (
                   <div className="col-span-full flex items-center justify-center gap-2 py-4 text-sm text-slate-400">
-                    <LoaderCircle className="h-4 w-4 animate-spin text-violet-500" />
+                    <LoaderCircle className="h-4 w-4 animate-spin text-teal-500" />
                     Loading people…
                   </div>
                 )}
@@ -892,7 +892,7 @@ export default function NewMessagePage() {
 
               {/* Chat header */}
 
-              <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-600 via-indigo-600 to-fuchsia-600 px-5 py-4 text-white">
+              <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-teal-600 via-indigo-600 to-teal-600 px-5 py-4 text-white">
 
                 <div className="flex min-w-0 items-center gap-3">
 
@@ -983,7 +983,7 @@ export default function NewMessagePage() {
             type="button"
             onClick={() => setActiveFriendsTab("all")}
             className={`px-2.5 pb-2 ${activeFriendsTab === "all"
-              ? "border-b-2 border-violet-600 dark:border-violet-400 font-semibold text-violet-600 dark:text-violet-400"
+              ? "border-b-2 border-teal-600 dark:border-teal-400 font-semibold text-teal-600 dark:text-teal-400"
               : "hover:text-slate-700 dark:hover:text-slate-200"
               }`}
           >
@@ -994,7 +994,7 @@ export default function NewMessagePage() {
             type="button"
             onClick={() => setActiveFriendsTab("online")}
             className={`px-2.5 pb-2 ${activeFriendsTab === "online"
-              ? "border-b-2 border-violet-600 dark:border-violet-400 font-semibold text-violet-600 dark:text-violet-400"
+              ? "border-b-2 border-teal-600 dark:border-teal-400 font-semibold text-teal-600 dark:text-teal-400"
               : "hover:text-slate-700 dark:hover:text-slate-200"
               }`}
           >
@@ -1005,7 +1005,7 @@ export default function NewMessagePage() {
             type="button"
             onClick={() => setActiveFriendsTab("requests")}
             className={`flex items-center gap-1.5 px-2.5 pb-2 ${activeFriendsTab === "requests"
-              ? "border-b-2 border-violet-600 dark:border-violet-400 font-semibold text-violet-600 dark:text-violet-400"
+              ? "border-b-2 border-teal-600 dark:border-teal-400 font-semibold text-teal-600 dark:text-teal-400"
               : "hover:text-slate-700 dark:hover:text-slate-200"
               }`}
           >
@@ -1047,8 +1047,8 @@ export default function NewMessagePage() {
                         flex w-full cursor-pointer items-center gap-3
                         rounded-xl p-2.5 text-left transition-all
                         ${isActive
-                          ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/25"
-                          : "text-slate-700 dark:text-slate-200 hover:bg-violet-50 dark:hover:bg-white/[0.06]"
+                          ? "bg-gradient-to-r from-teal-500 to-teal-500 text-white shadow-md shadow-teal-500/25"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-teal-50 dark:hover:bg-white/[0.06]"
                         }
                       `}
                     >
@@ -1101,8 +1101,8 @@ export default function NewMessagePage() {
                         flex w-full cursor-pointer items-center gap-3
                         rounded-xl p-2.5 text-left transition-all
                         ${isActive
-                          ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/25"
-                          : "text-slate-700 dark:text-slate-200 hover:bg-violet-50 dark:hover:bg-white/[0.06]"
+                          ? "bg-gradient-to-r from-teal-500 to-teal-500 text-white shadow-md shadow-teal-500/25"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-teal-50 dark:hover:bg-white/[0.06]"
                         }
                       `}
                     >

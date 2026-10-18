@@ -98,7 +98,7 @@ function InterviewSetup() {
         >
           <div className="bg-grid-light absolute inset-0 opacity-60" aria-hidden="true" />
           <div className="relative">
-            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/30">
+            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-teal-500 text-white shadow-lg shadow-indigo-500/30">
               <Video className="h-8 w-8" />
             </span>
             <h2 className="mt-5 font-display text-2xl font-bold text-slate-900 dark:text-white">
@@ -119,14 +119,14 @@ function InterviewSetup() {
                   <Button
                     onClick={handleCreateNewRoom}
                     disabled={creating}
-                    className="mt-4 w-full cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500"
+                    className="mt-4 w-full cursor-pointer bg-gradient-to-r from-indigo-600 to-teal-500"
                   >
                     {creating ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Creating…</> : "Create Interview Room"}
                   </Button>
                 </div>
               )}
-              <div className={`rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-fuchsia-500/10 hover:border-fuchsia-200 dark:hover:border-fuchsia-500/30 ${isInterviewer ? "" : "mx-auto w-full sm:col-span-2"}`}>
-                <KeyRound className="mx-auto h-6 w-6 text-fuchsia-600 dark:text-fuchsia-400" />
+              <div className={`rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-teal-500/10 hover:border-teal-200 dark:hover:border-teal-500/30 ${isInterviewer ? "" : "mx-auto w-full sm:col-span-2"}`}>
+                <KeyRound className="mx-auto h-6 w-6 text-teal-600 dark:text-teal-400" />
                 <h3 className="mt-2 font-display text-sm font-semibold text-slate-900 dark:text-slate-100">Join with a room ID</h3>
                 <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Enter the ID the interviewer gave you.</p>
                 <div className="mt-4 flex gap-2">

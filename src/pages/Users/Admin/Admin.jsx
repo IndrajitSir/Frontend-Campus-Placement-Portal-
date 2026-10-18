@@ -70,21 +70,21 @@ function Admin() {
   return (
     <div className="w-full space-y-5 pt-6">
       <div className="flex items-center gap-2">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-300">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-600 dark:bg-teal-500/10 dark:text-teal-300">
           <ShieldCheck className="h-4 w-4" />
         </span>
         <h2 className="font-display text-lg font-bold text-slate-900 dark:text-slate-100">Admins</h2>
-        <span className="rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-600 dark:bg-violet-500/10 dark:text-violet-300">
+        <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-600 dark:bg-teal-500/10 dark:text-teal-300">
           {Array.isArray(admin) ? admin.length : 0}
         </span>
-        <span className="ml-auto inline-flex items-center rounded-full bg-violet-50 px-2.5 py-0.5 text-[10px] font-semibold text-violet-600 dark:bg-violet-500/10 dark:text-violet-300">
+        <span className="ml-auto inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-[10px] font-semibold text-teal-600 dark:bg-teal-500/10 dark:text-teal-300">
           Admin
         </span>
       </div>
 
       {Array.isArray(admin) && admin.length === 0 && (
         <div className="flex flex-col items-center justify-center py-14 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 text-violet-300 dark:bg-violet-500/10 dark:text-violet-400/60">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-300 dark:bg-teal-500/10 dark:text-teal-400/60">
             <UserX className="h-7 w-7" />
           </span>
           <p className="mt-3 text-sm font-medium text-slate-400 dark:text-slate-500">No admins found.</p>
@@ -101,15 +101,15 @@ function Admin() {
           >
             <Card className="card-elevate h-full rounded-2xl border-slate-200/80 p-5 dark:border-white/10 dark:bg-white/[0.04]">
               <div className="flex min-w-0 items-center gap-3">
-                <img src={user?.avatar || DEFAULT_AVATAR} alt={user?.name} className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-violet-100 dark:ring-violet-500/20" />
+                <img src={user?.avatar || DEFAULT_AVATAR} alt={user?.name} className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-teal-100 dark:ring-teal-500/20" />
                 <div className="min-w-0">
                   <h3 className="truncate font-display text-sm font-semibold text-slate-900 dark:text-slate-100">{user?.name}</h3>
                   <p className="truncate text-xs text-slate-400 dark:text-slate-500">{user?.email}</p>
                 </div>
               </div>
               <div className="mt-4 space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
-                <p className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-violet-500 dark:text-violet-400" /> {user?.phoneNumber || "N/A"}</p>
-                <p className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-violet-500 dark:text-violet-400" /> {user?.email}</p>
+                <p className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-teal-500 dark:text-teal-400" /> {user?.phoneNumber || "N/A"}</p>
+                <p className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-teal-500 dark:text-teal-400" /> {user?.email}</p>
               </div>
               <div className="mt-4 flex justify-end border-t border-slate-100 pt-3 dark:border-white/10">
                 <TooltipProvider delayDuration={200}>

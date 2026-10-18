@@ -22,33 +22,19 @@ import {
   Pencil,
   Mail,
   Phone,
-  MapPin,
   Phone as phoneIcon,
+  MapPin,
   MapPin as mapPinIcon,
-  Building2 as building2Icon,
-  GraduationCap as graduationCapIcon,
-  UserRound as userRoundIcon,
-  CheckCircle2 as checkCircle2Icon,
-  LoaderCircle as loaderCircleIcon,
-  FileText as fileTextIcon,
-  Briefcase as briefcaseIcon,
-  Sparkles as sparklesIcon,
-  PlusCircleIcon as plusCircleIcon,
-  UploadCloudIcon as uploadCloudIcon,
-  Trash2Icon as trash2Icon,
-  Pencil as pencilIcon,
-  LogOut as logOutIcon,
-  Bell as bellIcon,
-  BellOff as bellOffIcon,
-  Clock as clockIcon,
-  X as xIcon,
   Building2,
+  Building2 as building2Icon,
   GraduationCap,
+  GraduationCap as graduationCapIcon,
   FileText,
   LogOut,
   Briefcase,
   Sparkles,
   UserRound,
+  UserRound as userRoundIcon,
   CheckCircle2,
   LoaderCircle,
 } from "lucide-react";
@@ -64,7 +50,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 const DEFAULT_AVATAR = "/defaultUserAvatar.jpeg";
 const PAGE_SIZE = 20;
 
-// Circular profile-completeness ring (indigo -> fuchsia gradient stroke).
+// Circular profile-completeness ring (sapphire -> teal gradient stroke).
 function CompletenessRing({ percent, complete, total }) {
   const R = 52;
   const CIRC = 2 * Math.PI * R;
@@ -75,7 +61,7 @@ function CompletenessRing({ percent, complete, total }) {
         <defs>
           <linearGradient id="profileRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#d946ef" />
+            <stop offset="100%" stopColor="#0d9488" />
           </linearGradient>
         </defs>
         <circle
@@ -331,7 +317,7 @@ export default function ProfilePage() {
         <div className="absolute inset-0 bg-spotlight" aria-hidden="true" />
         <div className="absolute inset-0 bg-grid-dark opacity-40" aria-hidden="true" />
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-indigo-600/25 blur-[100px]" />
-        <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-fuchsia-600/20 blur-[100px]" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-teal-600/20 blur-[100px]" />
 
         <div className="relative z-10 flex flex-col items-center text-center">
           {/* Avatar */}
@@ -339,7 +325,7 @@ export default function ProfilePage() {
             className="relative"
             {...tapScale}
           >
-            <div className="rounded-full bg-gradient-to-br from-indigo-400 via-violet-400 to-fuchsia-400 p-1">
+            <div className="rounded-full bg-gradient-to-br from-indigo-400 via-teal-400 to-teal-400 p-1">
               <img
                 src={student.avatar || DEFAULT_AVATAR}
                 alt={user.name || "Profile"}
@@ -350,7 +336,7 @@ export default function ProfilePage() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => setAvatarUploadDialog(true)}
-                  className="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/40 ring-4 ring-[#0a0e1f] transition hover:scale-110"
+                  className="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-teal-500 text-white shadow-lg shadow-indigo-500/40 ring-4 ring-[#0a0e1f] transition hover:scale-110"
                 >
                   <PlusCircleIcon className="h-5 w-5" />
                 </button>
@@ -396,7 +382,7 @@ export default function ProfilePage() {
                     to={student.resume}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 active:scale-[0.97]"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:brightness-110 active:scale-[0.97]"
                   >
                     <FileText className="h-4 w-4" /> View resume
                   </NavLink>
@@ -563,8 +549,8 @@ export default function ProfilePage() {
         >
           {[
             { icon: phoneIcon, color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300", text: user.phoneNumber || "Not added" },
-            { icon: mapPinIcon, color: "bg-violet-50 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300", text: student.location || "Not added" },
-            { icon: building2Icon, color: "bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-500/15 dark:text-fuchsia-300", text: student.department || "Not added" },
+            { icon: mapPinIcon, color: "bg-teal-50 text-teal-600 dark:bg-teal-500/15 dark:text-teal-300", text: student.location || "Not added" },
+            { icon: building2Icon, color: "bg-teal-50 text-teal-600 dark:bg-teal-500/15 dark:text-teal-300", text: student.department || "Not added" },
             { icon: graduationCapIcon, color: "bg-sky-50 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300", text: student.professional_skill || "Not added" },
             { icon: userRoundIcon, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300", text: student.approved ? "Approved" : "Pending approval" },
           ].map(({ icon: Icon, color, text }, i) => (
@@ -599,7 +585,7 @@ export default function ProfilePage() {
                 {...tapScale}
                 className="card-elevate group rounded-2xl border border-slate-200/80 bg-white p-5 dark:border-white/10 dark:bg-white/[0.04]"
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-600 ring-1 ring-indigo-100 transition group-hover:from-indigo-500 group-hover:to-fuchsia-500 group-hover:text-white dark:ring-indigo-500/20 dark:text-indigo-300">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-600 ring-1 ring-indigo-100 transition group-hover:from-indigo-500 group-hover:to-teal-500 group-hover:text-white dark:ring-indigo-500/20 dark:text-indigo-300">
                   <Briefcase className="h-5 w-5" />
                 </span>
                 <h4 className="mt-3 font-display text-sm font-semibold text-slate-900 dark:text-slate-100">{project?.title || "Untitled project"}</h4>
@@ -621,7 +607,7 @@ export default function ProfilePage() {
           </motion.div>
         ) : (
           <div className="mt-5 rounded-2xl border border-dashed border-slate-300/80 bg-slate-50/60 p-8 text-center dark:border-white/10 dark:bg-white/[0.02]">
-            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 text-indigo-500 dark:text-indigo-300">
+            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/10 to-teal-500/10 text-indigo-500 dark:text-indigo-300">
               <Briefcase className="h-5 w-5" />
             </span>
             <p className="mt-3 text-sm font-semibold text-slate-700 dark:text-slate-200">No projects added yet</p>
@@ -670,10 +656,10 @@ export default function ProfilePage() {
                 onClick={() => openNotification(n)}
                 className={`flex w-full items-start gap-2.5 rounded-xl border p-2.5 text-left transition-colors ${n.read
                   ? "border-slate-100 bg-slate-50/50 dark:border-white/5 dark:bg-white/[0.02]"
-                  : "border-violet-100 bg-violet-50/50 dark:border-violet-500/10 dark:bg-violet-500/5"
+                  : "border-teal-100 bg-teal-50/50 dark:border-teal-500/10 dark:bg-teal-500/5"
                   }`}
               >
-                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.read ? "bg-slate-300 dark:bg-slate-600" : "bg-gradient-to-r from-indigo-500 to-violet-500"}`} />
+                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.read ? "bg-slate-300 dark:bg-slate-600" : "bg-gradient-to-r from-indigo-600 to-teal-500"}`} />
                 <div className="min-w-0 flex-1">
                   <p className={`text-xs font-semibold truncate ${n.read ? "text-slate-600 dark:text-slate-300" : "text-slate-800 dark:text-slate-100"}`}>
                     {n.title}

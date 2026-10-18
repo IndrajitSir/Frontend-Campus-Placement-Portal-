@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, Menu, X, LogIn, ArrowRight, LayoutDashboard, Briefcase, FileText, User, MessageCircle, Settings } from "lucide-react";
+import { GraduationCap, Menu, X, LogIn, ArrowRight, LayoutDashboard, Briefcase, FileText, User, MessageCircle, Settings, Search } from "lucide-react";
 // CONTEXT api
 import { useUserData } from "../../context/AuthContext/AuthContext.jsx";
 import NotificationBell from "../Notifications/NotificationBell.jsx";
@@ -30,6 +30,7 @@ const Navbar = () => {
   };
 
   const appLinks = [
+    { label: "Search", icon: Search, action: () => go("/home/search") },
     ...(role === "student"
       ? [
           { label: "Jobs", icon: Briefcase, action: () => go("/home") },
@@ -63,7 +64,7 @@ const Navbar = () => {
         <div className="glass-dark flex w-full items-center justify-between rounded-2xl px-4 py-2.5 sm:px-5">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-md shadow-indigo-500/30">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500 shadow-md shadow-indigo-500/30">
               <GraduationCap className="h-5 w-5 text-white" />
             </span>
             <span className="font-display text-lg font-bold tracking-tight text-white">
@@ -87,12 +88,22 @@ const Navbar = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden items-center gap-2 md:flex">
+            {accessToken && (
+              <button
+                type="button"
+                onClick={() => go("/home/search")}
+                aria-label="Search placements, students and applications"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            )}
             {accessToken && <NotificationBell />}
             {!onLanding && <ThemeToggle />}
             {accessToken ? (
               <Link
                 to={role === "student" ? "/home/profile" : "/home/dashboard"}
-                className="group flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:brightness-110"
+                className="group flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:brightness-110"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 {role === "student" ? "Profile" : "Dashboard"}
@@ -107,7 +118,7 @@ const Navbar = () => {
                 </button>
                 <button
                   onClick={() => go("/register")}
-                  className="group flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:shadow-lg hover:shadow-indigo-500/40 hover:brightness-110 cursor-pointer"
+                  className="group flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:shadow-lg hover:shadow-indigo-500/40 hover:brightness-110 cursor-pointer"
                 >
                   Get started
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -158,7 +169,7 @@ const Navbar = () => {
                 {accessToken ? (
                   <button
                     onClick={() => go(role === "student" ? "/home/profile" : "/home/dashboard")}
-                    className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white cursor-pointer"
+                    className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2.5 text-sm font-semibold text-white cursor-pointer"
                   >
                     {role === "student" ? "Profile" : "Dashboard"}
                   </button>
@@ -172,7 +183,7 @@ const Navbar = () => {
                     </button>
                     <button
                       onClick={() => go("/register")}
-                      className="rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm font-semibold text-white cursor-pointer"
+                      className="rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2.5 text-sm font-semibold text-white cursor-pointer"
                     >
                       Get started
                     </button>

@@ -173,14 +173,14 @@ function Auth() {
 
       {/* Floating 3D orbs */}
       <div aria-hidden="true" className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-indigo-600/30 blur-[110px] animate-float-slow" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-1/4 h-80 w-80 rounded-full bg-fuchsia-600/25 blur-[100px] animate-float-slower" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-1/4 h-80 w-80 rounded-full bg-teal-600/25 blur-[100px] animate-float-slower" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-[-8rem] left-1/3 h-96 w-96 rounded-full bg-sky-500/20 blur-[110px] animate-float-slow" />
 
       {/* 3D rotating ring + orbiting node (pure CSS, degrades to static on low-power) */}
       <div aria-hidden="true" className="pointer-events-none absolute -left-40 bottom-[-10rem] hidden lg:block preserve-3d">
         <div className="relative h-[30rem] w-[30rem] animate-spin-slow" style={{ transformStyle: "preserve-3d", transform: "rotateX(72deg)" }}>
           <div className="absolute inset-0 rounded-full border border-indigo-400/25" />
-          <div className="absolute inset-10 rounded-full border border-fuchsia-400/20" />
+          <div className="absolute inset-10 rounded-full border border-teal-400/20" />
           <div className="absolute inset-24 rounded-full border border-sky-400/15" />
           <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-indigo-400 shadow-[0_0_18px_4px_rgba(129,140,248,0.7)]" />
         </div>
@@ -191,7 +191,7 @@ function Auth() {
           {/* ---------- Brand panel (desktop) ---------- */}
           <div className="hidden text-white lg:block">
             <motion.div custom={0} initial="hidden" animate="visible" variants={fadeUp} className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-lg shadow-indigo-500/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-teal-500 shadow-lg shadow-indigo-500/30">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <span className="font-display text-2xl font-bold tracking-tight">CampusPlace</span>
@@ -232,7 +232,7 @@ function Auth() {
             <div className="glass-dark relative w-full rounded-3xl p-8 shadow-2xl shadow-indigo-950/40 sm:p-10">
               {/* Mobile brand */}
               <div className="mb-8 flex items-center gap-3 lg:hidden">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500">
                   <GraduationCap className="h-5 w-5 text-white" />
                 </div>
                 <span className="font-display text-xl font-bold text-white">CampusPlace</span>
@@ -255,7 +255,7 @@ function Auth() {
                 <motion.div
                   layout
                   transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                  className="absolute inset-y-1.5 w-[calc(50%-0.375rem)] rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/30"
+                  className="absolute inset-y-1.5 w-[calc(50%-0.375rem)] rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 shadow-lg shadow-indigo-500/30"
                   style={{ left: isLogin ? "0.375rem" : "50%" }}
                 />
               </div>
@@ -387,7 +387,7 @@ function Auth() {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-indigo-500/40 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-teal-500 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-indigo-500/40 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {submitting ? (
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

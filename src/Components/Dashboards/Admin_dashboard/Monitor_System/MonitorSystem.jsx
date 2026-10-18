@@ -8,7 +8,7 @@ import { Card } from "../../../../Components/ui/card";
 // Hooks
 import { usePlacementsCreatedPerMonth, useApplicationStatusSummary } from "../../../../hooks/Analytics/useAnalytics.js";
 
-const PIE_COLORS = ["#6366f1", "#8b5cf6", "#d946ef", "#10b981", "#f59e0b", "#0ea5e9"];
+const PIE_COLORS = ["#6366f1", "#2563eb", "#0d9488", "#10b981", "#f59e0b", "#0ea5e9"];
 
 const statusLabel = (s) => {
   const labels = { applied: "Applied", shortlisted: "Shortlisted", selected: "Selected", rejected: "Rejected" };
@@ -71,7 +71,7 @@ export default function MonitorSystem() {
 
         <Card className="border-slate-200/80 p-5">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-fuchsia-50 text-fuchsia-600">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
               <PieIcon className="h-4 w-4" />
             </span>
             <h3 className="font-display text-sm font-bold text-slate-900">Application Status Distribution</h3>

@@ -43,7 +43,7 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
   const [showOutput, setShowOutput] = useState(false);
   const [running, setRunning] = useState(false);
   const [outputHeight, setOutputHeight] = useState(160);
-  const [snapshot, setSnapshot] = useState("");
+  const [, setSnapshot] = useState("");
   const [explanation, setExplanation] = useState("");
   const [showExplainStep, setShowExplainStep] = useState(false);
   const [copiedOutput, setCopiedOutput] = useState(false);
@@ -134,11 +134,6 @@ const CodeEditor = ({ onFinalSubmit, userId, interviewId, language, setLanguage 
     } finally {
       setRunning(false);
     }
-  };
-
-  const handleFinalSubmit = () => {
-    onFinalSubmit({ snapshot, explanation, language, userId, interviewId });
-    setShowExplainStep(false);
   };
 
   const takeSnapshot = async () => {

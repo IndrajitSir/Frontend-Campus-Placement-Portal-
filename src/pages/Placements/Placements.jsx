@@ -28,9 +28,9 @@ const rawCardClass =
 const rawTitleClass = "text-xl font-semibold text-slate-900 dark:text-slate-100";
 const rawMetaClass = "text-sm text-slate-500 dark:text-slate-400";
 const applyBtnClass =
-  "mt-3 inline-block cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-white shadow-md shadow-indigo-500/25 hover:brightness-110";
+  "mt-3 inline-block cursor-pointer bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-white shadow-md shadow-indigo-500/25 hover:brightness-110";
 const updateBtnClass =
-  "cursor-pointer bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-white shadow-md shadow-indigo-500/25 hover:brightness-110";
+  "cursor-pointer bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-white shadow-md shadow-indigo-500/25 hover:brightness-110";
 const deleteBtnClass =
   "ml-4 cursor-pointer border-red-200 px-4 py-2 text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10";
 

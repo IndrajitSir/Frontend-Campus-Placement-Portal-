@@ -1,67 +1,39 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-// Shadcn Components
-import { Card, CardHeader, CardContent, CardTitle } from '../../ui/card'
-import { Button } from '../../ui/button';
-// Components
-import SystemStatus from '../../../Components/System_Status/SystemStatus.jsx';
+import {
+  MetricGrid,
+  WorkQueue,
+  UpcomingDeadlines,
+  RecentApplications,
+} from "../DashboardWidgets.jsx";
+import SystemStatus from "../../System_Status/SystemStatus.jsx";
 
-function Admin_Dashboard() {
-    const navigate = useNavigate();
-    console.log("Rendering Admin_Dashboard component");
-    return (
-        <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-                <Card className="flex flex-col justify-between">
-                    <CardHeader>
-                        <CardTitle>User Management</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/manage-users")}>
-                            Manage Users
-                        </Button>
-                    </CardContent>
-                </Card>
+/**
+ * Administrator dashboard: ecosystem-wide counts, approval and review queues,
+ * and system health. Visible to admin and super_admin only (the API enforces
+ * the role; this component is never rendered for students).
+ */
+function Admin_Dashboard({ summary }) {
+  return (
+    <div className="space-y-6">
+      <MetricGrid metrics={summary?.metrics || []} />
 
-                <Card className="flex flex-col justify-between">
-                    <CardHeader>
-                        <CardTitle>System Monitoring</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/monitor-system")}>
-                            View Logs
-                        </Button>
-                    </CardContent>
-                </Card>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <WorkQueue queues={summary?.queues || []} />
+        <UpcomingDeadlines items={summary?.upcoming || []} staff />
+      </div>
 
-                <Card className="flex flex-col justify-between">
-                    <CardHeader>
-                        <CardTitle>Placement Records</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/placements")}>
-                            Check Records
-                        </Button>
-                    </CardContent>
-                </Card>
+      <RecentApplications items={summary?.recentApplications || []} staff />
 
-                <Card className="flex flex-col justify-between">
-                    <CardHeader>
-                        <CardTitle>Applications Management</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Button className="w-full mt-2 cursor-pointer" onClick={() => navigate("/home/dashboard/manage-applications")}>
-                            Manage Applications
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-
-            <div>
-                <SystemStatus />
-            </div>
-        </>
-    )
+      <section className="rounded-2xl border border-slate-200/80 bg-white p-5 dark:border-white/10 dark:bg-white/[0.04]">
+        <h2 className="font-display text-base font-bold text-slate-900 dark:text-slate-100">System health</h2>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
+          Live uptime, memory and CPU for this API instance.
+        </p>
+        <div className="mt-4">
+          <SystemStatus />
+        </div>
+      </section>
+    </div>
+  );
 }
 
-export default Admin_Dashboard
+export default Admin_Dashboard;
